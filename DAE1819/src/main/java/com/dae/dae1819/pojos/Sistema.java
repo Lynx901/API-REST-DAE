@@ -27,4 +27,8 @@ public class Sistema {
         return this.nombre;
     }
     
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    
 }
