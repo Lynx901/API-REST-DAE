@@ -3,7 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dae.dae1819;
+package com.dae.dae1819.beans;
+
+import com.dae.dae1819.clients.ClienteSistema;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 
 /**
  *
@@ -17,7 +22,7 @@ public class SistemaService {
         SpringApplication servidor = new SpringApplication(SistemaService.class);
         ApplicationContext context = servidor.run(args);
         
-        ClienteClinica cliente = new ClienteClinica(context);
+        ClienteSistema cliente = new ClienteSistema(context);
 
         cliente.run();
 

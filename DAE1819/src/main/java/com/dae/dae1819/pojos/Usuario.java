@@ -6,7 +6,7 @@
 
 /**
  *
- * @author dani
+ * @author dml y jfaf
  */
 public class Usuario {
     
