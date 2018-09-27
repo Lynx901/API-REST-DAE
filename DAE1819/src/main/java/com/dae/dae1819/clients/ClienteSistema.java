@@ -25,7 +25,6 @@ public class ClienteSistema {
         Sistema sistema = (Sistema) context.getBean("sistema");
 
         int eleccion = 0;
-
         do {
             System.out.print("\n|---------------------------------------------------------------------|" + "\n"
                     + "|-                                                                   -|" + "\n"
@@ -35,13 +34,15 @@ public class ClienteSistema {
                     + "|---------------------------------------------------------------------|" + "\n"
                     + "|- Seleccione una opción:                                            -|" + "\n"
                     + "|-                                                                   -|" + "\n"
-                    + "|- [1].Decir nombre del servidor                 sistema.getNombre() -|" + "\n"
+                    + "|- [1]. Decir nombre del servidor                sistema.getNombre() -|" + "\n"
+                    + "|- [2]. Mostrar eventos disponibles                                  -|" + "\n"
                     + "|---------------------------------------------------------------------|" + "\n"
                     + "|- [0].Finalizar programa                                            -|" + "\n"
                     + "|---------------------------------------------------------------------|" + "\n"
                     + "|-                       (c) 2018 dml y jfaf                         -|" + "\n"
                     + "|---------------------------------------------------------------------|" + "\n"
                     + "|- ");
+                      
 
             Scanner capt = new Scanner(System.in);
             System.out.print("Opción: ");
@@ -51,7 +52,11 @@ public class ClienteSistema {
                 case 1:
                     System.out.print("|- El servidor se llama " + sistema.getNombre() + ".\n");
                     break;
-             
+                    
+                case 2:
+                    System.out.print("|- Listado de eventos:                                                |\n");
+                    break;
+                    
                 default:
                 break;
             }

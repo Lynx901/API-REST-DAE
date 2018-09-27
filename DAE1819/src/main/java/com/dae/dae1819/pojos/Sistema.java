@@ -14,21 +14,59 @@ import java.util.TreeMap;
  */
 public class Sistema {
 
-    String nombre;
-    Map<Integer, Usuario> usuarios;
-    Map<Integer, Evento> eventos;
+    private String nombre;
+    private Map<Integer, Usuario> usuarios;
+    private Map<Integer, Evento> eventos;
 
     public Sistema() {
         usuarios = new TreeMap();
         eventos = new TreeMap();
     }
     
-    public String getNombre() {
-        return this.nombre;
+    public Sistema(String nombre) {
+        this.nombre = nombre;
     }
-    
+
+    /**
+     * @return the nombre
+     */
+    public String getNombre() {
+        return nombre;
+    }
+
+    /**
+     * @param nombre the nombre to set
+     */
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    /**
+     * @return the usuarios
+     */
+    public Map<Integer, Usuario> getUsuarios() {
+        return usuarios;
+    }
+
+    /**
+     * @param usuarios the usuarios to set
+     */
+    public void setUsuarios(Map<Integer, Usuario> usuarios) {
+        this.usuarios = usuarios;
+    }
+
+    /**
+     * @return the eventos
+     */
+    public Map<Integer, Evento> getEventos() {
+        return eventos;
+    }
+
+    /**
+     * @param eventos the eventos to set
+     */
+    public void setEventos(Map<Integer, Evento> eventos) {
+        this.eventos = eventos;
     }
     
 }
