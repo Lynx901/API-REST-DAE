@@ -5,6 +5,7 @@
  */
 package com.dae.dae1819.pojos;
 
+import com.dae.dae1819.interfaces.SistemaInterface;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -12,10 +13,10 @@ import java.util.TreeMap;
  *
  * @author dml y jfaf
  */
-public class Sistema {
+public class Sistema extends SistemaInterface{
 
     private String nombre;
-    private Map<Integer, Usuario> usuarios;
+    private Map<String, Usuario> usuarios;
     private Map<Integer, Evento> eventos;
 
     public Sistema() {
@@ -44,14 +45,14 @@ public class Sistema {
     /**
      * @return the usuarios
      */
-    public Map<Integer, Usuario> getUsuarios() {
+    public Map<String, Usuario> getUsuarios() {
         return usuarios;
     }
 
     /**
      * @param usuarios the usuarios to set
      */
-    public void setUsuarios(Map<Integer, Usuario> usuarios) {
+    public void setUsuarios(Map<String, Usuario> usuarios) {
         this.usuarios = usuarios;
     }
 
@@ -68,5 +69,28 @@ public class Sistema {
     public void setEventos(Map<Integer, Evento> eventos) {
         this.eventos = eventos;
     }
+    
+    @Override
+    public void nuevoUsuario(String username, String password, String email){
+        Usuario usuario = new Usuario(username,password,email);
+    };
+    
+    @Override
+    public boolean login(String username, String password ){
+        Usuario user = usuarios.get(username);
+        if (user != null){
+            if (user.getPassword().equals(password)){
+                return true;
+            }
+        }
+        return false;
+    };
+    
+    @Override
+    public void nuevoEvento(){
+    
+    };
+    
+    
     
 }

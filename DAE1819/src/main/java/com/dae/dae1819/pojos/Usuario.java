@@ -23,12 +23,14 @@ public class Usuario {
     private List<Evento> organizados;
     
     public Usuario() {
-        username = "";
-        password = "";
-        email = "";
-        
         eventos = new ArrayList();
         organizados = new ArrayList();
+    }
+    
+     public Usuario(String username, String password, String email) {
+        this.username = "";
+        this.password = "";
+        this.email = "";
     }
     
     public Usuario(String username, String password, String email, List<Evento> eventos, List<Evento> organizados) {

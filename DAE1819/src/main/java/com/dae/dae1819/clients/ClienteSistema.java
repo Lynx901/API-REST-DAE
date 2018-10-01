@@ -5,7 +5,7 @@
  */
 package com.dae.dae1819.clients;
 
-import com.dae.dae1819.pojos.Sistema;
+import com.dae.dae1819.interfaces.SistemaInterface;
 import java.util.Scanner;
 import org.springframework.context.ApplicationContext;
 
@@ -22,7 +22,7 @@ public class ClienteSistema {
     }
 
     public void run() {
-        Sistema sistema = (Sistema) context.getBean("sistema");
+        SistemaInterface sistema = (SistemaInterface) context.getBean("sistema");
 
         int eleccion = 0;
         do {
@@ -34,8 +34,9 @@ public class ClienteSistema {
                     + "|---------------------------------------------------------------------|" + "\n"
                     + "|- Seleccione una opción:                                            -|" + "\n"
                     + "|-                                                                   -|" + "\n"
-                    + "|- [1]. Decir nombre del servidor                sistema.getNombre() -|" + "\n"
-                    + "|- [2]. Mostrar eventos disponibles                                  -|" + "\n"
+                    + "|- [1]. Crear usuario                                                -|" + "\n"
+                    + "|- [2]. Iniciar sesión                                               -|" + "\n"
+                    + "|- [3]. Crear evento                                                 -|" + "\n"
                     + "|---------------------------------------------------------------------|" + "\n"
                     + "|- [0].Finalizar programa                                            -|" + "\n"
                     + "|---------------------------------------------------------------------|" + "\n"
@@ -50,11 +51,32 @@ public class ClienteSistema {
 
             switch (eleccion) {
                 case 1:
-                    System.out.print("|- El servidor se llama " + sistema.getNombre() + ".\n");
+                    String nombreusuario, contrasena, email;
+                    System.out.print("Introduzca el correo electronico:");
+                    email = capt.next();
+                    System.out.print("Introduzca el nombre de usuario:");
+                    nombreusuario = capt.next();
+                    System.out.print("Introduzca la contraseña:");
+                    contrasena = capt.next();
+                    System.out.print("Repita la contraseña:");
+                    if (!contrasena.equals(capt.next())){
+                        System.out.println("La contraseña introducida no es la misma");
+                    } else {
+                        System.out.println("La contraseña introducida es correcta");
+                        sistema.nuevoUsuario(nombreusuario, contrasena, email);
+                    }
                     break;
                     
                 case 2:
-                    System.out.print("|- Listado de eventos:                                                |\n");
+                    System.out.println("Introduzca el nombre de usuario:");
+                    nombreusuario = capt.next();
+                    System.out.println("Introduzca la contraseña:");
+                    contrasena = capt.next();
+                    if (sistema.login(nombreusuario, contrasena)){
+                        System.out.println("El inicio de sesión se creo correctamente");
+                    } else {
+                        System.out.println("Compruebe sus credenciales de sesión");
+                    }
                     break;
                     
                 default:

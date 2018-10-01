@@ -16,34 +16,26 @@ import java.util.List;
  * @author dml y jfaf
  */
 public class Evento {
-    private int id;
+    private Integer id;
     private String nombre;
     private Date fecha;
     private enum Tipo {
         CHARLA, CURSO, ACTIVIDAD_DEPORTIVA, VISITA_CULTURAL
     }
     private String descripcion;
-    private int capacidad;
+    private Integer capacidad;
     private String localizacion;
     
     private List<Usuario> asistentes;
     private Usuario organizador;
     
-    public Evento() {
-        id = 0;
-        nombre = "";
-        fecha = new Date();
-        Tipo tipo = Tipo.CHARLA;
-        descripcion = "";
-        capacidad = 1;
-        localizacion = "";
-        
+    public Evento() {        
         asistentes = new ArrayList();
         organizador = new Usuario();   
     }
     
-    public Evento (int id, String nombre, Date fecha, Tipo _tipo, String descripcion, 
-                   int capacidad, String localizacion, List<Usuario> asistentes, Usuario organizador) {
+    public Evento (Integer id, String nombre, Date fecha, Tipo _tipo, String descripcion, 
+                   Integer capacidad, String localizacion, List<Usuario> asistentes, Usuario organizador) {
         this.id = 0;
         this.nombre = "";
         this.fecha = new Date();
@@ -62,14 +54,14 @@ public class Evento {
     /**
      * @return the id
      */
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -118,14 +110,14 @@ public class Evento {
     /**
      * @return the capacidad
      */
-    public int getCapacidad() {
+    public Integer getCapacidad() {
         return capacidad;
     }
 
     /**
      * @param capacidad the capacidad to set
      */
-    public void setCapacidad(int capacidad) {
+    public void setCapacidad(Integer capacidad) {
         this.capacidad = capacidad;
     }
 
