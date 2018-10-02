@@ -54,65 +54,65 @@ public class ClienteSistema {
             switch (eleccion) {
                 case 1:
                     String nombreusuario, contrasena, email;
-                    System.out.print("Introduzca el correo electronico:");
+                    System.out.print("|- Introduzca el correo electronico:");
                     email = capt.next();
-                    System.out.print("Introduzca el nombre de usuario:");
+                    System.out.print("\n|- Introduzca el nombre de usuario:");
                     nombreusuario = capt.next();
-                    System.out.print("Introduzca la contraseña:");
+                    System.out.print("\n|- Introduzca la contraseña:");
                     contrasena = capt.next();
-                    System.out.print("Repita la contraseña:");
+                    System.out.print("\n|- Repita la contraseña:");
                     if (!contrasena.equals(capt.next())){
-                        System.out.println("La contraseña introducida no es la misma");
+                        System.out.println("\n|- La contraseña introducida no es la misma");
                     } else {
-                        System.out.println("La contraseña introducida es correcta");
+                        System.out.println("\n|- La contraseña introducida es correcta");
                         sistema.nuevoUsuario(nombreusuario, contrasena, email);
                     }
                     break;
                     
                 case 2:
-                    System.out.println("Introduzca el nombre de usuario:");
+                    System.out.print("\n|- Introduzca el nombre de usuario:");
                     nombreusuario = capt.next();
-                    System.out.println("Introduzca la contraseña:");
+                    System.out.print("\n|- Introduzca la contraseña:");
                     contrasena = capt.next();
                     if (sistema.login(nombreusuario, contrasena)){
-                        System.out.println("El inicio de sesión se creo correctamente");
+                        System.out.print("\n|- El inicio de sesión se creo correctamente");
                     } else {
-                        System.out.println("Compruebe sus credenciales de sesión");
+                        System.out.print("\n|- Compruebe sus credenciales de sesión");
                     }
                     break;
                 case 3:
                     String tipoevento;
-                    System.out.println("Introduzca el tipo de evento que desea buscar (CHARLA, CURSO, ACTIVIDAD_DEPORTIVA, VISITA_CULTURAL):");
+                    System.out.print("|- Introduzca el tipo de evento que desea buscar (CHARLA, CURSO, ACTIVIDAD_DEPORTIVA, VISITA_CULTURAL):");
                     tipoevento = capt.next();
-                    System.out.println("Estamos buscando sus eventos");
+                    System.out.print("|- Estamos buscando sus eventos... \n");
                     List<String> listaeventos = sistema.buscarEventoPorTipo(tipoevento);
                     if (listaeventos.isEmpty()){
-                        System.out.println("No existen eventos disponibles de ese tipo");
+                        System.out.print("|- No existen eventos disponibles de ese tipo\n");
                     } else {
-                        System.out.println("Lista de eventos disponibles: ");
+                        System.out.print("|- Lista de eventos disponibles: ");
                         Integer count=0;
                        for (String event : listaeventos) 
                         { 
                             count++;
-                            System.out.println(count + "-" + event );
+                            System.out.println("|- " + count + "-" + event );
                         }
                     }
                     break;
                  case 4:
                     String descevento="";
-                    System.out.println("Introduzca la descripción del evento que desea buscar:");
+                    System.out.print("|- Introduzca la descripción del evento que desea buscar:");
                     tipoevento = capt.next();
-                    System.out.println("Estamos buscando sus eventos");
+                    System.out.print("|- Estamos buscando sus eventos... \n");
                     List<String> listaeventosdesc = sistema.buscarEventoPorPalabras(descevento);
                     if (listaeventosdesc.isEmpty()){
-                        System.out.println("No existen eventos disponibles de ese tipo");
+                        System.out.print("|- No existen eventos disponibles de ese tipo\n");
                     } else {
-                        System.out.println("Lista de eventos disponibles: ");
+                        System.out.print("|- Lista de eventos disponibles: ");
                         Integer count=0;
                        for (String event : listaeventosdesc) 
                         { 
                             count++;
-                            System.out.println(count + "-" + event );
+                            System.out.println("|- " + count + "-" + event );
                         }
                     }
                     break;
@@ -125,7 +125,7 @@ public class ClienteSistema {
                 System.out.print("|- ¿Continuar? [Y/N]: ");
                 String end = capt.next();
 
-                if (end.equalsIgnoreCase("n")) {
+                if (end.equalsIgnoreCase("n") || end.equals("0")) {
                     eleccion = 0;
                 } 
             }
