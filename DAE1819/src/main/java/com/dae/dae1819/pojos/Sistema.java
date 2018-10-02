@@ -6,6 +6,8 @@
 package com.dae.dae1819.pojos;
 
 import com.dae.dae1819.interfaces.SistemaInterface;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -70,6 +72,8 @@ public class Sistema extends SistemaInterface{
         this.eventos = eventos;
     }
     
+    /* ACCIONES USUARIOS SIN LOGEAR */
+    
     @Override
     public void nuevoUsuario(String username, String password, String email){
         Usuario usuario = new Usuario(username,password,email);
@@ -87,10 +91,38 @@ public class Sistema extends SistemaInterface{
     };
     
     @Override
-    public void nuevoEvento(){
-    
+    public List<String> buscarEventoPorTipo(String tipo){
+        List<String> lista = new ArrayList();
+        for (Map.Entry<Integer, Evento> entry : eventos.entrySet()) {
+            if (entry.getValue().getTipoEvento().equals(tipo)){
+                lista.add(entry.getValue().getNombre());
+            };
+        }
+        return lista;
     };
     
+    @Override
+    public List<String> buscarEventoPorPalabras(String descripcion){
+        List<String> lista = new ArrayList();
+        for (Map.Entry<Integer, Evento> entry : eventos.entrySet()) {
+            if (entry.getValue().getDescripcion().contains(descripcion)){
+                lista.add(entry.getValue().getNombre());
+            };
+        }
+        return lista;
+    };
+    
+    /* ACCIONES USUARIOS LOGEADOS */
+    
+    @Override
+    public void nuevoEvento(){
+        
+    };
+    
+    @Override
+    public void cancelarEvento(){
+        
+    };
     
     
 }

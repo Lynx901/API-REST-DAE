@@ -22,6 +22,7 @@ public class Evento {
     private enum Tipo {
         CHARLA, CURSO, ACTIVIDAD_DEPORTIVA, VISITA_CULTURAL
     }
+    private Tipo tipoevento;
     private String descripcion;
     private Integer capacidad;
     private String localizacion;
@@ -91,6 +92,13 @@ public class Evento {
      */
     public void setFecha(Date fecha) {
         this.fecha = fecha;
+    }
+
+     /**
+     * @return the type
+     */
+    public String getTipoEvento() {
+        return tipoevento.name();
     }
 
     /**

@@ -6,6 +6,7 @@
 package com.dae.dae1819.clients;
 
 import com.dae.dae1819.interfaces.SistemaInterface;
+import java.util.List;
 import java.util.Scanner;
 import org.springframework.context.ApplicationContext;
 
@@ -36,7 +37,8 @@ public class ClienteSistema {
                     + "|-                                                                   -|" + "\n"
                     + "|- [1]. Crear usuario                                                -|" + "\n"
                     + "|- [2]. Iniciar sesión                                               -|" + "\n"
-                    + "|- [3]. Crear evento                                                 -|" + "\n"
+                    + "|- [3]. Buscar evento por tipo                                       -|" + "\n"
+                    + "|- [4]. Buscar evento por palabras                                   -|" + "\n"
                     + "|---------------------------------------------------------------------|" + "\n"
                     + "|- [0].Finalizar programa                                            -|" + "\n"
                     + "|---------------------------------------------------------------------|" + "\n"
@@ -78,7 +80,42 @@ public class ClienteSistema {
                         System.out.println("Compruebe sus credenciales de sesión");
                     }
                     break;
-                    
+                case 3:
+                    String tipoevento;
+                    System.out.println("Introduzca el tipo de evento que desea buscar (CHARLA, CURSO, ACTIVIDAD_DEPORTIVA, VISITA_CULTURAL):");
+                    tipoevento = capt.next();
+                    System.out.println("Estamos buscando sus eventos");
+                    List<String> listaeventos = sistema.buscarEventoPorTipo(tipoevento);
+                    if (listaeventos.isEmpty()){
+                        System.out.println("No existen eventos disponibles de ese tipo");
+                    } else {
+                        System.out.println("Lista de eventos disponibles: ");
+                        Integer count=0;
+                       for (String event : listaeventos) 
+                        { 
+                            count++;
+                            System.out.println(count + "-" + event );
+                        }
+                    }
+                    break;
+                 case 4:
+                    String descevento="";
+                    System.out.println("Introduzca la descripción del evento que desea buscar:");
+                    tipoevento = capt.next();
+                    System.out.println("Estamos buscando sus eventos");
+                    List<String> listaeventosdesc = sistema.buscarEventoPorPalabras(descevento);
+                    if (listaeventosdesc.isEmpty()){
+                        System.out.println("No existen eventos disponibles de ese tipo");
+                    } else {
+                        System.out.println("Lista de eventos disponibles: ");
+                        Integer count=0;
+                       for (String event : listaeventosdesc) 
+                        { 
+                            count++;
+                            System.out.println(count + "-" + event );
+                        }
+                    }
+                    break;
                 default:
                 break;
             }
