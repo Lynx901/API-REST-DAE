@@ -28,15 +28,15 @@ public class Usuario {
     }
     
      public Usuario(String username, String password, String email) {
-        this.username = "";
-        this.password = "";
-        this.email = "";
+        this.username = username;
+        this.password = password;
+        this.email = email;
     }
     
     public Usuario(String username, String password, String email, List<Evento> eventos, List<Evento> organizados) {
-        this.username = "";
-        this.password = "";
-        this.email = "";
+        this.username = username;
+        this.password = password;
+        this.email = email;
         
         this.eventos.clear();
         for (Evento evento : eventos) {

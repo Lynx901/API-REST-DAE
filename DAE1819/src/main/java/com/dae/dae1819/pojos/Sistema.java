@@ -77,6 +77,7 @@ public class Sistema extends SistemaInterface{
     @Override
     public void nuevoUsuario(String username, String password, String email){
         Usuario usuario = new Usuario(username,password,email);
+        usuarios.put(username, usuario);
     };
     
     @Override
