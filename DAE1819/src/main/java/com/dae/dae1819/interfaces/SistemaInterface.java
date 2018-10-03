@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  *
- * @author juanf
+ * @author dml y jfaf
  */
 public abstract class SistemaInterface {
     private String nombre;
@@ -29,5 +29,6 @@ public abstract class SistemaInterface {
     /* ACCIONES USUARIO LOGEADOS */
     public abstract void nuevoEvento();
     public abstract void cancelarEvento();
+    public abstract Usuario buscarUsuario(String username);
     
 }

@@ -116,14 +116,21 @@ public class Sistema extends SistemaInterface{
     /* ACCIONES USUARIOS LOGEADOS */
     
     @Override
-    public void nuevoEvento(){
+    public void nuevoEvento() {
         
     };
     
     @Override
-    public void cancelarEvento(){
+    public void cancelarEvento() {
         
     };
+    
+    @Override
+    public Usuario buscarUsuario(String username) {
+        Usuario user = new Usuario();
+        usuarios.get(username);
+        return user;        
+    }
     
     
 }

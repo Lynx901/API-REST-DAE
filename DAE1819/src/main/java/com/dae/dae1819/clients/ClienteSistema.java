@@ -6,6 +6,7 @@
 package com.dae.dae1819.clients;
 
 import com.dae.dae1819.interfaces.SistemaInterface;
+import com.dae.dae1819.interfaces.UsuarioInterface;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
@@ -25,7 +26,7 @@ public class ClienteSistema {
 
     public void run() {
         SistemaInterface sistema = (SistemaInterface) context.getBean("sistema");
-        Integer token = null;
+        UsuarioInterface user = null;
 
         int eleccion = 0;
         do {
@@ -36,13 +37,20 @@ public class ClienteSistema {
                     + "|-                                                                   -|" + "\n"
                     + "|---------------------------------------------------------------------|" + "\n"
                     + "|- Seleccione una opción:                                            -|" + "\n"
-                    + "|-                                                                   -|" + "\n"
-                    + "|- [1]. Registrarse                                                  -|" + "\n"
-                    + "|- [2]. Iniciar sesión                                               -|" + "\n"
-                    + "|- [3]. Buscar evento                                                -|" + "\n");
-            if (token != null) {
-                System.out.print("|- [4]. Mostrar detalles de usuario                              -|" + "\n"
-                        + "|- [5]. Cerrar sesión                                                -|" + "\n");
+                    + "|-                                                                   -|" + "\n");
+            if (user == null) {
+                System.out.print("|- [1]. Registrarse                                                  -|" + "\n"
+                        + "|- [2]. Iniciar sesión                                               -|" + "\n"
+                        + "|- [3]. Buscar evento                                                -|" + "\n"
+                        + "|- [4]. Mostrar todos los eventos                                    -|" + "\n");
+            } else {
+                System.out.print("|- [1]. Cerrar sesión                                                -|" + "\n"
+                        + "|- [2]. Mostrar perfil del usuario                                   -|" + "\n"
+                        + "|- [3]. Buscar evento                                                -|" + "\n"
+                        + "|- [4]. Mostrar todos los eventos                                    -|" + "\n"
+                        + "|- [5]. Crear evento                                                 -|" + "\n"
+                        + "|- [6]. Mostrar eventos en los que se ha inscrito el usuario         -|" + "\n"
+                        + "|- [7]. Mostrar eventos que ha organizado el usuario                 -|" + "\n");
             }
             System.out.print("|---------------------------------------------------------------------|" + "\n"
                     + "|- [0].Finalizar programa                                            -|" + "\n"
@@ -57,46 +65,64 @@ public class ClienteSistema {
 
             switch (eleccion) {
                 case 1:
-                    if (token == null) {
+                    if (user == null) {
                         String nombreusuario, contrasena, email;
-                        System.out.print("|- Introduzca el correo electronico:");
+                        System.out.print("|- Escriba su correo electrónico:");
                         email = capt.next();
-                        System.out.print("|- Introduzca el nombre de usuario:");
+                        System.out.print("|- Introduzca un nombre de usuario:");
                         nombreusuario = capt.next();
-                        System.out.print("|- Introduzca la contraseña:");
+                        System.out.print("|- Introduzca una contraseña:");
                         contrasena = capt.next();
                         System.out.print("|- Repita la contraseña:");
                         if (!contrasena.equals(capt.next())) {
                             System.out.println("\n|- Las contraseñas no coinciden, vuelva a intentarlo.");
                         } else {
-                            System.out.println("\n|- Los datos son correctos, creando usuario...");
+                            System.out.println("\n|- Los datos son correctos. Creando usuario...");
                             sistema.nuevoUsuario(nombreusuario, contrasena, email);
-                            System.out.println("\n|- Usuario creado con username: " + nombreusuario + " y contraseña: " + contrasena);
+                            System.out.print("\n|- Usuario creado correctamente con username: " + nombreusuario + " y contraseña: " + contrasena);
+                            System.out.println("\n|- ¡Ya puede iniciar sesión!");
+                        }
+                    } else {
+                        capt = new Scanner(System.in);
+                        System.out.print("|- ¿Desea cerrar la sesión? [Y/N]: ");
+                        String logoff = capt.next();
+
+                        if (logoff.equalsIgnoreCase("y")) {
+                            user = null;
+                            System.out.print("|- ¡Vuelva pronto!");
                         }
                     }
                     break;
 
                 case 2:
-                    String nombreusuario, contrasena, email;
-                    System.out.print("\n|- Introduzca el nombre de usuario:");
-                    nombreusuario = capt.next();
-                    System.out.print("|- Introduzca la contraseña:");
-                    contrasena = capt.next();
-                    if (sistema.login(nombreusuario, contrasena)) {
-                        System.out.print("\n|- Ha iniciado sesión correctamente.\n");
-                        token = ThreadLocalRandom.current().nextInt(10000000, 100000000);
+                    if (user == null) {
+                        String nombreusuario, contrasena;
+                        System.out.print("\n|- Nombre de usuario: ");
+                        nombreusuario = capt.next();
+                        System.out.print("|- Contraseña: ");
+                        contrasena = capt.next();
+                        if (sistema.login(nombreusuario, contrasena)) {
+                            System.out.print("\n|- Ha iniciado sesión correctamente.\n");
+                            user = (UsuarioInterface) sistema.buscarUsuario(nombreusuario);
+                        } else {
+                            System.out.print("\n|- Algo ha fallado. Compruebe los datos de inicio de sesión.\n");
+                        }
                     } else {
-                        System.out.print("\n|- Algo ha fallado. Compruebe sus credenciales de sesión.\n");
+                        System.out.print("|---------------------------------------------------------------------|" + "\n"
+                                + "|- " + user.username + "\n"
+                                + "|---------------------------------------------------------------------|" + "\n"
+                                + "|- E-mail: \t" + user.email + "\n"
+                                + "|- Contraseña: \t" + user.password + "\n");
                     }
                     break;
                 case 3:
                     String tipoevento;
-                    System.out.print("|- Introduzca el tipo de evento que desea buscar (CHARLA, CURSO, ACTIVIDAD_DEPORTIVA, VISITA_CULTURAL):");
+                    System.out.print("|- Introduzca el tipo de evento que desea buscar (CHARLA, CURSO, ACTIVIDAD_DEPORTIVA, VISITA_CULTURAL): ");
                     tipoevento = capt.next();
                     System.out.print("|- Estamos buscando sus eventos... \n");
                     List<String> listaeventos = sistema.buscarEventoPorTipo(tipoevento);
                     if (listaeventos.isEmpty()) {
-                        System.out.print("|- No existen eventos disponibles de ese tipo\n");
+                        System.out.print("|- No existen eventos disponibles de ese tipo.\n");
                     } else {
                         System.out.print("|- Lista de eventos disponibles: ");
                         Integer count = 0;

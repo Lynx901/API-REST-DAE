@@ -6,6 +6,7 @@
 
 package com.dae.dae1819.pojos;
 
+import com.dae.dae1819.interfaces.UsuarioInterface;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
  *
  * @author dml y jfaf
  */
-public class Usuario {
+public class Usuario extends UsuarioInterface{
     private String username;
     private String password;
     private String email;
