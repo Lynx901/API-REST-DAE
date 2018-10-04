@@ -13,10 +13,10 @@ import java.util.List;
  * @author dml y jfaf
  */
 public abstract class UsuarioInterface {
-    public String username;
-    public String password;
-    public String email;
+    private String username;
+    private String password;
+    private String email;
     
-    public List<Evento> eventos;
-    public List<Evento> organizados;
+    private List<Evento> eventos;
+    private List<Evento> organizados;
 }

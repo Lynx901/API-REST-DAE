@@ -92,7 +92,18 @@ public class Sistema extends SistemaInterface{
     };
     
     @Override
-    public List<String> buscarEventoPorTipo(String tipo){
+    public Evento buscarEventoPorNombre(String nombre){
+        Evento e = new Evento();
+        for (Map.Entry<Integer, Evento> entry : eventos.entrySet()) {
+            if (entry.getValue().getTipoEvento().equals(nombre)){
+                e = entry.getValue();
+            };
+        }
+        return e;
+    };
+    
+    @Override
+    public List<String> buscarEventosPorTipo(String tipo){
         List<String> lista = new ArrayList();
         for (Map.Entry<Integer, Evento> entry : eventos.entrySet()) {
             if (entry.getValue().getTipoEvento().equals(tipo)){
@@ -103,7 +114,7 @@ public class Sistema extends SistemaInterface{
     };
     
     @Override
-    public List<String> buscarEventoPorPalabras(String descripcion){
+    public List<String> buscarEventosPorPalabras(String descripcion){
         List<String> lista = new ArrayList();
         for (Map.Entry<Integer, Evento> entry : eventos.entrySet()) {
             if (entry.getValue().getDescripcion().contains(descripcion)){
@@ -112,6 +123,15 @@ public class Sistema extends SistemaInterface{
         }
         return lista;
     };
+    
+    @Override
+    public List<String> listarEventos() {
+        List<String> lista = new ArrayList();
+        for (Map.Entry<Integer, Evento> entry : eventos.entrySet()) {
+            lista.add(entry.getValue().getNombre());
+        }
+        return lista;
+    }
     
     /* ACCIONES USUARIOS LOGEADOS */
     

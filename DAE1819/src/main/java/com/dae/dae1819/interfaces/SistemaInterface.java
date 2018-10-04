@@ -22,8 +22,10 @@ public abstract class SistemaInterface {
     /* ACCIONES USUARIOS SIN LOGEAR */
     public abstract void nuevoUsuario(String username, String password, String email);
     public abstract boolean login(String username, String password);
-    public abstract List<String> buscarEventoPorTipo(String tipo);
-    public abstract List<String> buscarEventoPorPalabras(String descripcion);
+    public abstract Evento buscarEventoPorNombre(String nombre);
+    public abstract List<String> buscarEventosPorTipo(String tipo);
+    public abstract List<String> buscarEventosPorPalabras(String descripcion);
+    public abstract List<String> listarEventos();
     
     
     /* ACCIONES USUARIO LOGEADOS */

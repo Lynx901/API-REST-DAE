@@ -5,10 +5,13 @@
  */
 package com.dae.dae1819.clients;
 
+import com.dae.dae1819.pojos.Evento;
 import com.dae.dae1819.interfaces.SistemaInterface;
-import com.dae.dae1819.interfaces.UsuarioInterface;
+import com.dae.dae1819.pojos.Usuario;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
 import org.springframework.context.ApplicationContext;
 
@@ -19,16 +22,81 @@ import org.springframework.context.ApplicationContext;
 public class ClienteSistema {
 
     ApplicationContext context;
+    Usuario user;
 
     public ClienteSistema(ApplicationContext context) {
         this.context = context;
     }
 
+    private int seleccionarOpcion() {
+        int opt = 0;
+        boolean badOption;
+        Scanner sc = new Scanner(System.in);
+
+        do {
+            System.out.print("|- Opción: ");
+            try {
+                opt = sc.nextInt();
+                badOption = false;
+            } catch (Exception e) {
+                System.out.println("|- No es una opción válida, por favor elija una opción del menú.");
+                sc.next();
+                badOption = true;
+            }
+        } while (badOption);
+
+        return opt;
+    }
+
+    private void menuListadoEvento(List<String> listaEventos) {
+        if (listaEventos.isEmpty()) {
+            System.out.println("|- No existen eventos disponibles actualmente.");
+        } else {
+            System.out.println("|- Lista de eventos disponibles: ");
+
+            for (int i = 0; i < listaEventos.size(); i++) {
+                System.out.println("|- [" + i + "]. " + listaEventos.get(i));
+            }
+            System.out.println("|---------------------------------------------------------------------|" + "\n"
+                    + "|- [0]. Volver al menú                                               -|" + "\n"
+                    + "|---------------------------------------------------------------------|" + "\n");
+        }
+    }
+
+    private void menuEvento(Evento evento) {
+        System.out.print("|---------------------------------------------------------------------|" + "\n"
+                + "|- Nombre: \t" + evento.getNombre() + "\n"
+                + "|- Descripción: \t" + evento.getDescripcion() + "\n"
+                + "|- Lugar: \t" + evento.getLocalizacion() + "\n"
+                + "|- Plazas máximas: \t" + evento.getCapacidad() + "\n"
+                + "|- Plazas disponibles: \t" + (evento.getCapacidad() - evento.getAsistentes().size()) + "\n"
+                + "|---------------------------------------------------------------------|" + "\n");
+        if (user != null) {
+            if (evento.getAsistentes().size() < evento.getCapacidad()) {
+                System.out.print("|- ¿Qué desea hacer?                                                 -|" + "\n"
+                        + "|- [1]. Inscribirse                                                  -|" + "\n");
+            } else {
+                System.out.print("|- ¿Qué desea hacer?                                                 -|" + "\n"
+                        + "|- [1]. Entrar en lista de espera                                    -|" + "\n");
+            }
+        } else {
+            System.out.print("|- Debe iniciar sesión para realizar cualquier acción.               -|" + "\n");
+        }
+
+        if (user == evento.getOrganizador()) {
+            System.out.print("|- [2]. Cancelar evento                                              -|" + "\n"
+                    + "|- [3]. Mostrar asistentes                                           -|" + "\n");
+        }
+        System.out.println("|---------------------------------------------------------------------|" + "\n"
+                + "|- [0]. Volver al menú                                               -|" + "\n"
+                + "|---------------------------------------------------------------------|" + "\n");
+    }
+
     public void run() {
         SistemaInterface sistema = (SistemaInterface) context.getBean("sistema");
-        UsuarioInterface user = null;
+        user = null;
+        int eleccion = -1;
 
-        int eleccion = 0;
         do {
             System.out.print("\n|---------------------------------------------------------------------|" + "\n"
                     + "|-                                                                   -|" + "\n"
@@ -57,22 +125,10 @@ public class ClienteSistema {
                     + "|---------------------------------------------------------------------|" + "\n"
                     + "|-                       (c) 2018 dml y jfaf                         -|" + "\n"
                     + "|---------------------------------------------------------------------|" + "\n");
-            
+
             Scanner capt = new Scanner(System.in);
-            
-            boolean badOption;
-            Scanner sc = new Scanner(System.in);
-            do {
-                System.out.print("|- Opción: ");
-                try {
-                    eleccion = sc.nextInt();
-                    badOption = false;
-                } catch (Exception e) {
-                    System.out.println("|- No es una opción válida, por favor elija una opción del menú.");
-                    sc.next();
-                    badOption = true;
-                }
-            } while (badOption);
+
+            eleccion = seleccionarOpcion();
 
             switch (eleccion) {
                 case 1:
@@ -114,78 +170,100 @@ public class ClienteSistema {
                         contrasena = capt.next();
                         if (sistema.login(nombreusuario, contrasena)) {
                             System.out.print("\n|- Ha iniciado sesión correctamente.\n");
-                            user = (UsuarioInterface) sistema.buscarUsuario(nombreusuario);
+                            user = sistema.buscarUsuario(nombreusuario);
                         } else {
                             System.out.print("\n|- Algo ha fallado. Compruebe los datos de inicio de sesión.\n");
                         }
                     } else {
                         System.out.print("|---------------------------------------------------------------------|" + "\n"
-                                + "|- Username: \t" + user.username + "\n"
-                                + "|- E-mail: \t" + user.email + "\n"
-                                + "|- Contraseña: \t" + user.password + "\n");
+                                + "|- Username: \t" + user.getUsername() + "\n"
+                                + "|- E-mail: \t" + user.getEmail() + "\n"
+                                + "|- Contraseña: \t" + user.getPassword() + "\n");
                     }
                     break;
                 case 3:
-                    System.out.print("|- ¿Cómo desea buscar el evento?                                     -|" + "\n"
+                    System.out.print("|---------------------------------------------------------------------|" + "\n"
+                            + "|- ¿Cómo desea buscar el evento?                                     -|" + "\n"
                             + "|- [1]. Por tipo                                                     -|" + "\n"
                             + "|- [2]. Por su descripción                                           -|" + "\n"
                             + "|---------------------------------------------------------------------|" + "\n"
                             + "|- [0]. Volver al menú                                               -|" + "\n"
                             + "|---------------------------------------------------------------------|" + "\n");
-                    int opt = 0;
-                    do {
-                        System.out.print("|- Opción: ");
-                        try {
-                            opt = sc.nextInt();
-                            badOption = false;
-                        } catch (Exception e) {
-                            System.out.println("|- No es una opción válida, por favor elija una opción del menú.");
-                            sc.next();
-                            badOption = true;
-                        }
-                    } while (badOption);
-                    
-                    switch (opt) {
+
+                    int tipoBusq = seleccionarOpcion();
+
+                    switch (tipoBusq) {
                         case 1:
-                            String tipoevento;
-                            System.out.print("|- Introduzca el tipo de evento que desea buscar (CHARLA, CURSO, ACTIVIDAD_DEPORTIVA, VISITA_CULTURAL): ");
-                            tipoevento = sc.next();
-                            System.out.print("|- Estamos buscando sus eventos... \n");
-                            List<String> listaeventos = sistema.buscarEventoPorTipo(tipoevento);
-                            if (listaeventos.isEmpty()) {
-                                System.out.print("|- No existen eventos disponibles de ese tipo.\n");
-                            } else {
-                                System.out.print("|- Lista de eventos disponibles: ");
-                                Integer count = 0;
-                                for (String event : listaeventos) {
-                                    count++;
-                                    System.out.println("|- " + count + "-" + event);
-                                }
+                            System.out.print("|---------------------------------------------------------------------|" + "\n"
+                                    + "|- Tipos posibles de eventos:                                        -|" + "\n"
+                                    + "|- [1]. Charla                                                       -|" + "\n"
+                                    + "|- [2]. Curso                                                        -|" + "\n"
+                                    + "|- [3]. Actividad Deportiva                                          -|" + "\n"
+                                    + "|- [4]. Visita Cultural                                              -|" + "\n");
+
+                            System.out.print("|---------------------------------------------------------------------|" + "\n"
+                                    + "|- [0]. Volver al menú                                               -|" + "\n"
+                                    + "|---------------------------------------------------------------------|" + "\n");
+
+                            int elecTipo = seleccionarOpcion();
+                            List<String> listaEventosTipo = null;
+                            switch (elecTipo) {
+                                case 1:
+                                    listaEventosTipo = sistema.buscarEventosPorTipo("CHARLA");
+                                    break;
+                                case 2:
+                                    listaEventosTipo = sistema.buscarEventosPorTipo("CURSO");
+                                    break;
+                                case 3:
+                                    listaEventosTipo = sistema.buscarEventosPorTipo("ACTIVIDAD_DEPORTIVA");
+                                    break;
+                                case 4:
+                                    listaEventosTipo = sistema.buscarEventosPorTipo("VISITA_CULTURAL");
+                                    break;
+                                default:
+                                    break;
                             }
+
+                            menuListadoEvento(listaEventosTipo);
+                            int elecEventoTipo = seleccionarOpcion();
+
+                            Evento eventoTipo = sistema.buscarEventoPorNombre(listaEventosTipo.get(elecEventoTipo));
+                            menuEvento(eventoTipo);
+
                             break;
+
                         case 2:
-                            String descevento = "";
-                            System.out.print("|- Introduzca la descripción del evento que desea buscar:");
-                            tipoevento = capt.next();
+
+                            String descEvento = "";
+
+                            System.out.print("|---------------------------------------------------------------------|" + "\n"
+                                    + "|- Introduzca la descripción del evento que desea buscar:");
+                            descEvento = capt.next();
+
                             System.out.print("|- Estamos buscando sus eventos... \n");
-                            List<String> listaeventosdesc = sistema.buscarEventoPorPalabras(descevento);
-                            if (listaeventosdesc.isEmpty()) {
-                                System.out.print("|- No existen eventos disponibles con esa descripción.\n");
-                            } else {
-                                System.out.print("|- Lista de eventos disponibles: ");
-                                Integer count = 0;
-                                for (String event : listaeventosdesc) {
-                                    count++;
-                                    System.out.println("|- " + count + "-" + event);
-                                }
-                            }
+
+                            List<String> listaEventosDesc = sistema.buscarEventosPorPalabras(descEvento);
+                            menuListadoEvento(listaEventosDesc);
+                            int elecEventoDesc = seleccionarOpcion();
+
+                            Evento eventoDesc = sistema.buscarEventoPorNombre(listaEventosDesc.get(elecEventoDesc));
+                            menuEvento(eventoDesc);
                             break;
                     }
 
                     break;
+
                 case 4:
+                    List<String> listaEventos = sistema.listarEventos();
+
+                    menuListadoEvento(listaEventos);
+                    int elecEvento = seleccionarOpcion();
+
+                    Evento evento = sistema.buscarEventoPorNombre(listaEventos.get(elecEvento));
+                    menuEvento(evento);
 
                     break;
+
                 case 5:
                     if (user == null) {
                         System.out.print("|- Esta acción no está disponible, seleccione una del menú. ");
@@ -194,6 +272,7 @@ public class ClienteSistema {
 
                     }
                     break;
+
                 case 6:
                     if (user == null) {
                         System.out.print("|- Esta acción no está disponible, seleccione una del menú. ");
@@ -202,6 +281,7 @@ public class ClienteSistema {
 
                     }
                     break;
+
                 case 7:
                     if (user == null) {
                         System.out.print("|- Esta acción no está disponible, seleccione una del menú. ");
@@ -210,9 +290,12 @@ public class ClienteSistema {
 
                     }
                     break;
+
                 default:
-                        System.out.print("|- Esta acción no está disponible. \n");
-                        if(eleccion != 0) {eleccion = -1;}
+                    System.out.print("|- Esta acción no está disponible. \n");
+                    if (eleccion != 0) {
+                        eleccion = -1;
+                    }
                     break;
             }
 //            
