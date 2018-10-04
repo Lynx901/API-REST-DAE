@@ -8,6 +8,7 @@ package com.dae.dae1819.clients;
 import com.dae.dae1819.pojos.Evento;
 import com.dae.dae1819.interfaces.SistemaInterface;
 import com.dae.dae1819.pojos.Usuario;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import org.springframework.context.ApplicationContext;
@@ -270,7 +271,10 @@ public class ClienteSistema {
                         System.out.print("|- Esta acción no está disponible, seleccione una del menú. ");
                     } else {
                         String nombre, descripcion, localizacion;
-                        Integer capacidad, dia, mes, anio;
+                        Integer capacidad = 0;
+                        Integer dia = 0;
+                        Integer mes = 0;
+                        Integer anio = 0;
 
                         System.out.print("|- Introduzca el nombre del evento: ");
                         nombre = capt.next();
@@ -281,16 +285,38 @@ public class ClienteSistema {
                         System.out.print("|- Introduzca el lugar donde se realizará: ");
                         localizacion = capt.next();
 
-                        System.out.print("|- Introduzca el día del evento: ");
                         boolean badOption;
                         do {
-                            System.out.print("|- ¿Qué capacidad máxima tendrá?: ");
+                            System.out.print("|- Introduzca el día del evento: ");
                             try {
                                 dia = capt.nextInt();
-                                (dia > 0 && dia < 31) ? (badOption = false) : (badOption = true);
-                            }
+                                badOption = (dia > 0 && dia < 32);
                             } catch (Exception e) {
-                                System.out.println("|- No es un número válido, elija un número entero.");
+                                System.out.println("|- No es un día válido, elija un día entre 1 y 31.");
+                                capt.next();
+                                badOption = true;
+                            }
+                        } while (badOption);
+
+                        do {
+                            System.out.print("|- Introduzca el mes del evento (en número): ");
+                            try {
+                                mes = capt.nextInt();
+                                badOption = (mes > 0 && mes < 13);
+                            } catch (Exception e) {
+                                System.out.println("|- No es un día válido, elija un mes entre 1 y 12.");
+                                capt.next();
+                                badOption = true;
+                            }
+                        } while (badOption);
+
+                        do {
+                            System.out.print("|- Introduzca el año del evento: ");
+                            try {
+                                anio = capt.nextInt();
+                                badOption = (anio > 2017);
+                            } catch (Exception e) {
+                                System.out.println("|- No es un año válido, elija un año después de 2017");
                                 capt.next();
                                 badOption = true;
                             }
@@ -316,7 +342,6 @@ public class ClienteSistema {
                                 + "|---------------------------------------------------------------------|" + "\n"
                                 + "|- [0]. Volver al menú                                               -|" + "\n"
                                 + "|---------------------------------------------------------------------|" + "\n");
-
                         int elecTipo = seleccionarOpcion();
                         String tipo;
                         switch (elecTipo) {
@@ -337,10 +362,14 @@ public class ClienteSistema {
                                 break;
                         }
 
+                        Date fecha = new Date(anio, mes, dia);
+
                         System.out.println("\n|- Los datos son correctos. Creando evento...");
                         sistema.nuevoEvento(nombre, fecha, tipo, descripcion, capacidad, localizacion, user);
-                        System.out.print("\n|- Usuario creado correctamente con username: " + nombreusuario + " y contraseña: " + contrasena);
-                        System.out.println("\n|- ¡Ya puede iniciar sesión!");
+
+                        Evento newEvento = sistema.buscarEventoPorNombre(nombre);
+                        System.out.print("\n|- Evento creado correctamente. ");
+                        menuEvento(newEvento);
 
                     }
                     break;
