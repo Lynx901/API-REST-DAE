@@ -7,6 +7,7 @@ package com.dae.dae1819.pojos;
 
 import com.dae.dae1819.interfaces.SistemaInterface;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -136,7 +137,8 @@ public class Sistema extends SistemaInterface{
     /* ACCIONES USUARIOS LOGEADOS */
     
     @Override
-    public void nuevoEvento() {
+    public void nuevoEvento(String nombre, Date fecha, String tipp, String descripcion, 
+                   Integer capacidad, String localizacion, Usuario organizado) {
         
     };
     

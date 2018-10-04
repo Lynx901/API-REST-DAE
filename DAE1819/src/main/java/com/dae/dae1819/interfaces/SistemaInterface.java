@@ -7,6 +7,7 @@ package com.dae.dae1819.interfaces;
 
 import com.dae.dae1819.pojos.Evento;
 import com.dae.dae1819.pojos.Usuario;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,8 @@ public abstract class SistemaInterface {
     
     
     /* ACCIONES USUARIO LOGEADOS */
-    public abstract void nuevoEvento();
+    public abstract void nuevoEvento(String nombre, Date fecha, String tipp, String descripcion, 
+                   Integer capacidad, String localizacion, Usuario organizado);
     public abstract void cancelarEvento();
     public abstract Usuario buscarUsuario(String username);
     
