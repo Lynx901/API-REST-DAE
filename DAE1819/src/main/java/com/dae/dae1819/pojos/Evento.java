@@ -16,7 +16,7 @@ import java.util.List;
  * @author dml y jfaf
  */
 public class Evento {
-    private Integer id;
+    private Integer id = 0;
     private String nombre;
     private Date fecha;
     private enum Tipo {
@@ -30,14 +30,14 @@ public class Evento {
     private List<Usuario> asistentes;
     private Usuario organizador;
     
-    public Evento() {        
-        asistentes = new ArrayList();
-        organizador = new Usuario();   
+    public Evento() {       
+        this.asistentes = new ArrayList();
+        this.organizador = new Usuario();   
     }
     
-    public Evento (Integer id, String nombre, Date fecha, Tipo _tipo, String descripcion, 
+    public Evento (String nombre, Date fecha, Tipo _tipo, String descripcion, 
                    Integer capacidad, String localizacion, List<Usuario> asistentes, Usuario organizador) {
-        this.id = 0;
+        this.id++;
         this.nombre = "";
         this.fecha = new Date();
         Tipo tipo = _tipo;
@@ -51,6 +51,18 @@ public class Evento {
         }
         this.organizador = organizador;
     }
+    
+     public Evento (String nombre, Date fecha, String _tipo, String descripcion, 
+                   Integer capacidad, String localizacion, Usuario organizador) {
+        this.nombre = "";
+        this.fecha = new Date();
+        this.tipoevento = Tipo.valueOf(_tipo);
+        this.descripcion = "";
+        this.capacidad = 1;
+        this.localizacion = "";
+        this.organizador = organizador;
+        
+    }
 
     /**
      * @return the id
@@ -61,6 +73,8 @@ public class Evento {
 
     /**
      * @param id the id to set
+     * @description Por mi parte creo que esta funcion no deberia existir ya que es un ID automatico dado por el sistema y 
+     * es su clave ************************LEEEEEEEEEEEEMEEEEEEEEEEEEEEEEEEEEEEE********************************
      */
     public void setId(Integer id) {
         this.id = id;

@@ -5,9 +5,9 @@
  */
 package com.dae.dae1819.clients;
 
-import com.dae.dae1819.pojos.Evento;
+import com.dae.dae1819.DTOs.EventoDTO;
+import com.dae.dae1819.DTOs.UsuarioDTO;
 import com.dae.dae1819.interfaces.SistemaInterface;
-import com.dae.dae1819.pojos.Usuario;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -20,7 +20,7 @@ import org.springframework.context.ApplicationContext;
 public class ClienteSistema {
 
     ApplicationContext context;
-    Usuario user;
+    UsuarioDTO user;
 
     public ClienteSistema(ApplicationContext context) {
         this.context = context;
@@ -61,7 +61,7 @@ public class ClienteSistema {
         }
     }
 
-    private void menuEvento(Evento evento) {
+    private void menuEvento(EventoDTO evento) {
         System.out.print("|---------------------------------------------------------------------|" + "\n"
                 + "|- Nombre: \t" + evento.getNombre() + "\n"
                 + "|- Descripción: \t" + evento.getDescripcion() + "\n"
@@ -229,7 +229,7 @@ public class ClienteSistema {
                             menuListadoEvento(listaEventosTipo);
                             int elecEventoTipo = seleccionarOpcion();
 
-                            Evento eventoTipo = sistema.buscarEventoPorNombre(listaEventosTipo.get(elecEventoTipo));
+                            EventoDTO eventoTipo = sistema.buscarEventoPorNombre(listaEventosTipo.get(elecEventoTipo));
                             menuEvento(eventoTipo);
 
                             break;
@@ -248,7 +248,7 @@ public class ClienteSistema {
                             menuListadoEvento(listaEventosDesc);
                             int elecEventoDesc = seleccionarOpcion();
 
-                            Evento eventoDesc = sistema.buscarEventoPorNombre(listaEventosDesc.get(elecEventoDesc));
+                            EventoDTO eventoDesc = sistema.buscarEventoPorNombre(listaEventosDesc.get(elecEventoDesc));
                             menuEvento(eventoDesc);
                             break;
                     }
@@ -261,7 +261,7 @@ public class ClienteSistema {
                     menuListadoEvento(listaEventos);
                     int elecEvento = seleccionarOpcion();
 
-                    Evento evento = sistema.buscarEventoPorNombre(listaEventos.get(elecEvento));
+                    EventoDTO evento = sistema.buscarEventoPorNombre(listaEventos.get(elecEvento));
                     menuEvento(evento);
 
                     break;
@@ -367,7 +367,7 @@ public class ClienteSistema {
                         System.out.println("\n|- Los datos son correctos. Creando evento...");
                         sistema.nuevoEvento(nombre, fecha, tipo, descripcion, capacidad, localizacion, user);
 
-                        Evento newEvento = sistema.buscarEventoPorNombre(nombre);
+                        EventoDTO newEvento = sistema.buscarEventoPorNombre(nombre);
                         System.out.print("\n|- Evento creado correctamente. ");
                         menuEvento(newEvento);
 

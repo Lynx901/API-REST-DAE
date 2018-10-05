@@ -11,6 +11,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import com.dae.dae1819.DTOs.EventoDTO;
+import com.dae.dae1819.DTOs.UsuarioDTO;
+import org.modelmapper.ModelMapper;
+
 
 /**
  *
@@ -20,7 +24,7 @@ public class Sistema extends SistemaInterface{
 
     private String nombre;
     private Map<String, Usuario> usuarios;
-    private Map<Integer, Evento> eventos;
+    private Map<String, Evento> eventos;
 
     public Sistema() {
         usuarios = new TreeMap();
@@ -62,14 +66,14 @@ public class Sistema extends SistemaInterface{
     /**
      * @return the eventos
      */
-    public Map<Integer, Evento> getEventos() {
+    public Map<String, Evento> getEventos() {
         return eventos;
     }
 
     /**
      * @param eventos the eventos to set
      */
-    public void setEventos(Map<Integer, Evento> eventos) {
+    public void setEventos(Map<String, Evento> eventos) {
         this.eventos = eventos;
     }
     
@@ -93,20 +97,22 @@ public class Sistema extends SistemaInterface{
     };
     
     @Override
-    public Evento buscarEventoPorNombre(String nombre){
+    public EventoDTO buscarEventoPorNombre(String nombre){
         Evento e = new Evento();
-        for (Map.Entry<Integer, Evento> entry : eventos.entrySet()) {
+        for (Map.Entry<String, Evento> entry : eventos.entrySet()) {
             if (entry.getValue().getTipoEvento().equals(nombre)){
                 e = entry.getValue();
             };
         }
-        return e;
+        ModelMapper modelMapper = new ModelMapper();
+        EventoDTO evento = modelMapper.map(e, EventoDTO.class);
+        return evento;
     };
     
     @Override
     public List<String> buscarEventosPorTipo(String tipo){
         List<String> lista = new ArrayList();
-        for (Map.Entry<Integer, Evento> entry : eventos.entrySet()) {
+        for (Map.Entry<String, Evento> entry : eventos.entrySet()) {
             if (entry.getValue().getTipoEvento().equals(tipo)){
                 lista.add(entry.getValue().getNombre());
             };
@@ -117,7 +123,7 @@ public class Sistema extends SistemaInterface{
     @Override
     public List<String> buscarEventosPorPalabras(String descripcion){
         List<String> lista = new ArrayList();
-        for (Map.Entry<Integer, Evento> entry : eventos.entrySet()) {
+        for (Map.Entry<String, Evento> entry : eventos.entrySet()) {
             if (entry.getValue().getDescripcion().contains(descripcion)){
                 lista.add(entry.getValue().getNombre());
             };
@@ -128,7 +134,7 @@ public class Sistema extends SistemaInterface{
     @Override
     public List<String> listarEventos() {
         List<String> lista = new ArrayList();
-        for (Map.Entry<Integer, Evento> entry : eventos.entrySet()) {
+        for (Map.Entry<String, Evento> entry : eventos.entrySet()) {
             lista.add(entry.getValue().getNombre());
         }
         return lista;
@@ -137,21 +143,29 @@ public class Sistema extends SistemaInterface{
     /* ACCIONES USUARIOS LOGEADOS */
     
     @Override
-    public void nuevoEvento(String nombre, Date fecha, String tipp, String descripcion, 
-                   Integer capacidad, String localizacion, Usuario organizado) {
-        
+    public void nuevoEvento(String nombre, Date fecha, String tipo, String descripcion, 
+                   Integer capacidad, String localizacion, UsuarioDTO organizado) {
+        ModelMapper modelMapper = new ModelMapper();
+        Usuario organizador = modelMapper.map(organizado, Usuario.class);
+        Evento evento = new Evento(nombre, fecha, tipo, descripcion, capacidad, localizacion, organizador);
+        eventos.put(nombre, evento);
     };
     
     @Override
-    public void cancelarEvento() {
-        
+    public boolean cancelarEvento(String nombreEvento) {
+        if (eventos.remove(nombreEvento) != null){
+            return true;
+        }
+        return false;
     };
     
     @Override
-    public Usuario buscarUsuario(String username) {
-        Usuario user = new Usuario();
-        usuarios.get(username);
-        return user;        
+    public UsuarioDTO buscarUsuario(String username) {
+        Usuario usuario = new Usuario();
+        usuario = usuarios.get(username);
+        ModelMapper modelMapper = new ModelMapper();
+        UsuarioDTO usuarioDTO = modelMapper.map(usuario, UsuarioDTO.class);
+        return usuarioDTO;        
     }
     
     

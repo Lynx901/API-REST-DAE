@@ -5,8 +5,8 @@
  */
 package com.dae.dae1819.interfaces;
 
-import com.dae.dae1819.pojos.Evento;
-import com.dae.dae1819.pojos.Usuario;
+import com.dae.dae1819.DTOs.EventoDTO;
+import com.dae.dae1819.DTOs.UsuarioDTO;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -17,13 +17,13 @@ import java.util.Map;
  */
 public abstract class SistemaInterface {
     private String nombre;
-    private Map<String, Usuario> usuarios;
-    private Map<Integer, Evento> eventos;
+    private Map<String, UsuarioDTO> usuarios;
+    private Map<Integer, EventoDTO> eventos;
     
     /* ACCIONES USUARIOS SIN LOGEAR */
     public abstract void nuevoUsuario(String username, String password, String email);
     public abstract boolean login(String username, String password);
-    public abstract Evento buscarEventoPorNombre(String nombre);
+    public abstract EventoDTO buscarEventoPorNombre(String nombre);
     public abstract List<String> buscarEventosPorTipo(String tipo);
     public abstract List<String> buscarEventosPorPalabras(String descripcion);
     public abstract List<String> listarEventos();
@@ -31,8 +31,8 @@ public abstract class SistemaInterface {
     
     /* ACCIONES USUARIO LOGEADOS */
     public abstract void nuevoEvento(String nombre, Date fecha, String tipp, String descripcion, 
-                   Integer capacidad, String localizacion, Usuario organizado);
-    public abstract void cancelarEvento();
-    public abstract Usuario buscarUsuario(String username);
+                   Integer capacidad, String localizacion, UsuarioDTO organizado);
+    public abstract boolean cancelarEvento(String nombreEvento);
+    public abstract UsuarioDTO buscarUsuario(String username);
     
 }
