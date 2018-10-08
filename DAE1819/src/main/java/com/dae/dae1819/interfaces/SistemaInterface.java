@@ -20,6 +20,8 @@ public abstract class SistemaInterface {
     private Map<String, UsuarioDTO> usuarios;
     private Map<Integer, EventoDTO> eventos;
     
+    public abstract boolean isTokenValid(Integer token);
+    
     /* ACCIONES USUARIOS SIN LOGEAR */
     public abstract void nuevoUsuario(String username, String password, String email);
     public abstract boolean login(String username, String password);
@@ -30,8 +32,8 @@ public abstract class SistemaInterface {
     
     
     /* ACCIONES USUARIO LOGEADOS */
-    public abstract void nuevoEvento(String nombre, Date fecha, String tipp, String descripcion, 
-                   Integer capacidad, String localizacion, UsuarioDTO organizado);
+    public abstract void nuevoEvento(String nombre, Date fecha, String tipo, String descripcion, 
+                   Integer capacidad, String localizacion, UsuarioDTO organizador);
     public abstract boolean cancelarEvento(String nombreEvento);
     public abstract UsuarioDTO buscarUsuario(String username);
     

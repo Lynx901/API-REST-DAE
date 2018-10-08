@@ -38,12 +38,12 @@ public class Evento {
     public Evento (String nombre, Date fecha, Tipo _tipo, String descripcion, 
                    Integer capacidad, String localizacion, List<Usuario> asistentes, Usuario organizador) {
         this.id++;
-        this.nombre = "";
-        this.fecha = new Date();
+        this.nombre = nombre;
+        this.fecha = fecha;
         Tipo tipo = _tipo;
-        this.descripcion = "";
-        this.capacidad = 1;
-        this.localizacion = "";
+        this.descripcion = descripcion;
+        this.capacidad = capacidad;
+        this.localizacion = localizacion;
         
         this.asistentes.clear();
         for (Usuario usuario : asistentes) {
@@ -54,12 +54,12 @@ public class Evento {
     
      public Evento (String nombre, Date fecha, String _tipo, String descripcion, 
                    Integer capacidad, String localizacion, Usuario organizador) {
-        this.nombre = "";
-        this.fecha = new Date();
+        this.nombre = nombre;
+        this.fecha = fecha;
         this.tipoevento = Tipo.valueOf(_tipo);
-        this.descripcion = "";
-        this.capacidad = 1;
-        this.localizacion = "";
+        this.descripcion = descripcion;
+        this.capacidad = capacidad;
+        this.localizacion = localizacion;
         this.organizador = organizador;
         
     }

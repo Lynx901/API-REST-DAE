@@ -33,12 +33,12 @@ public class EventoDTO {
     
     public EventoDTO (String nombre, Date fecha, Tipo _tipo, String descripcion, 
                    Integer capacidad, String localizacion, List<UsuarioDTO> asistentes, UsuarioDTO organizador) {
-        this.nombre = "";
-        this.fecha = new Date();
+        this.nombre = nombre;
+        this.fecha = fecha;
         Tipo tipo = _tipo;
-        this.descripcion = "";
-        this.capacidad = 1;
-        this.localizacion = "";
+        this.descripcion = descripcion;
+        this.capacidad = capacidad;
+        this.localizacion = localizacion;
         
         this.asistentes.clear();
         for (UsuarioDTO usuario : asistentes) {

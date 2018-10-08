@@ -15,6 +15,7 @@ public class UsuarioDTO {
     private String username;
     private String password;
     private String email;
+    private Integer token;
     
     private List<EventoDTO> eventos;
     private List<EventoDTO> organizados;
@@ -36,13 +37,14 @@ public class UsuarioDTO {
         this.email = email;
         
         this.eventos.clear();
-        for (EventoDTO evento : eventos) {
+        eventos.forEach((evento) -> {
             this.eventos.add(evento);
-        }
+        });
+        
         this.organizados.clear();
-        for (EventoDTO evento : organizados) {
+        organizados.forEach((evento) -> {
             this.organizados.add(evento);
-        }
+        });
     }
 
     /**
@@ -119,5 +121,19 @@ public class UsuarioDTO {
         for (EventoDTO evento : organizados) {
             this.organizados.add(evento);
         }
+    }
+
+    /**
+     * @return the token
+     */
+    public Integer getToken() {
+        return token;
+    }
+
+    /**
+     * @param token the token to set
+     */
+    public void setToken(Integer token) {
+        this.token = token;
     }
 }

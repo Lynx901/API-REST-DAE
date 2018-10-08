@@ -17,6 +17,7 @@ public class Usuario{
     private String username;
     private String password;
     private String email;
+    private Integer token;
     
     private List<Evento> eventos;
     private List<Evento> organizados;
@@ -121,5 +122,19 @@ public class Usuario{
         for (Evento evento : organizados) {
             this.organizados.add(evento);
         }
+    }
+
+    /**
+     * @return the token
+     */
+    public Integer getToken() {
+        return token;
+    }
+
+    /**
+     * @param token the token to set
+     */
+    public void setToken(Integer token) {
+        this.token = token;
     }
 }
