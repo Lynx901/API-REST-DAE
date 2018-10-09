@@ -15,37 +15,35 @@ import java.util.List;
 public class EventoDTO {
     private String nombre;
     private Date fecha;
-    private enum Tipo {
-        CHARLA, CURSO, ACTIVIDAD_DEPORTIVA, VISITA_CULTURAL
-    }
-    private Tipo tipoevento;
+    private String tipo;
     private String descripcion;
     private Integer capacidad;
     private String localizacion;
     
-    private List<UsuarioDTO> asistentes;
-    private UsuarioDTO organizador;
+    private List<String> asistentes;
+    private String organizador;
     
     public EventoDTO() {        
-        asistentes = new ArrayList();
-        organizador = new UsuarioDTO();   
+        asistentes = new ArrayList();  
     }
     
-    public EventoDTO (String nombre, Date fecha, Tipo _tipo, String descripcion, 
-                   Integer capacidad, String localizacion, List<UsuarioDTO> asistentes, UsuarioDTO organizador) {
+    public EventoDTO (String nombre, Date fecha, String _tipo, String descripcion, 
+                   Integer capacidad, String localizacion, List<String> asistentes, String organizador) {
         this.nombre = nombre;
         this.fecha = fecha;
-        Tipo tipo = _tipo;
+        this.tipo = _tipo;
         this.descripcion = descripcion;
         this.capacidad = capacidad;
         this.localizacion = localizacion;
         
         this.asistentes.clear();
-        for (UsuarioDTO usuario : asistentes) {
+        asistentes.forEach((usuario) -> {
             this.asistentes.add(usuario);
-        }
+        });
+        
         this.organizador = organizador;
     }
+    
     /**
      * @return the nombre
      */
@@ -74,11 +72,18 @@ public class EventoDTO {
         this.fecha = fecha;
     }
 
-     /**
+    /**
      * @return the type
      */
-    public String getTipoEvento() {
-        return tipoevento.name();
+    public String getTipo() {
+        return tipo;
+    }
+    
+    /**
+     * @param tipo the tipo to set
+     */
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
     /**
@@ -126,31 +131,31 @@ public class EventoDTO {
     /**
      * @return the asistentes
      */
-    public List<UsuarioDTO> getAsistentes() {
+    public List<String> getAsistentes() {
         return asistentes;
     }
 
     /**
      * @param asistentes the asistentes to set
      */
-    public void setAsistentes(List<UsuarioDTO> asistentes) {
+    public void setAsistentes(List<String> asistentes) {
         this.asistentes.clear();
-        for (UsuarioDTO usuario : asistentes) {
+        asistentes.forEach((usuario) -> {
             this.asistentes.add(usuario);
-        }
+        });
     }
 
     /**
      * @return the organizador
      */
-    public UsuarioDTO getOrganizador() {
+    public String getOrganizador() {
         return organizador;
     }
 
     /**
      * @param organizador the organizador to set
      */
-    public void setOrganizador(UsuarioDTO organizador) {
+    public void setOrganizador(String organizador) {
         this.organizador = organizador;
     }
     

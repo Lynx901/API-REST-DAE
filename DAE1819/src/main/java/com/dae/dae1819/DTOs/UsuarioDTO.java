@@ -13,37 +13,33 @@ import java.util.List;
  */
 public class UsuarioDTO {
     private String username;
-    private String password;
     private String email;
-    private Integer token;
     
-    private List<EventoDTO> eventos;
-    private List<EventoDTO> organizados;
+    private List<Integer> idEventos;
+    private List<Integer> idOrganizados;
     
     public UsuarioDTO() {
-        eventos = new ArrayList();
-        organizados = new ArrayList();
+        idEventos = new ArrayList();
+        idOrganizados = new ArrayList();
     }
     
-     public UsuarioDTO(String username, String password, String email) {
+    public UsuarioDTO(String username, String email) {
         this.username = username;
-        this.password = password;
         this.email = email;
     }
     
-    public UsuarioDTO(String username, String password, String email, List<EventoDTO> eventos, List<EventoDTO> organizados) {
+    public UsuarioDTO(String username, String email, List<Integer> eventos, List<Integer> organizados) {
         this.username = username;
-        this.password = password;
         this.email = email;
         
-        this.eventos.clear();
+        this.idEventos.clear();
         eventos.forEach((evento) -> {
-            this.eventos.add(evento);
+            this.idEventos.add(evento);
         });
         
-        this.organizados.clear();
+        this.idOrganizados.clear();
         organizados.forEach((evento) -> {
-            this.organizados.add(evento);
+            this.idOrganizados.add(evento);
         });
     }
 
@@ -59,20 +55,6 @@ public class UsuarioDTO {
      */
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    /**
-     * @return the password
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * @param password the password to set
-     */
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     /**
@@ -92,48 +74,34 @@ public class UsuarioDTO {
     /**
      * @return the eventos
      */
-    public List<EventoDTO> getEventos() {
-        return eventos;
+    public List<Integer> getIdEventos() {
+        return idEventos;
     }
 
     /**
      * @param eventos the eventos to set
      */
-    public void setEventos(List<EventoDTO> eventos) {
-        this.eventos.clear();
-        for (EventoDTO evento : eventos) {
-            this.eventos.add(evento);
-        }
+    public void setIdEventos(List<Integer> eventos) {
+        this.idEventos.clear();
+        eventos.forEach((evento) -> {
+            this.idEventos.add(evento);
+        });
     }
 
     /**
      * @return the organizados
      */
-    public List<EventoDTO> getOrganizados() {
-        return organizados;
+    public List<Integer> getIdOrganizados() {
+        return idOrganizados;
     }
 
     /**
      * @param organizados the organizados to set
      */
-    public void setOrganizados(List<EventoDTO> organizados) {
-        this.organizados.clear();
-        for (EventoDTO evento : organizados) {
-            this.organizados.add(evento);
-        }
-    }
-
-    /**
-     * @return the token
-     */
-    public Integer getToken() {
-        return token;
-    }
-
-    /**
-     * @param token the token to set
-     */
-    public void setToken(Integer token) {
-        this.token = token;
+    public void setIdOrganizados(List<Integer> organizados) {
+        this.idOrganizados.clear();
+        organizados.forEach((evento) -> {
+            this.idOrganizados.add(evento);
+        });
     }
 }
