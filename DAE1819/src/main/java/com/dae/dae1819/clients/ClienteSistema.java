@@ -8,6 +8,7 @@ package com.dae.dae1819.clients;
 import com.dae.dae1819.DTOs.EventoDTO;
 import com.dae.dae1819.DTOs.UsuarioDTO;
 import com.dae.dae1819.interfaces.SistemaInterface;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
@@ -47,7 +48,7 @@ public class ClienteSistema {
         return opt;
     }
 
-    private boolean menuListadoEvento(List<String> listaEventos) {
+    private boolean menuListadoEvento(List<EventoDTO> listaEventos) {
         if (listaEventos.isEmpty()) {
             System.out.println("|- No existen eventos disponibles actualmente.");
             return false;
@@ -55,7 +56,7 @@ public class ClienteSistema {
             System.out.println("|- Lista de eventos disponibles: ");
 
             for (int i = 0; i < listaEventos.size(); i++) {
-                System.out.println("|- [" + i + "]. " + listaEventos.get(i));
+                System.out.println("|- [" + i + "]. " + listaEventos.get(i).getNombre());
             }
             System.out.println("|---------------------------------------------------------------------|" + "\n"
                     + "|- [0]. Volver al menú                                               -|" + "\n"
@@ -84,7 +85,7 @@ public class ClienteSistema {
             }
         }
 
-        if (user == evento.getOrganizador()) {
+        if (user.getUsername().equals(evento.getOrganizador())) {
             System.out.print("|- [2]. Cancelar evento                                              -|" + "\n"
                     + "|- [3]. Mostrar asistentes                                           -|" + "\n");
         }
@@ -112,11 +113,17 @@ public class ClienteSistema {
         System.out.println("Creado user2");
         sistema.nuevoUsuario("USER3", "1a2b", "el3@yo.com");
         System.out.println("Creado USER3");
-        sistema.nuevoEvento("Clase1", new Date(), "CHARLA", "Clase de DAE", 15, "Edificio A3", sistema.buscarUsuario("admin"));
+        
+        List<String> testAsistentes = new ArrayList();
+        testAsistentes.add("admin");
+        sistema.nuevoEvento("Clase1", new Date(), "CHARLA", "Clase de DAE", (Integer) 15, "Edificio A3", testAsistentes, "admin");
         System.out.println("Creado Clase1");
-        sistema.nuevoEvento("Partido1", new Date(), "ACTIVIDAD_DEPORTIVA", "Partido de 2ª división", 200, "Pabellón", sistema.buscarUsuario("user1"));
+        
+        testAsistentes.add("user1");
+        testAsistentes.add("user2");
+        sistema.nuevoEvento("Partido1", new Date(), "ACTIVIDAD_DEPORTIVA", "Partido de 2ª división", (Integer) 2, "Pabellón", testAsistentes, "user1");
         System.out.println("Creado Partido1");
-        sistema.nuevoEvento("Partido2", new Date(), "ACTIVIDAD_DEPORTIVA", "Partido de 1ª división", 2000, "Campo de fútbol", sistema.buscarUsuario("user1"));
+        sistema.nuevoEvento("Partido2", new Date(), "ACTIVIDAD_DEPORTIVA", "Partido de 1ª división", (Integer) 5, "Campo de fútbol", testAsistentes, "user1");
         System.out.println("Creado Partido2");
         /******************************************************************************/
 
@@ -191,11 +198,14 @@ public class ClienteSistema {
                 case 2:
                     if (!sistema.isTokenValid(token)) {
                         String nombreusuario, contrasena;
+                        
                         System.out.print("\n|- Nombre de usuario: ");
                         nombreusuario = capt.next();
+                        
                         System.out.print("|- Contraseña: ");
                         contrasena = capt.next();
-                        if (sistema.login(nombreusuario, contrasena)) {
+                        token = sistema.login(nombreusuario, contrasena);
+                        if (token != 0) {
                             System.out.print("\n|- Ha iniciado sesión correctamente.\n");
                             user = sistema.buscarUsuario(nombreusuario);
                         } else {
@@ -233,7 +243,7 @@ public class ClienteSistema {
                                     + "|---------------------------------------------------------------------|" + "\n");
 
                             int elecTipo = seleccionarOpcion();
-                            List<String> listaEventosTipo = null;
+                            List<EventoDTO> listaEventosTipo = null;
                             switch (elecTipo) {
                                 case 1:
                                     listaEventosTipo = sistema.buscarEventosPorTipo("CHARLA");
@@ -254,7 +264,7 @@ public class ClienteSistema {
                             if(menuListadoEvento(listaEventosTipo)) {
                                 int elecEventoTipo = seleccionarOpcion();
 
-                                EventoDTO eventoTipo = sistema.buscarEventoPorNombre(listaEventosTipo.get(elecEventoTipo));
+                                EventoDTO eventoTipo = listaEventosTipo.get(elecEventoTipo);
                                 menuEvento(sistema, eventoTipo);
                             }
                            
@@ -270,12 +280,12 @@ public class ClienteSistema {
 
                             System.out.print("|- Estamos buscando sus eventos... \n");
 
-                            List<String> listaEventosDesc = sistema.buscarEventosPorPalabras(descEvento);
+                            List<EventoDTO> listaEventosDesc = sistema.buscarEventosPorDescripcion(descEvento);
                             
                             if(menuListadoEvento(listaEventosDesc)) {
                                 int elecEventoDesc = seleccionarOpcion();
 
-                                EventoDTO eventoDesc = sistema.buscarEventoPorNombre(listaEventosDesc.get(elecEventoDesc));
+                                EventoDTO eventoDesc = listaEventosDesc.get(elecEventoDesc);
                                 menuEvento(sistema, eventoDesc);
                             }
                             
@@ -285,12 +295,12 @@ public class ClienteSistema {
                     break;
 
                 case 4:
-                    List<String> listaEventos = sistema.listarEventos();
+                    List<EventoDTO> listaEventos = sistema.listarEventos();
 
                     if(menuListadoEvento(listaEventos)) {
                         int elecEvento = seleccionarOpcion();
 
-                        EventoDTO evento = sistema.buscarEventoPorNombre(listaEventos.get(elecEvento));
+                        EventoDTO evento = listaEventos.get(elecEvento);
                         menuEvento(sistema, evento);
                     }
 
@@ -395,7 +405,7 @@ public class ClienteSistema {
                         Date fecha = new Date(anio, mes, dia);
 
                         System.out.println("\n|- Los datos son correctos. Creando evento...");
-                        sistema.nuevoEvento(nombre, fecha, tipo, descripcion, capacidad, localizacion, user);
+                        sistema.nuevoEvento(nombre, fecha, tipo, descripcion, capacidad, localizacion, new ArrayList(), user.getUsername());
 
                         EventoDTO newEvento = sistema.buscarEventoPorNombre(nombre);
                         System.out.print("\n|- Evento creado correctamente. ");
@@ -405,7 +415,7 @@ public class ClienteSistema {
                     break;
 
                 case 6:
-                    if (sistema.isTokenValid(user.getToken())) {
+                    if (!sistema.isTokenValid(token)) {
                         System.out.print("|- Esta acción no está disponible, seleccione una del menú. ");
 
                     } else {
@@ -414,7 +424,7 @@ public class ClienteSistema {
                     break;
 
                 case 7:
-                    if (sistema.isTokenValid(user.getToken())) {
+                    if (!sistema.isTokenValid(token)) {
                         System.out.print("|- Esta acción no está disponible, seleccione una del menú. ");
 
                     } else {

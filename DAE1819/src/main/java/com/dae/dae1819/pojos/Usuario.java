@@ -5,6 +5,7 @@
  */
 
 package com.dae.dae1819.pojos;
+import com.dae.dae1819.DTOs.UsuarioDTO;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -137,4 +138,23 @@ public class Usuario{
     public void setToken(Integer token) {
         this.token = token;
     }
+    
+    public UsuarioDTO toDTO() {
+        UsuarioDTO u = new UsuarioDTO();
+        u.setUsername(this.getUsername());
+        u.setEmail(this.getEmail());
+        
+        List<String> eventos = new ArrayList();
+        this.getEventos().forEach((evento) -> {
+            eventos.add(evento.getNombre());
+        });
+        
+        List<String> organizados = new ArrayList();
+        this.getOrganizados().forEach((organizado) -> {
+            organizados.add(organizado.getNombre());
+        });
+      
+        return u;
+    }
+    
 }

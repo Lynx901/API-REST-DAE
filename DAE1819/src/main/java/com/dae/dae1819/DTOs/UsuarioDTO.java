@@ -15,12 +15,12 @@ public class UsuarioDTO {
     private String username;
     private String email;
     
-    private List<Integer> idEventos;
-    private List<Integer> idOrganizados;
+    private List<String> eventos;
+    private List<String> organizados;
     
     public UsuarioDTO() {
-        idEventos = new ArrayList();
-        idOrganizados = new ArrayList();
+        eventos = new ArrayList();
+        organizados = new ArrayList();
     }
     
     public UsuarioDTO(String username, String email) {
@@ -28,18 +28,18 @@ public class UsuarioDTO {
         this.email = email;
     }
     
-    public UsuarioDTO(String username, String email, List<Integer> eventos, List<Integer> organizados) {
+    public UsuarioDTO(String username, String email, List<String> eventos, List<String> organizados) {
         this.username = username;
         this.email = email;
         
-        this.idEventos.clear();
+        this.eventos.clear();
         eventos.forEach((evento) -> {
-            this.idEventos.add(evento);
+            this.eventos.add(evento);
         });
         
-        this.idOrganizados.clear();
+        this.organizados.clear();
         organizados.forEach((evento) -> {
-            this.idOrganizados.add(evento);
+            this.organizados.add(evento);
         });
     }
 
@@ -74,34 +74,34 @@ public class UsuarioDTO {
     /**
      * @return the eventos
      */
-    public List<Integer> getIdEventos() {
-        return idEventos;
+    public List<String> getEventos() {
+        return eventos;
     }
 
     /**
      * @param eventos the eventos to set
      */
-    public void setIdEventos(List<Integer> eventos) {
-        this.idEventos.clear();
+    public void setEventos(List<String> eventos) {
+        this.eventos.clear();
         eventos.forEach((evento) -> {
-            this.idEventos.add(evento);
+            this.eventos.add(evento);
         });
     }
 
     /**
      * @return the organizados
      */
-    public List<Integer> getIdOrganizados() {
-        return idOrganizados;
+    public List<String> getOrganizados() {
+        return organizados;
     }
 
     /**
      * @param organizados the organizados to set
      */
-    public void setIdOrganizados(List<Integer> organizados) {
-        this.idOrganizados.clear();
+    public void setOrganizados(List<String> organizados) {
+        this.organizados.clear();
         organizados.forEach((evento) -> {
-            this.idOrganizados.add(evento);
+            this.organizados.add(evento);
         });
     }
 }

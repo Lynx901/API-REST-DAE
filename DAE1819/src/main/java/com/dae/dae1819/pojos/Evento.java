@@ -6,6 +6,7 @@
 
 package com.dae.dae1819.pojos;
 
+import com.dae.dae1819.DTOs.EventoDTO;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,7 +23,7 @@ public class Evento {
     private enum Tipo {
         CHARLA, CURSO, ACTIVIDAD_DEPORTIVA, VISITA_CULTURAL
     }
-    private Tipo tipoevento;
+    private Tipo tipo;
     private String descripcion;
     private Integer capacidad;
     private String localizacion;
@@ -46,9 +47,9 @@ public class Evento {
         this.localizacion = localizacion;
         
         this.asistentes.clear();
-        for (Usuario usuario : asistentes) {
+        asistentes.forEach((usuario) -> {
             this.asistentes.add(usuario);
-        }
+        });
         this.organizador = organizador;
     }
     
@@ -56,7 +57,7 @@ public class Evento {
                    Integer capacidad, String localizacion, Usuario organizador) {
         this.nombre = nombre;
         this.fecha = fecha;
-        this.tipoevento = Tipo.valueOf(_tipo);
+        this.tipo = Tipo.valueOf(_tipo);
         this.descripcion = descripcion;
         this.capacidad = capacidad;
         this.localizacion = localizacion;
@@ -108,11 +109,33 @@ public class Evento {
         this.fecha = fecha;
     }
 
-     /**
+    /**
      * @return the type
      */
-    public String getTipoEvento() {
-        return tipoevento.name();
+    public String getTipo() {
+        return tipo.name();
+    }
+    
+    /**
+     * @param tipo the tipo to set
+     */
+    public void setTipo(String tipo) {
+        switch (tipo) {
+            case "CHARLA":
+                this.tipo = Tipo.CHARLA;
+                break;
+            case "CURSO":
+                this.tipo = Tipo.CURSO;
+                break;
+            case "ACTIVIDAD_DEPORTIVA":
+                this.tipo = Tipo.ACTIVIDAD_DEPORTIVA;
+                break;
+            case "VISITA_CULTURAL":
+                this.tipo = Tipo.VISITA_CULTURAL;
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -169,9 +192,9 @@ public class Evento {
      */
     public void setAsistentes(List<Usuario> asistentes) {
         this.asistentes.clear();
-        for (Usuario usuario : asistentes) {
+        asistentes.forEach((usuario) -> {
             this.asistentes.add(usuario);
-        }
+        });
     }
 
     /**
@@ -186,6 +209,21 @@ public class Evento {
      */
     public void setOrganizador(Usuario organizador) {
         this.organizador = organizador;
+    }
+    
+    public EventoDTO toDTO() {
+        EventoDTO e = new EventoDTO();
+        e.setNombre(this.getNombre());
+        e.setDescripcion(this.getDescripcion());
+        e.setFecha(this.getFecha());
+        List<String> asistentes = new ArrayList();
+        this.getAsistentes().forEach((asistente) -> {
+            asistentes.add(asistente.getUsername());
+        });
+        e.setAsistentes(asistentes);
+        e.setTipo(this.getTipo());
+        e.setOrganizador(this.getOrganizador().getUsername());
+        return e;
     }
     
     

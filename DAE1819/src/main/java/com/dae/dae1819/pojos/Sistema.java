@@ -92,63 +92,73 @@ public class Sistema extends SistemaInterface{
     };
     
     @Override
-    public boolean login(String username, String password ){
+    public Integer login(String username, String password) {
         Usuario user = usuarios.get(username);
         if (user != null){
             if (user.getPassword().equals(password)) {
-                return true;
+                Integer token = ThreadLocalRandom.current().nextInt(10000000, 100000000);
+                return token;
             }
         }
-        return false;
+        return 0;
     };
     
     @Override
-    public EventoDTO buscarEventoPorNombre(String nombre){
-        Evento e = new Evento();
+    public EventoDTO buscarEventoPorNombre(String nombre) {
+        EventoDTO e = new EventoDTO();
         for (Map.Entry<String, Evento> entry : eventos.entrySet()) {
-            if (entry.getValue().getTipoEvento().equals(nombre)){
-                e = entry.getValue();
+            if (entry.getValue().getNombre().equals(nombre)){
+                e = entry.getValue().toDTO();
             }
         }
-        ModelMapper modelMapper = new ModelMapper();
-        EventoDTO evento = modelMapper.map(e, EventoDTO.class);
-        return evento;
+        return e;
     };
     
     @Override
-    public List<String> buscarEventosPorTipo(String tipo){
-        List<String> lista = new ArrayList();
-        eventos.entrySet().stream().filter((entry) -> (entry.getValue().getTipoEvento().equals(tipo))).forEachOrdered((entry) -> {
-            lista.add(entry.getValue().getNombre());
-        });
-        return lista;
+    public List<EventoDTO> buscarEventosPorTipo(String tipo){
+        List<EventoDTO> eventosPorTipo = new ArrayList();
+        
+        EventoDTO e = new EventoDTO();
+        for (Map.Entry<String, Evento> entry : eventos.entrySet()) {
+            if (entry.getValue().getTipo().equals(tipo)){
+                e = entry.getValue().toDTO();
+                eventosPorTipo.add(e);
+            }
+        }
+        return eventosPorTipo;
     };
     
     @Override
-    public List<String> buscarEventosPorPalabras(String descripcion){
-        List<String> lista = new ArrayList();
-        eventos.entrySet().stream().filter((entry) -> (entry.getValue().getDescripcion().contains(descripcion))).forEachOrdered((entry) -> {
-            lista.add(entry.getValue().getNombre());
-        });
-        return lista;
+    public List<EventoDTO> buscarEventosPorDescripcion(String descripcion){
+        List<EventoDTO> eventosPorDescripcion = new ArrayList();
+        
+        EventoDTO e = new EventoDTO();
+        for (Map.Entry<String, Evento> entry : eventos.entrySet()) {
+            if (entry.getValue().getDescripcion().contains(descripcion)){
+                e = entry.getValue().toDTO();
+                eventosPorDescripcion.add(e);
+            }
+        }
+        
+        return eventosPorDescripcion;
     };
     
     @Override
-    public List<String> listarEventos() {
-        List<String> lista = new ArrayList();
+    public List<EventoDTO> listarEventos() {
+        List<EventoDTO> lista = new ArrayList();
         eventos.entrySet().forEach((entry) -> {
-            lista.add(entry.getValue().getNombre());
+            lista.add(entry.getValue().toDTO());
         });
         return lista;
     }
     
     /* ACCIONES USUARIOS LOGEADOS */
-    
     @Override
-    public void nuevoEvento(String nombre, Date fecha, String tipo, String descripcion, 
-                   Integer capacidad, String localizacion, UsuarioDTO organizador) {
-        
-        EventoDTO evento = new EventoDTO(nombre, fecha, tipo, descripcion, capacidad, localizacion, organizador);
+    public void nuevoEvento(String nombre,      Date fecha,         String tipo, 
+                            String descripcion, Integer capacidad,  String localizacion, 
+                            List<String> asistentes,                String organizador) {
+                
+        EventoDTO evento = new EventoDTO(nombre, fecha, tipo, descripcion, capacidad, localizacion, asistentes, organizador);
         eventos.put(nombre, evento);
     };
     
@@ -159,19 +169,10 @@ public class Sistema extends SistemaInterface{
     
     @Override
     public UsuarioDTO buscarUsuario(String username) {
-        Usuario u = null;
-        UsuarioDTO usuarioDTO = null;
-        try { 
-            u = usuarios.get(username);
-            
-            Integer token = ThreadLocalRandom.current().nextInt(10000000, 100000000);
-            u.setToken(token);
-            System.out.println("[debug:Sistema.buscarUsuario] Token set");
-            usuarioDTO = new UsuarioDTO(u.getUsername(), u.getPassword(), u.getEmail());
-            System.out.println("[debug:Sistema.buscarUsuario] User searched");
-        } finally {
-            
-        }
+        Usuario u = new Usuario();
+        
+        u = usuarios.get(username);
+        UsuarioDTO usuarioDTO = new UsuarioDTO(u.toDTO());
         
         return usuarioDTO;        
     }

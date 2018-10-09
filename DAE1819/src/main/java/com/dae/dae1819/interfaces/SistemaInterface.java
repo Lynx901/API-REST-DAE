@@ -24,16 +24,18 @@ public abstract class SistemaInterface {
     
     /* ACCIONES USUARIOS SIN LOGEAR */
     public abstract void nuevoUsuario(String username, String password, String email);
-    public abstract boolean login(String username, String password);
+    public abstract Integer login(String username, String password);
     public abstract EventoDTO buscarEventoPorNombre(String nombre);
-    public abstract List<String> buscarEventosPorTipo(String tipo);
-    public abstract List<String> buscarEventosPorPalabras(String descripcion);
-    public abstract List<String> listarEventos();
+    public abstract List<EventoDTO> buscarEventosPorTipo(String tipo);
+    public abstract List<EventoDTO> buscarEventosPorDescripcion(String descripcion);
+    public abstract List<EventoDTO> listarEventos();
     
     
     /* ACCIONES USUARIO LOGEADOS */
-    public abstract void nuevoEvento(String nombre, Date fecha, String tipo, String descripcion, 
-                   Integer capacidad, String localizacion, UsuarioDTO organizador);
+    public abstract void nuevoEvento(String nombre,      Date fecha,        String tipo, 
+                                     String descripcion, Integer capacidad, String localizacion, 
+                                     List<String> asistentes,               String organizador);
+    
     public abstract boolean cancelarEvento(String nombreEvento);
     public abstract UsuarioDTO buscarUsuario(String username);
     
