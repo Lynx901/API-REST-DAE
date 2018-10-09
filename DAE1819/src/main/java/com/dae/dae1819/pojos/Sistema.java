@@ -155,10 +155,10 @@ public class Sistema extends SistemaInterface{
     /* ACCIONES USUARIOS LOGEADOS */
     @Override
     public void nuevoEvento(String nombre,      Date fecha,         String tipo, 
-                            String descripcion, Integer capacidad,  String localizacion, 
-                            List<String> asistentes,                String organizador) {
-                
-        EventoDTO evento = new EventoDTO(nombre, fecha, tipo, descripcion, capacidad, localizacion, asistentes, organizador);
+                            String descripcion, Integer capacidad,  String localizacion,
+                            String organizador) {
+        // TO-DO
+        Evento evento = new Evento(nombre, fecha, tipo, descripcion, capacidad, localizacion, organizador);
         eventos.put(nombre, evento);
     };
     
@@ -172,7 +172,7 @@ public class Sistema extends SistemaInterface{
         Usuario u = new Usuario();
         
         u = usuarios.get(username);
-        UsuarioDTO usuarioDTO = new UsuarioDTO(u.toDTO());
+        UsuarioDTO usuarioDTO = u.toDTO();
         
         return usuarioDTO;        
     }

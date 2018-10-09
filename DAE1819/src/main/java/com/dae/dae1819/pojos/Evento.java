@@ -36,12 +36,12 @@ public class Evento {
         this.organizador = new Usuario();   
     }
     
-    public Evento (String nombre, Date fecha, Tipo _tipo, String descripcion, 
+    public Evento (String nombre, Date fecha, String _tipo, String descripcion, 
                    Integer capacidad, String localizacion, List<Usuario> asistentes, Usuario organizador) {
         this.id++;
         this.nombre = nombre;
         this.fecha = fecha;
-        Tipo tipo = _tipo;
+        Tipo tipo = Tipo.valueOf(_tipo);
         this.descripcion = descripcion;
         this.capacidad = capacidad;
         this.localizacion = localizacion;
@@ -120,22 +120,7 @@ public class Evento {
      * @param tipo the tipo to set
      */
     public void setTipo(String tipo) {
-        switch (tipo) {
-            case "CHARLA":
-                this.tipo = Tipo.CHARLA;
-                break;
-            case "CURSO":
-                this.tipo = Tipo.CURSO;
-                break;
-            case "ACTIVIDAD_DEPORTIVA":
-                this.tipo = Tipo.ACTIVIDAD_DEPORTIVA;
-                break;
-            case "VISITA_CULTURAL":
-                this.tipo = Tipo.VISITA_CULTURAL;
-                break;
-            default:
-                break;
-        }
+        this.tipo = Tipo.valueOf(tipo);
     }
 
     /**

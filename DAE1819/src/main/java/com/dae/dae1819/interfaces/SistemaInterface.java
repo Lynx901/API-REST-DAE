@@ -34,7 +34,7 @@ public abstract class SistemaInterface {
     /* ACCIONES USUARIO LOGEADOS */
     public abstract void nuevoEvento(String nombre,      Date fecha,        String tipo, 
                                      String descripcion, Integer capacidad, String localizacion, 
-                                     List<String> asistentes,               String organizador);
+                                     String organizador);
     
     public abstract boolean cancelarEvento(String nombreEvento);
     public abstract UsuarioDTO buscarUsuario(String username);
