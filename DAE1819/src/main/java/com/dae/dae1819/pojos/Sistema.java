@@ -172,14 +172,15 @@ public class Sistema extends SistemaInterface{
     public void nuevoEvento(String nombre,      Date fecha,         String tipo, 
                             String descripcion, Integer capacidad,  String localizacion,
                             String organizador) {
-        Evento evento = new Evento(nombre, fecha, tipo, descripcion, capacidad, localizacion, buscarUserPorUsername(organizador));
-        
+        Usuario o = buscarUserPorUsername(organizador);
+        Evento evento = new Evento(nombre, fecha, tipo, descripcion, capacidad, localizacion, o);
+        o.inscribirEnEvento(evento);
         eventos.put(nombre, evento);
     };
     
     @Override
     public boolean cancelarEvento(String nombreEvento) {
-        return (eventos.remove(nombreEvento) != null);
+        return eventos.get(nombreEvento).cancelar();
     };
     
     @Override
@@ -190,6 +191,45 @@ public class Sistema extends SistemaInterface{
         UsuarioDTO usuarioDTO = usuarioToDTO(u);
         
         return usuarioDTO;        
+    }
+    
+    @Override
+    public boolean inscribirse(UsuarioDTO uDTO, EventoDTO eDTO) {
+        Usuario u = usuarios.get(uDTO.getUsername());
+        Evento e = eventos.get(eDTO.getNombre());
+        if(u.inscribirEnEvento(e)) {
+            List<String> listaEventos = uDTO.getEventos();
+            listaEventos.add(eDTO.getNombre());
+            uDTO.setOrganizados(listaEventos);
+            
+            List<String> listaAsistentes = eDTO.getAsistentes();
+            listaAsistentes.add(u.getUsername());
+            eDTO.setAsistentes(listaAsistentes);
+            
+            return true;
+        }
+        
+        return false;
+    }
+    
+    @Override
+    public boolean desinscribirse(UsuarioDTO uDTO, EventoDTO eDTO) {
+        Usuario u = usuarios.get(uDTO.getUsername());
+        Evento e = eventos.get(eDTO.getNombre());
+        if(u.desinscribir(e)) {
+            List<String> listaEventos = uDTO.getEventos();
+            listaEventos.remove(eDTO.getNombre());
+            uDTO.setOrganizados(listaEventos);
+            
+            List<String> listaAsistentes = eDTO.getAsistentes();
+            listaAsistentes.remove(u.getUsername()); 
+            eDTO.setAsistentes(listaAsistentes);
+            
+            
+            return true;
+        }
+        
+        return false;
     }
     
     

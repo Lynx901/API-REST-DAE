@@ -141,4 +141,21 @@ public class Usuario{
     public void setToken(Integer token) {
         this.token = token;
     }
+    
+    public boolean inscribirEnEvento(Evento e) {
+        if(e.inscribir(this)) {
+            this.eventos.add(e);
+            this.organizados.add(e);
+            return true;
+        }
+        
+        return false;
+    }
+    
+    public boolean desinscribir(Evento e) {
+        if(this.eventos.remove(e) && this.organizados.remove(e)) {
+            return true;
+        }
+        return false;
+    }
 }

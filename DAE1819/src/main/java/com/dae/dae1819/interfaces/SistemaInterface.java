@@ -38,5 +38,7 @@ public abstract class SistemaInterface {
     
     public abstract boolean cancelarEvento(String nombreEvento);
     public abstract UsuarioDTO buscarUsuario(String username);
+    public abstract boolean inscribirse(UsuarioDTO uDTO, EventoDTO eDTO);
+    public abstract boolean desinscribirse(UsuarioDTO uDTO, EventoDTO eDTO); 
     
 }

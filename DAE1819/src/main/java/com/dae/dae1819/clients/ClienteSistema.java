@@ -39,7 +39,7 @@ public class ClienteSistema {
                 opt = sc.nextInt();
                 badOption = false;
             } catch (Exception e) {
-                System.out.println("|- No es una opción válida, por favor elija una opción del menú.");
+                System.out.println("|- No es una opción válida, por favor elija una opción del menú.     -|");
                 sc.next();
                 badOption = true;
             }
@@ -48,55 +48,154 @@ public class ClienteSistema {
         return opt;
     }
 
-    private boolean menuListadoEvento(List<EventoDTO> listaEventos) {
-        if (listaEventos.isEmpty()) {
-            System.out.println("|- No existen eventos disponibles actualmente.");
+    private boolean menuListadoAsistentes(EventoDTO e, List<UsuarioDTO> listaUsuarios) {
+        if (listaUsuarios.isEmpty()) {
+            System.out.println("|- No existen usuarios inscritos actualmente.                        -|");
             return false;
         } else {
-            System.out.println("|---------------------------------------------------------------------|" + "\n"
-                    + "|- Lista de eventos disponibles: ");
+            System.out.println("|---------------------------------------------------------------------|");
+            System.out.println("|- Lista de usuarios inscritos en " + e.getNombre());
+            System.out.println("|- " + listaUsuarios.size() + " inscritos de " + e.getCapacidad() + " posibles. ");
+            System.out.println("|- Elija uno para obtener su dirección de email:                     -|");
+
+            for (int i = 1; i <= listaUsuarios.size(); i++) {
+                System.out.println("|- [" + i + "]. " + listaUsuarios.get(i - 1).getUsername());
+            }
+            System.out.println("|---------------------------------------------------------------------|");
+            System.out.println("|- [0]. Volver al menú                                               -|");
+            System.out.println("|---------------------------------------------------------------------|");
+        }
+        return true;
+    }
+
+    private boolean menuListadoEvento(List<EventoDTO> listaEventos) {
+        if (listaEventos.isEmpty()) {
+            System.out.println("|- No existen eventos disponibles actualmente.                       -|");
+            return false;
+        } else {
+            System.out.println("|---------------------------------------------------------------------|");
+            System.out.println("|- Lista de eventos disponibles: ");
 
             for (int i = 1; i <= listaEventos.size(); i++) {
-                System.out.println("|- [" + i + "]. " + listaEventos.get(i-1).getNombre());
+                System.out.println("|- [" + i + "]. " + listaEventos.get(i - 1).getNombre());
             }
-            System.out.println("|---------------------------------------------------------------------|" + "\n"
-                    + "|- [0]. Volver al menú                                               -|" + "\n"
-                    + "|---------------------------------------------------------------------|");
+            System.out.println("|---------------------------------------------------------------------|");
+            System.out.println("|- [0]. Volver al menú                                               -|");
+            System.out.println("|---------------------------------------------------------------------|");
         }
         return true;
     }
 
     private boolean menuEvento(SistemaInterface sistema, EventoDTO evento) {
-        if(evento.getNombre().equals("")) {
-            System.out.println("|- Este evento no es válido, revíselo.");
+        if (evento.getNombre().equals("")) {
+            System.out.println("|- Este evento no es válido, revíselo.                               -|");
         } else {
-            System.out.print("|---------------------------------------------------------------------|" + "\n");
-            System.out.print("|- Nombre: \t\t" + evento.getNombre() + "\n");
-            System.out.print("|- Descripción: \t" + evento.getDescripcion() + "\n");
-            System.out.print("|- Fecha: \t\t" + evento.getFecha().toString() + "\n");
-            System.out.print("|- Tipo: \t\t" + evento.getTipo() + "\n");
-            System.out.print("|- Lugar: \t\t" + evento.getLocalizacion() + "\n");
-            System.out.print("|- Plazas máximas: \t" + evento.getCapacidad() + "\n");
-            System.out.print("|- Plazas disponibles: \t" + (evento.getCapacidad() - evento.getAsistentes().size()) + "\n"
-                    + "|---------------------------------------------------------------------|" + "\n");
+            System.out.println("|---------------------------------------------------------------------|");
+            System.out.println("|- Nombre: \t\t" + evento.getNombre());
+            System.out.println("|- Descripción: \t" + evento.getDescripcion());
+            System.out.println("|- Fecha: \t\t" + evento.getFecha().toString());
+            System.out.println("|- Tipo: \t\t" + evento.getTipo());
+            System.out.println("|- Lugar: \t\t" + evento.getLocalizacion());
+            System.out.println("|- Plazas máximas: \t" + evento.getCapacidad());
+            System.out.println("|- Plazas disponibles:\t" + (evento.getCapacidad() - evento.getAsistentes().size()));
+            System.out.println("|---------------------------------------------------------------------|" + "\n");
             if (!sistema.isTokenValid(token)) {
                 System.out.print("|- Debe iniciar sesión para realizar cualquier acción.               -|" + "\n");
             } else {
-                if (evento.getAsistentes().size() < evento.getCapacidad()) {
-                    System.out.print("|- ¿Qué desea hacer?                                                 -|" + "\n"
-                            + "|- [1]. Inscribirse                                                  -|" + "\n");
+                if (evento.getAsistentes().contains(user.getUsername())) {
+                    System.out.println("|- ¿Qué desea hacer?                                                 -|");
+                    System.out.println("|- [1]. Desinscribirse                                               -|");
                 } else {
-                    System.out.print("|- ¿Qué desea hacer?                                                 -|" + "\n"
-                            + "|- [1]. Entrar en lista de espera                                    -|" + "\n");
+                    if (evento.getAsistentes().size() < evento.getCapacidad()) {
+                        System.out.println("|- ¿Qué desea hacer?                                                 -|");
+                        System.out.println("|- [1]. Inscribirse                                                  -|");
+                    } else {
+                        System.out.println("|- ¿Qué desea hacer?                                                 -|");
+                        System.out.println("|- [1]. Entrar en lista de espera                                    -|");
+                    }
+
+                    if (user.getUsername().equals(evento.getOrganizador())) {
+                        System.out.println("|- [2]. Cancelar evento                                              -|");
+                        System.out.println("|- [3]. Mostrar asistentes                                           -|");
+                    }
+
+                    System.out.println("|---------------------------------------------------------------------|");
+                    System.out.println("|- [0]. Volver al menú                                               -|");
+                    System.out.println("|---------------------------------------------------------------------|");
+                    int eleccion = seleccionarOpcion();
+
+                    switch (eleccion) {
+                        case 1:
+                            if (evento.getAsistentes().contains(user.getUsername())) {
+                                Scanner capt = new Scanner(System.in);
+                                String desinscribirse = "";
+                                do {
+                                    System.out.print("|- ¿Está seguro que desea desinscribirse? [S/N]: ");
+                                    desinscribirse = capt.nextLine();
+                                } while (!(desinscribirse.equalsIgnoreCase("S") || desinscribirse.equalsIgnoreCase("N")));
+
+                                if (desinscribirse.equalsIgnoreCase("s")) {
+                                    sistema.desinscribirse(user, evento);
+                                    System.out.println("|- Se ha desinscrito correctamente.                                  -|");
+                                }
+                            } else {
+                                if (sistema.inscribirse(user, evento)) {
+                                    sistema.inscribirse(user, evento);
+                                    System.out.println("|- Se le ha inscrito en la posición: " + evento.getAsistentes().size());
+                                } else {
+                                    System.out.println("|- Se le ha añadido a la lista de espera en la posición: " + (evento.getAsistentes().size() - evento.getCapacidad()));
+                                }
+                            }
+                            break;
+                        case 2:
+                            if (user.getUsername().equals(evento.getOrganizador())) {
+                                if (sistema.cancelarEvento(evento.getNombre())) {
+                                    System.out.println("|- Se ha cancelado el evento correctamente.                          -|");
+                                } else {
+                                    System.out.println("|- Se ha producido un error al cancelar el evento.                   -|");
+                                }
+                            }
+                            break;
+                        case 3:
+                            if (user.getUsername().equals(evento.getOrganizador())) {
+
+                                UsuarioDTO usuario = null;
+                                List<UsuarioDTO> listaUsuarios = new ArrayList();
+
+                                do {
+                                    if (menuListadoAsistentes(evento, listaUsuarios)) {
+                                        int elecUsuario = seleccionarOpcion();
+                                        if (elecUsuario <= 0) {
+                                            break;
+                                        }
+                                        usuario = listaUsuarios.get(elecUsuario - 1);
+                                    } else {
+                                        break;
+                                    }
+                                } while (usuario == null);
+
+                                if (usuario != null) {
+                                    System.out.println("|---------------------------------------------------------------------|");
+                                    System.out.println("|- Username: \t" + usuario.getUsername());
+                                    System.out.println("|- E-mail: \t" + usuario.getEmail());
+                                    System.out.println("|---------------------------------------------------------------------|");
+                                }
+                            }
+                            break;
+
+                        case 0:
+                            break;
+
+                        default:
+                            System.out.println("|- Esta acción no está disponible.                                   -|");
+                            if (eleccion != 0) {
+                                eleccion = -1;
+                            }
+                            break;
+                    }
+
+                    return true;
                 }
-                if (user.getUsername().equals(evento.getOrganizador())) {
-                    System.out.print("|- [2]. Cancelar evento                                              -|" + "\n"
-                        + "|- [3]. Mostrar asistentes                                           -|" + "\n");
-                }
-                System.out.println("|---------------------------------------------------------------------|" + "\n"
-                    + "|- [0]. Volver al menú                                               -|" + "\n"
-                    + "|---------------------------------------------------------------------|" + "\n");
-                return true;
             }
         }
         return false;
@@ -107,21 +206,21 @@ public class ClienteSistema {
         user = null;
         Scanner capt = new Scanner(System.in);
         int eleccion;
-        
-        System.out.print("\n|---------------------------------------------------------------------|" + "\n"
-                        + "|-                                                                   -|" + "\n"
-                        + "|-                            Práctica 1                             -|" + "\n"
-                        + "|-                        Gestión de Eventos                         -|" + "\n"
-                        + "|-                                                                   -|" + "\n"
-                        + "|---------------------------------------------------------------------|" + "\n");
+        String testData = "";
 
-        String testData;
+        System.out.println("|---------------------------------------------------------------------|");
+        System.out.println("|---------------------------------------------------------------------|");
+        System.out.println("|-                                                                   -|");
+        System.out.println("|-                            Práctica 1                             -|");
+        System.out.println("|-                        Gestión de Eventos                         -|");
+        System.out.println("|-                                                                   -|");
+        System.out.println("|---------------------------------------------------------------------|");
+
         do {
             System.out.print("|- ¿Desea comenzar la ejecución con algunos datos de prueba? [S/N]: ");
-            testData = capt.next();
-            boolean test = (testData.equalsIgnoreCase("S") || testData.equalsIgnoreCase("N"));
-        } while(!(testData.equalsIgnoreCase("S") || testData.equalsIgnoreCase("N")));
-            
+            testData = capt.nextLine();
+        } while (!(testData.equalsIgnoreCase("S") || testData.equalsIgnoreCase("N")));
+
         if (testData.equalsIgnoreCase("s")) {
             sistema.nuevoUsuario("admin", "admin", "admin@ujaen.es");
             sistema.nuevoUsuario("user1", "asdf", "user@uja.es");
@@ -135,29 +234,30 @@ public class ClienteSistema {
         }
 
         do {
-            System.out.print("|---------------------------------------------------------------------|" + "\n"
-                    + "|- Seleccione una opción:                                            -|" + "\n"
-                    + "|-                                                                   -|" + "\n");
-            if (!sistema.isTokenValid(token)) {
-                System.out.print("|- [1]. Registrarse                                                  -|" + "\n"
-                        + "|- [2]. Iniciar sesión                                               -|" + "\n"
-                        + "|- [3]. Buscar evento                                                -|" + "\n"
-                        + "|- [4]. Mostrar todos los eventos                                    -|" + "\n");
-            } else {
-                System.out.print("|- [1]. Cerrar sesión                                                -|" + "\n"
-                        + "|- [2]. Mostrar perfil del usuario                                   -|" + "\n"
-                        + "|- [3]. Buscar evento                                                -|" + "\n"
-                        + "|- [4]. Mostrar todos los eventos                                    -|" + "\n"
-                        + "|- [5]. Crear evento                                                 -|" + "\n"
-                        + "|- [6]. Mostrar eventos en los que se ha inscrito el usuario         -|" + "\n"
-                        + "|- [7]. Mostrar eventos que ha organizado el usuario                 -|" + "\n");
-            }
-            System.out.print("|---------------------------------------------------------------------|" + "\n"
-                    + "|- [0].Finalizar programa                                            -|" + "\n"
-                    + "|---------------------------------------------------------------------|" + "\n"
-                    + "|-                       (c) 2018 dml y jfaf                         -|" + "\n"
-                    + "|---------------------------------------------------------------------|" + "\n");
+            System.out.println("|---------------------------------------------------------------------|");
+            System.out.println("|- Seleccione una opción:                                            -|");
+            System.out.println("|-                                                                   -|");
 
+            if (!sistema.isTokenValid(token)) {
+                System.out.println("|- [1]. Registrarse                                                  -|");
+                System.out.println("|- [2]. Iniciar sesión                                               -|");
+                System.out.println("|- [3]. Buscar evento                                                -|");
+                System.out.println("|- [4]. Mostrar todos los eventos                                    -|");
+            } else {
+                System.out.println("|- [1]. Cerrar sesión                                                -|");
+                System.out.println("|- [2]. Mostrar perfil del usuario                                   -|");
+                System.out.println("|- [3]. Buscar evento                                                -|");
+                System.out.println("|- [4]. Mostrar todos los eventos                                    -|");
+                System.out.println("|- [5]. Crear evento                                                 -|");
+                System.out.println("|- [6]. Mostrar eventos en los que se ha inscrito el usuario         -|");
+                System.out.println("|- [7]. Mostrar eventos que ha organizado el usuario                 -|");
+            }
+
+            System.out.println("|---------------------------------------------------------------------|");
+            System.out.println("|- [0]. Finalizar programa                                           -|");
+            System.out.println("|---------------------------------------------------------------------|");
+            System.out.println("|-                       (c) 2018 dml y jfaf                         -|");
+            System.out.println("|---------------------------------------------------------------------|");
 
             eleccion = seleccionarOpcion();
 
@@ -166,32 +266,33 @@ public class ClienteSistema {
                     if (!sistema.isTokenValid(token)) {
                         String nombreUsuario, contrasena, email;
                         System.out.print("|- Escriba su correo electrónico: ");
-                        email = capt.next();
+                        email = capt.nextLine();
 
                         System.out.print("|- Introduzca un nombre de usuario: ");
-                        nombreUsuario = capt.next();
+                        nombreUsuario = capt.nextLine();
 
                         System.out.print("|- Introduzca una contraseña: ");
-                        contrasena = capt.next();
+                        contrasena = capt.nextLine();
 
                         System.out.print("|- Repita la contraseña: ");
-                        if (!contrasena.equals(capt.next())) {
-                            System.out.println("\n|- Las contraseñas no coinciden, vuelva a intentarlo.");
+                        if (!contrasena.equals(capt.nextLine())) {
+                            System.out.println("|- Las contraseñas no coinciden, vuelva a intentarlo.                -|");
                         } else {
-                            System.out.println("\n|- Los datos son correctos. Creando usuario...");
                             sistema.nuevoUsuario(nombreUsuario, contrasena, email);
-
-                            System.out.print("\n|- Usuario creado correctamente con username: " + nombreUsuario + " y contraseña: " + contrasena);
-                            System.out.println("\n|- ¡Ya puede iniciar sesión!");
+                            System.out.println("|- Usuario creado correctamente con username: " + nombreUsuario + " y contraseña: " + contrasena);
+                            System.out.println("|- ¡Ya puede iniciar sesión!                                         -|");
                         }
                     } else {
-                        capt = new Scanner(System.in);
-                        System.out.print("|- ¿Desea cerrar la sesión? [Y/N]: ");
-                        String logoff = capt.next();
+                        String logoff;
+                        do {
+                            System.out.print("|- ¿Desea cerrar la sesión? [S/N]: ");
+                            logoff = capt.nextLine();
+                        } while (!(testData.equalsIgnoreCase("S") || testData.equalsIgnoreCase("N")));
 
-                        if (logoff.equalsIgnoreCase("y")) {
+                        if (logoff.equalsIgnoreCase("s")) {
                             user = null;
-                            System.out.print("|- ¡Vuelva pronto!");
+                            token = -1;
+                            System.out.println("|- ¡Vuelva pronto!                                                   -|");
                         }
                     }
                     break;
@@ -200,49 +301,50 @@ public class ClienteSistema {
                     if (!sistema.isTokenValid(token)) {
                         String nombreusuario, contrasena;
 
-                        System.out.print("\n|- Nombre de usuario: ");
-                        nombreusuario = capt.next();
+                        System.out.print("|- Nombre de usuario: ");
+                        nombreusuario = capt.nextLine();
 
                         System.out.print("|- Contraseña: ");
-                        contrasena = capt.next();
+                        contrasena = capt.nextLine();
                         token = sistema.login(nombreusuario, contrasena);
 
                         if (sistema.isTokenValid(token)) {
-                            System.out.print("\n|- Ha iniciado sesión correctamente.\n");
+                            System.out.println("|- Ha iniciado sesión correctamente.                                 -|");
                             user = sistema.buscarUsuario(nombreusuario);
                         } else {
-                            System.out.print("\n|- Algo ha fallado. Compruebe los datos de inicio de sesión.\n");
+                            System.out.println("|- Algo ha fallado. Compruebe los datos de inicio de sesión.         -|");
                         }
 
                     } else {
-                        System.out.print("|---------------------------------------------------------------------|" + "\n"
-                                + "|- Username: \t" + user.getUsername() + "\n"
-                                + "|- E-mail: \t" + user.getEmail() + "\n");
+                        System.out.println("|---------------------------------------------------------------------|");
+                        System.out.println("|- Username: \t" + user.getUsername());
+                        System.out.println("|- E-mail: \t" + user.getEmail());
+                        System.out.println("|---------------------------------------------------------------------|");
                     }
                     break;
 
                 case 3:
-                    System.out.print("|---------------------------------------------------------------------|" + "\n"
-                            + "|- ¿Cómo desea buscar el evento?                                     -|" + "\n"
-                            + "|- [1]. Por tipo                                                     -|" + "\n"
-                            + "|- [2]. Por su descripción                                           -|" + "\n"
-                            + "|---------------------------------------------------------------------|" + "\n"
-                            + "|- [0]. Volver al menú                                               -|" + "\n"
-                            + "|---------------------------------------------------------------------|" + "\n");
+                    System.out.println("|---------------------------------------------------------------------|");
+                    System.out.println("|- ¿Cómo desea buscar el evento?                                     -|");
+                    System.out.println("|- [1]. Por tipo                                                     -|");
+                    System.out.println("|- [2]. Por su descripción                                           -|");
+                    System.out.println("|---------------------------------------------------------------------|");
+                    System.out.println("|- [0]. Volver al menú                                               -|");
+                    System.out.println("|---------------------------------------------------------------------|");
 
                     int tipoBusq = seleccionarOpcion();
 
                     switch (tipoBusq) {
                         case 1:
-                            System.out.print("|---------------------------------------------------------------------|" + "\n"
-                                    + "|- Tipos posibles de eventos:                                        -|" + "\n"
-                                    + "|- [1]. Charla                                                       -|" + "\n"
-                                    + "|- [2]. Curso                                                        -|" + "\n"
-                                    + "|- [3]. Actividad Deportiva                                          -|" + "\n"
-                                    + "|- [4]. Visita Cultural                                              -|" + "\n"
-                                    + "|---------------------------------------------------------------------|" + "\n"
-                                    + "|- [0]. Volver al menú                                               -|" + "\n"
-                                    + "|---------------------------------------------------------------------|" + "\n");
+                            System.out.println("|---------------------------------------------------------------------|");
+                            System.out.println("|- Tipos posibles de eventos:                                        -|");
+                            System.out.println("|- [1]. Charla                                                       -|");
+                            System.out.println("|- [2]. Curso                                                        -|");
+                            System.out.println("|- [3]. Actividad Deportiva                                          -|");
+                            System.out.println("|- [4]. Visita Cultural                                              -|");
+                            System.out.println("|---------------------------------------------------------------------|");
+                            System.out.println("|- [0]. Volver al menú                                               -|");
+                            System.out.println("|---------------------------------------------------------------------|");
 
                             int elecTipo = seleccionarOpcion();
                             List<EventoDTO> listaEventosTipo = new ArrayList();
@@ -265,16 +367,16 @@ public class ClienteSistema {
 
                             EventoDTO eventoTipo = new EventoDTO();
                             do {
-                                if(menuListadoEvento(listaEventosTipo)) {
+                                if (menuListadoEvento(listaEventosTipo)) {
                                     int elecEventoTipo = seleccionarOpcion();
-                                    if(elecEventoTipo <= 0) {
+                                    if (elecEventoTipo <= 0) {
                                         break;
                                     }
-                                    eventoTipo = listaEventosTipo.get(elecEventoTipo-1);
+                                    eventoTipo = listaEventosTipo.get(elecEventoTipo - 1);
                                 } else {
                                     break;
                                 }
-                            } while(!menuEvento(sistema, eventoTipo));
+                            } while (!menuEvento(sistema, eventoTipo));
 
                             break;
 
@@ -282,22 +384,22 @@ public class ClienteSistema {
 
                             String descEvento;
 
-                            System.out.print("|---------------------------------------------------------------------|" + "\n"
-                                    + "|- Introduzca la descripción del evento que desea buscar:");
-                            descEvento = capt.next();
+                            System.out.println("|---------------------------------------------------------------------|");
+                            System.out.print("|- Introduzca la descripción del evento que desea buscar:");
+                            descEvento = capt.nextLine();
 
                             List<EventoDTO> listaEventosDesc = sistema.buscarEventosPorDescripcion(descEvento);
 
                             EventoDTO eventoDesc = new EventoDTO();
                             do {
-                                if(menuListadoEvento(listaEventosDesc)) {
+                                if (menuListadoEvento(listaEventosDesc)) {
                                     int elecEventoDesc = seleccionarOpcion();
-                                    if(elecEventoDesc <= 0) {
+                                    if (elecEventoDesc <= 0) {
                                         break;
                                     }
-                                    eventoDesc = listaEventosDesc.get(elecEventoDesc-1);
+                                    eventoDesc = listaEventosDesc.get(elecEventoDesc - 1);
                                 }
-                            } while(!menuEvento(sistema, eventoDesc));
+                            } while (!menuEvento(sistema, eventoDesc));
 
                             break;
                     }
@@ -308,21 +410,21 @@ public class ClienteSistema {
                     List<EventoDTO> listaEventos = sistema.listarEventos();
 
                     EventoDTO evento = new EventoDTO();
-                            do {
-                                if(menuListadoEvento(listaEventos)) {
-                                    int elecEvento = seleccionarOpcion();
-                                    if(elecEvento <= 0) {
-                                        break;
-                                    }
-                                    evento = listaEventos.get(elecEvento-1);
-                                }
-                            } while(!menuEvento(sistema, evento));
+                    do {
+                        if (menuListadoEvento(listaEventos)) {
+                            int elecEvento = seleccionarOpcion();
+                            if (elecEvento <= 0) {
+                                break;
+                            }
+                            evento = listaEventos.get(elecEvento - 1);
+                        }
+                    } while (!menuEvento(sistema, evento));
 
                     break;
 
                 case 5:
                     if (!sistema.isTokenValid(token)) {
-                        System.out.print("|- Esta acción no está disponible, seleccione una del menú. ");
+                        System.out.println("|- Esta acción no está disponible, seleccione una del menú.          -|");
                     } else {
                         String nombre, descripcion, localizacion;
                         Integer capacidad = 0;
@@ -331,24 +433,24 @@ public class ClienteSistema {
                         Integer anio = 0;
 
                         System.out.print("|- Introduzca el nombre del evento: ");
-                        nombre = capt.next();
+                        nombre = capt.nextLine();
 
                         System.out.print("|- Introduzca una descripción: ");
-                        descripcion = capt.next();
+                        descripcion = capt.nextLine();
 
                         System.out.print("|- Introduzca el lugar donde se realizará: ");
-                        localizacion = capt.next();
+                        localizacion = capt.nextLine();
 
                         boolean badOption;
                         do {
                             System.out.print("|- Introduzca el día del evento: ");
                             try {
                                 dia = capt.nextInt();
-                                badOption = (dia > 0 && dia < 32);
+                                badOption = (dia < 0 || dia > 32);
                             } catch (Exception e) {
-                                System.out.println("|- No es un día válido, elija un día entre 1 y 31.");
-                                capt.next();
-                                badOption = true;
+                                System.out.println("|- No es un día válido, elija un día entre 1 y 31.                   -|");
+                                capt.nextInt();
+                                badOption = false;
                             }
                         } while (badOption);
 
@@ -356,11 +458,11 @@ public class ClienteSistema {
                             System.out.print("|- Introduzca el mes del evento (en número): ");
                             try {
                                 mes = capt.nextInt();
-                                badOption = (mes > 0 && mes < 13);
+                                badOption = (mes < 0 || mes > 13);
                             } catch (Exception e) {
-                                System.out.println("|- No es un día válido, elija un mes entre 1 y 12.");
-                                capt.next();
-                                badOption = true;
+                                System.out.println("|- No es un día válido, elija un mes entre 1 y 12.                   -|");
+                                capt.nextInt();
+                                badOption = false;
                             }
                         } while (badOption);
 
@@ -368,11 +470,11 @@ public class ClienteSistema {
                             System.out.print("|- Introduzca el año del evento: ");
                             try {
                                 anio = capt.nextInt();
-                                badOption = (anio > 2017);
+                                badOption = (anio < 2018);
                             } catch (Exception e) {
-                                System.out.println("|- No es un año válido, elija un año después de 2017");
-                                capt.next();
-                                badOption = true;
+                                System.out.println("|- No es un año válido, elija un año después de 2017                 -|");
+                                capt.nextInt();
+                                badOption = false;
                             }
                         } while (badOption);
 
@@ -382,20 +484,21 @@ public class ClienteSistema {
                                 capacidad = capt.nextInt();
                                 badOption = false;
                             } catch (Exception e) {
-                                System.out.println("|- No es un número válido, elija un número entero.");
-                                capt.next();
+                                System.out.println("|- No es un número válido, elija un número entero.                   -|");
+                                capt.nextInt();
                                 badOption = true;
                             }
                         } while (badOption);
 
-                        System.out.print("|- Seleccione uno de los siguiente tipos de evento                   -|" + "\n"
-                                + "|- [1]. Charla                                                       -|" + "\n"
-                                + "|- [2]. Curso                                                        -|" + "\n"
-                                + "|- [3]. Actividad Deportiva                                          -|" + "\n"
-                                + "|- [4]. Visita Cultural                                              -|" + "\n"
-                                + "|---------------------------------------------------------------------|" + "\n"
-                                + "|- [0]. Volver al menú                                               -|" + "\n"
-                                + "|---------------------------------------------------------------------|" + "\n");
+                        System.out.println("|- Seleccione uno de los siguiente tipos de evento                   -|");
+                        System.out.println("|- [1]. Charla                                                       -|");
+                        System.out.println("|- [2]. Curso                                                        -|");
+                        System.out.println("|- [3]. Actividad Deportiva                                          -|");
+                        System.out.println("|- [4]. Visita Cultural                                              -|");
+                        System.out.println("|---------------------------------------------------------------------|");
+                        System.out.println("|- [0]. Volver al menú                                               -|");
+                        System.out.println("|---------------------------------------------------------------------|");
+
                         int elecTipo = seleccionarOpcion();
                         String tipo;
                         switch (elecTipo) {
@@ -417,12 +520,10 @@ public class ClienteSistema {
                         }
 
                         Date fecha = new Date(anio, mes, dia);
-
-                        System.out.println("\n|- Los datos son correctos. Creando evento...");
                         sistema.nuevoEvento(nombre, fecha, tipo, descripcion, capacidad, localizacion, user.getUsername());
 
                         EventoDTO newEvento = sistema.buscarEventoPorNombre(nombre);
-                        System.out.print("\n|- Evento creado correctamente. ");
+                        System.out.println("|- Evento creado correctamente.                                      -|");
                         menuEvento(sistema, newEvento);
 
                     }
@@ -430,39 +531,45 @@ public class ClienteSistema {
 
                 case 6:
                     if (!sistema.isTokenValid(token)) {
-                        System.out.print("|- Esta acción no está disponible, seleccione una del menú. ");
-
+                        System.out.println("|- Esta acción no está disponible, seleccione una del menú.          -|");
                     } else {
-                        System.out.print("|- Próximamente (Opción 6) ");
+                        System.out.println("|- Próximamente (Opción 6) ");
                     }
                     break;
 
                 case 7:
                     if (!sistema.isTokenValid(token)) {
-                        System.out.print("|- Esta acción no está disponible, seleccione una del menú. ");
+                        System.out.println("|- Esta acción no está disponible, seleccione una del menú.          -|");
 
                     } else {
-                        System.out.print("|- Próximamente (Opción 7) ");
+                        System.out.println("|- Próximamente (Opción 7) ");
                     }
                     break;
 
+                case 0:
+                    break;
+
                 default:
-                    System.out.print("|- Esta acción no está disponible. \n");
+                    System.out.println("|- Esta acción no está disponible.                                   -|");
                     if (eleccion != 0) {
                         eleccion = -1;
                     }
                     break;
             }
-//
-//            if (eleccion != 0) {
-//                capt = new Scanner(System.in);
-//                System.out.print("|- ¿Continuar? [Y/N]: ");
-//                String end = capt.next();
-//
-//                if (end.equalsIgnoreCase("n") || end.equals("0")) {
-//                    eleccion = 0;
-//                }
-//            }
+
+            if (eleccion != 0) {
+
+                String end;
+                do {
+                    System.out.print("|- ¿Ir de nuevo al menú? [S/N]: ");
+                    end = capt.nextLine();
+                } while (!(testData.equalsIgnoreCase("S") || testData.equalsIgnoreCase("N")));
+
+                if (end.equalsIgnoreCase("n")) {
+                    eleccion = 0;
+                }
+
+            }
 
         } while (eleccion != 0);
 
