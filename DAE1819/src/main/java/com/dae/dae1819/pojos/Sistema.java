@@ -14,7 +14,6 @@ import java.util.TreeMap;
 import com.dae.dae1819.DTOs.EventoDTO;
 import com.dae.dae1819.DTOs.UsuarioDTO;
 import java.util.concurrent.ThreadLocalRandom;
-import org.modelmapper.ModelMapper;
 
 
 /**
@@ -80,7 +79,17 @@ public class Sistema extends SistemaInterface{
     
     @Override
     public boolean isTokenValid(Integer token) {
-        return (usuarios.entrySet().stream().anyMatch((entry) -> (entry.getValue().getToken().equals(token)))) ;
+        if(token == -1) {
+            return false;
+        }
+        
+        for (Map.Entry<String, Usuario> entry : usuarios.entrySet()) {
+            Usuario u = entry.getValue();
+            if (u != null && u.getToken().equals(token)){
+                 return true;
+            }
+        }
+        return false;
     }
     
     /* ACCIONES USUARIOS SIN LOGEAR */
@@ -97,6 +106,7 @@ public class Sistema extends SistemaInterface{
         if (user != null){
             if (user.getPassword().equals(password)) {
                 Integer token = ThreadLocalRandom.current().nextInt(10000000, 100000000);
+                user.setToken(token);
                 return token;
             }
         }
@@ -108,7 +118,7 @@ public class Sistema extends SistemaInterface{
         EventoDTO e = new EventoDTO();
         for (Map.Entry<String, Evento> entry : eventos.entrySet()) {
             if (entry.getValue().getNombre().equals(nombre)){
-                e = entry.getValue().toDTO();
+                e = eventoToDTO(entry.getValue());
             }
         }
         return e;
@@ -118,10 +128,9 @@ public class Sistema extends SistemaInterface{
     public List<EventoDTO> buscarEventosPorTipo(String tipo){
         List<EventoDTO> eventosPorTipo = new ArrayList();
         
-        EventoDTO e = new EventoDTO();
         for (Map.Entry<String, Evento> entry : eventos.entrySet()) {
             if (entry.getValue().getTipo().equals(tipo)){
-                e = entry.getValue().toDTO();
+                EventoDTO e = eventoToDTO(entry.getValue());
                 eventosPorTipo.add(e);
             }
         }
@@ -132,10 +141,9 @@ public class Sistema extends SistemaInterface{
     public List<EventoDTO> buscarEventosPorDescripcion(String descripcion){
         List<EventoDTO> eventosPorDescripcion = new ArrayList();
         
-        EventoDTO e = new EventoDTO();
         for (Map.Entry<String, Evento> entry : eventos.entrySet()) {
             if (entry.getValue().getDescripcion().contains(descripcion)){
-                e = entry.getValue().toDTO();
+                EventoDTO e = eventoToDTO(entry.getValue());
                 eventosPorDescripcion.add(e);
             }
         }
@@ -147,9 +155,15 @@ public class Sistema extends SistemaInterface{
     public List<EventoDTO> listarEventos() {
         List<EventoDTO> lista = new ArrayList();
         eventos.entrySet().forEach((entry) -> {
-            lista.add(entry.getValue().toDTO());
+            EventoDTO e = eventoToDTO(entry.getValue());
+            lista.add(e);
         });
         return lista;
+    }
+    
+    private Usuario buscarUserPorUsername(String username) {
+        Usuario u = usuarios.get(username);
+        return (u == null) ? new Usuario() : u;
     }
     
     /* ACCIONES USUARIOS LOGEADOS */
@@ -157,8 +171,8 @@ public class Sistema extends SistemaInterface{
     public void nuevoEvento(String nombre,      Date fecha,         String tipo, 
                             String descripcion, Integer capacidad,  String localizacion,
                             String organizador) {
-        // TO-DO
-        Evento evento = new Evento(nombre, fecha, tipo, descripcion, capacidad, localizacion, organizador);
+        Evento evento = new Evento(nombre, fecha, tipo, descripcion, capacidad, localizacion, buscarUserPorUsername(organizador));
+        
         eventos.put(nombre, evento);
     };
     
@@ -172,10 +186,58 @@ public class Sistema extends SistemaInterface{
         Usuario u = new Usuario();
         
         u = usuarios.get(username);
-        UsuarioDTO usuarioDTO = u.toDTO();
+        UsuarioDTO usuarioDTO = usuarioToDTO(u);
         
         return usuarioDTO;        
     }
+    
+    
+    public UsuarioDTO usuarioToDTO(Usuario u) {
+        UsuarioDTO uDTO = new UsuarioDTO();
+        uDTO.setUsername(u.getUsername());
+        uDTO.setEmail(u.getEmail());
+        
+        List<String> e = new ArrayList();
+        if(!u.getEventos().isEmpty()) {
+            u.getEventos().forEach((evento) -> {
+                e.add(evento.getNombre());
+            });
+            uDTO.setEventos(e);
+            
+            List<String> o = new ArrayList();
+            u.getOrganizados().forEach((organizado) -> {
+                o.add(organizado.getNombre());
+            });
+            uDTO.setOrganizados(o);
+        }
+        
+        return uDTO;
+    }
+    
+    public EventoDTO eventoToDTO(Evento e) {
+        EventoDTO eDTO = new EventoDTO();
+        eDTO.setNombre(e.getNombre());
+        eDTO.setDescripcion(e.getDescripcion());
+        eDTO.setFecha(e.getFecha());
+        eDTO.setLocalizacion(e.getLocalizacion());
+        eDTO.setCapacidad(e.getCapacidad());
+        
+        if(!e.getAsistentes().isEmpty()) {
+            List<String> asistentes = new ArrayList();
+            e.getAsistentes().forEach((asistente) -> {
+                asistentes.add(asistente.getUsername());
+            });
+            eDTO.setAsistentes(asistentes);
+        } else {
+            eDTO.setAsistentes(new ArrayList());
+        }
+        
+        eDTO.setTipo(e.getTipo());
+        eDTO.setOrganizador(e.getOrganizador().getUsername());
+        
+        return eDTO;
+    }
+    
     
     
 }

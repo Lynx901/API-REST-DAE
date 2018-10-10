@@ -46,10 +46,11 @@ public class Evento {
         this.capacidad = capacidad;
         this.localizacion = localizacion;
         
-        this.asistentes.clear();
+        this.asistentes = new ArrayList();
         asistentes.forEach((usuario) -> {
             this.asistentes.add(usuario);
         });
+        
         this.organizador = organizador;
     }
     
@@ -61,6 +62,8 @@ public class Evento {
         this.descripcion = descripcion;
         this.capacidad = capacidad;
         this.localizacion = localizacion;
+        
+        this.asistentes = new ArrayList();
         this.organizador = organizador;
         
     }
@@ -195,21 +198,5 @@ public class Evento {
     public void setOrganizador(Usuario organizador) {
         this.organizador = organizador;
     }
-    
-    public EventoDTO toDTO() {
-        EventoDTO e = new EventoDTO();
-        e.setNombre(this.getNombre());
-        e.setDescripcion(this.getDescripcion());
-        e.setFecha(this.getFecha());
-        List<String> asistentes = new ArrayList();
-        this.getAsistentes().forEach((asistente) -> {
-            asistentes.add(asistente.getUsername());
-        });
-        e.setAsistentes(asistentes);
-        e.setTipo(this.getTipo());
-        e.setOrganizador(this.getOrganizador().getUsername());
-        return e;
-    }
-    
     
 }

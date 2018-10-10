@@ -23,8 +23,9 @@ public class EventoDTO {
     private List<String> asistentes;
     private String organizador;
     
-    public EventoDTO() {        
-        asistentes = new ArrayList();  
+    public EventoDTO() {    
+        nombre = "";
+        asistentes = new ArrayList();
     }
     
     public EventoDTO (String nombre, Date fecha, String _tipo, String descripcion, 
@@ -36,7 +37,7 @@ public class EventoDTO {
         this.capacidad = capacidad;
         this.localizacion = localizacion;
         
-        this.asistentes.clear();
+        this.asistentes = new ArrayList();
         asistentes.forEach((usuario) -> {
             this.asistentes.add(usuario);
         });

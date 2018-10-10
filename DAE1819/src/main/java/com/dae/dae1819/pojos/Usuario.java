@@ -32,6 +32,8 @@ public class Usuario{
         this.username = username;
         this.password = password;
         this.email = email;
+        eventos = new ArrayList();
+        organizados = new ArrayList();
     }
     
     public Usuario(String username, String password, String email, List<Evento> eventos, List<Evento> organizados) {
@@ -39,11 +41,12 @@ public class Usuario{
         this.password = password;
         this.email = email;
         
-        this.eventos.clear();
+        this.eventos = new ArrayList();
         for (Evento evento : eventos) {
             this.eventos.add(evento);
         }
-        this.organizados.clear();
+        
+        this.organizados = new ArrayList();
         for (Evento evento : organizados) {
             this.organizados.add(evento);
         }
@@ -138,23 +141,4 @@ public class Usuario{
     public void setToken(Integer token) {
         this.token = token;
     }
-    
-    public UsuarioDTO toDTO() {
-        UsuarioDTO u = new UsuarioDTO();
-        u.setUsername(this.getUsername());
-        u.setEmail(this.getEmail());
-        
-        List<String> eventos = new ArrayList();
-        this.getEventos().forEach((evento) -> {
-            eventos.add(evento.getNombre());
-        });
-        
-        List<String> organizados = new ArrayList();
-        this.getOrganizados().forEach((organizado) -> {
-            organizados.add(organizado.getNombre());
-        });
-      
-        return u;
-    }
-    
 }

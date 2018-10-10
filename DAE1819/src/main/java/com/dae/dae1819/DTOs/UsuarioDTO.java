@@ -26,6 +26,8 @@ public class UsuarioDTO {
     public UsuarioDTO(String username, String email) {
         this.username = username;
         this.email = email;
+        eventos = new ArrayList();
+        organizados = new ArrayList();
     }
     
     public UsuarioDTO(String username, String email, List<String> eventos, List<String> organizados) {

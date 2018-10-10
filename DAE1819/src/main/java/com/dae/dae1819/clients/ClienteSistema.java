@@ -53,87 +53,91 @@ public class ClienteSistema {
             System.out.println("|- No existen eventos disponibles actualmente.");
             return false;
         } else {
-            System.out.println("|- Lista de eventos disponibles: ");
+            System.out.println("|---------------------------------------------------------------------|" + "\n"
+                    + "|- Lista de eventos disponibles: ");
 
-            for (int i = 0; i < listaEventos.size(); i++) {
-                System.out.println("|- [" + i + "]. " + listaEventos.get(i).getNombre());
+            for (int i = 1; i <= listaEventos.size(); i++) {
+                System.out.println("|- [" + i + "]. " + listaEventos.get(i-1).getNombre());
             }
             System.out.println("|---------------------------------------------------------------------|" + "\n"
                     + "|- [0]. Volver al menú                                               -|" + "\n"
-                    + "|---------------------------------------------------------------------|" + "\n");
+                    + "|---------------------------------------------------------------------|");
         }
         return true;
     }
 
-    private void menuEvento(SistemaInterface sistema, EventoDTO evento) {
-        System.out.print("|---------------------------------------------------------------------|" + "\n"
-                + "|- Nombre: \t" + evento.getNombre() + "\n"
-                + "|- Descripción: \t" + evento.getDescripcion() + "\n"
-                + "|- Lugar: \t" + evento.getLocalizacion() + "\n"
-                + "|- Plazas máximas: \t" + evento.getCapacidad() + "\n"
-                + "|- Plazas disponibles: \t" + (evento.getCapacidad() - evento.getAsistentes().size()) + "\n"
-                + "|---------------------------------------------------------------------|" + "\n");
-        if (!sistema.isTokenValid(token)) {
-            System.out.print("|- Debe iniciar sesión para realizar cualquier acción.               -|" + "\n");
+    private boolean menuEvento(SistemaInterface sistema, EventoDTO evento) {
+        if(evento.getNombre().equals("")) {
+            System.out.println("|- Este evento no es válido, revíselo.");
         } else {
-            if (evento.getAsistentes().size() < evento.getCapacidad()) {
-                System.out.print("|- ¿Qué desea hacer?                                                 -|" + "\n"
-                        + "|- [1]. Inscribirse                                                  -|" + "\n");
+            System.out.print("|---------------------------------------------------------------------|" + "\n");
+            System.out.print("|- Nombre: \t\t" + evento.getNombre() + "\n");
+            System.out.print("|- Descripción: \t" + evento.getDescripcion() + "\n");
+            System.out.print("|- Fecha: \t\t" + evento.getFecha().toString() + "\n");
+            System.out.print("|- Tipo: \t\t" + evento.getTipo() + "\n");
+            System.out.print("|- Lugar: \t\t" + evento.getLocalizacion() + "\n");
+            System.out.print("|- Plazas máximas: \t" + evento.getCapacidad() + "\n");
+            System.out.print("|- Plazas disponibles: \t" + (evento.getCapacidad() - evento.getAsistentes().size()) + "\n"
+                    + "|---------------------------------------------------------------------|" + "\n");
+            if (!sistema.isTokenValid(token)) {
+                System.out.print("|- Debe iniciar sesión para realizar cualquier acción.               -|" + "\n");
             } else {
-                System.out.print("|- ¿Qué desea hacer?                                                 -|" + "\n"
-                        + "|- [1]. Entrar en lista de espera                                    -|" + "\n");
+                if (evento.getAsistentes().size() < evento.getCapacidad()) {
+                    System.out.print("|- ¿Qué desea hacer?                                                 -|" + "\n"
+                            + "|- [1]. Inscribirse                                                  -|" + "\n");
+                } else {
+                    System.out.print("|- ¿Qué desea hacer?                                                 -|" + "\n"
+                            + "|- [1]. Entrar en lista de espera                                    -|" + "\n");
+                }
+                if (user.getUsername().equals(evento.getOrganizador())) {
+                    System.out.print("|- [2]. Cancelar evento                                              -|" + "\n"
+                        + "|- [3]. Mostrar asistentes                                           -|" + "\n");
+                }
+                System.out.println("|---------------------------------------------------------------------|" + "\n"
+                    + "|- [0]. Volver al menú                                               -|" + "\n"
+                    + "|---------------------------------------------------------------------|" + "\n");
+                return true;
             }
         }
-
-        if (user.getUsername().equals(evento.getOrganizador())) {
-            System.out.print("|- [2]. Cancelar evento                                              -|" + "\n"
-                    + "|- [3]. Mostrar asistentes                                           -|" + "\n");
-        }
-        System.out.println("|---------------------------------------------------------------------|" + "\n"
-                + "|- [0]. Volver al menú                                               -|" + "\n"
-                + "|---------------------------------------------------------------------|" + "\n");
+        return false;
     }
 
     public void run() {
         SistemaInterface sistema = (SistemaInterface) context.getBean("sistema");
         user = null;
+        Scanner capt = new Scanner(System.in);
         int eleccion;
-        
-        /******************************************************************************/
-        /*   Usar si se quiere empezar con algunos datos, comentar el bloque si no    */
-        /*                                                                            */
-        /* Es algo que sirve para poder probar el cliente sin necesidad de introducir */
-        /* todos los datos cada vez que se ejecuta                                    */
-        /*                                                                            */
-        sistema.nuevoUsuario("admin", "admin", "admin@ujaen.es");
-        System.out.println("Creado admin");
-        sistema.nuevoUsuario("user1", "asdf", "user@uja.es");
-        System.out.println("Creado user1");
-        sistema.nuevoUsuario("user2", "1234", "usuario@gmail.com");
-        System.out.println("Creado user2");
-        sistema.nuevoUsuario("USER3", "1a2b", "el3@yo.com");
-        System.out.println("Creado USER3");
-        
-        List<String> testAsistentes = new ArrayList();
-        testAsistentes.add("admin");
-        sistema.nuevoEvento("Clase1", new Date(), "CHARLA", "Clase de DAE", (Integer) 15, "Edificio A3", testAsistentes, "admin");
-        System.out.println("Creado Clase1");
-        
-        testAsistentes.add("user1");
-        testAsistentes.add("user2");
-        sistema.nuevoEvento("Partido1", new Date(), "ACTIVIDAD_DEPORTIVA", "Partido de 2ª división", (Integer) 2, "Pabellón", testAsistentes, "user1");
-        System.out.println("Creado Partido1");
-        sistema.nuevoEvento("Partido2", new Date(), "ACTIVIDAD_DEPORTIVA", "Partido de 1ª división", (Integer) 5, "Campo de fútbol", testAsistentes, "user1");
-        System.out.println("Creado Partido2");
-        /******************************************************************************/
 
-        do {
-            System.out.print("\n|---------------------------------------------------------------------|" + "\n"
+        
+        System.out.print("\n|---------------------------------------------------------------------|" + "\n"
                     + "|-                                                                   -|" + "\n"
                     + "|-                            Práctica 1                             -|" + "\n"
                     + "|-                        Gestión de Eventos                         -|" + "\n"
                     + "|-                                                                   -|" + "\n"
                     + "|---------------------------------------------------------------------|" + "\n"
+                    + "|- ¿Desea comenzar la ejecución con algunos datos de prueba? [S/N]: ");
+        
+        String testData = capt.next();
+
+        if (testData.equalsIgnoreCase("n") || testData.equals("0")) {
+            eleccion = 0;
+        } else {
+            sistema.nuevoUsuario("admin", "admin", "admin@ujaen.es");
+            sistema.nuevoUsuario("user1", "asdf", "user@uja.es");
+            sistema.nuevoUsuario("user2", "1234", "usuario@gmail.com");
+            sistema.nuevoUsuario("USER3", "1a2b", "el3@yo.com");
+
+            sistema.nuevoEvento("Clase1", new Date(), "CHARLA", "Clase de DAE", (Integer) 15, "Edificio A3", "admin");
+            sistema.nuevoEvento("Partido1", new Date(), "ACTIVIDAD_DEPORTIVA", "Partido de 2ª división", (Integer) 2, "Pabellón", "user1");
+            sistema.nuevoEvento("Partido2", new Date(), "ACTIVIDAD_DEPORTIVA", "Partido de 1ª división", (Integer) 5, "Campo de fútbol", "user1");
+            System.out.println("|- Creados 4 usuarios y 3 eventos                                    -|");
+        }
+        
+        
+
+        do {
+            
+            System.out.print("|---------------------------------------------------------------------|" + "\n"
                     + "|- Seleccione una opción:                                            -|" + "\n"
                     + "|-                                                                   -|" + "\n");
             if (!sistema.isTokenValid(token)) {
@@ -156,7 +160,6 @@ public class ClienteSistema {
                     + "|-                       (c) 2018 dml y jfaf                         -|" + "\n"
                     + "|---------------------------------------------------------------------|" + "\n");
 
-            Scanner capt = new Scanner(System.in);
 
             eleccion = seleccionarOpcion();
 
@@ -212,10 +215,9 @@ public class ClienteSistema {
                             System.out.print("\n|- Algo ha fallado. Compruebe los datos de inicio de sesión.\n");
                         }
                     } else {
-//                        System.out.print("|---------------------------------------------------------------------|" + "\n"
-//                                + "|- Username: \t" + user.getUsername() + "\n"
-//                                + "|- E-mail: \t" + user.getEmail() + "\n"
-//                                + "|- Contraseña: \t" + user.getPassword() + "\n");
+                        System.out.print("|---------------------------------------------------------------------|" + "\n"
+                                + "|- Username: \t" + user.getUsername() + "\n"
+                                + "|- E-mail: \t" + user.getEmail() + "\n");
                     }
                     break;
 
@@ -243,7 +245,7 @@ public class ClienteSistema {
                                     + "|---------------------------------------------------------------------|" + "\n");
 
                             int elecTipo = seleccionarOpcion();
-                            List<EventoDTO> listaEventosTipo = null;
+                            List<EventoDTO> listaEventosTipo = new ArrayList();
                             switch (elecTipo) {
                                 case 1:
                                     listaEventosTipo = sistema.buscarEventosPorTipo("CHARLA");
@@ -261,13 +263,19 @@ public class ClienteSistema {
                                     break;
                             }
 
-                            if(menuListadoEvento(listaEventosTipo)) {
-                                int elecEventoTipo = seleccionarOpcion();
-
-                                EventoDTO eventoTipo = listaEventosTipo.get(elecEventoTipo);
-                                menuEvento(sistema, eventoTipo);
-                            }
-                           
+                            EventoDTO eventoTipo = new EventoDTO();
+                            do {
+                                if(menuListadoEvento(listaEventosTipo)) {
+                                    int elecEventoTipo = seleccionarOpcion();
+                                    if(elecEventoTipo <= 0) {
+                                        break;
+                                    }
+                                    eventoTipo = listaEventosTipo.get(elecEventoTipo-1);
+                                } else {
+                                    break;
+                                }
+                            } while(!menuEvento(sistema, eventoTipo));
+                            
                             break;
 
                         case 2:
@@ -278,16 +286,18 @@ public class ClienteSistema {
                                     + "|- Introduzca la descripción del evento que desea buscar:");
                             descEvento = capt.next();
 
-                            System.out.print("|- Estamos buscando sus eventos... \n");
-
                             List<EventoDTO> listaEventosDesc = sistema.buscarEventosPorDescripcion(descEvento);
                             
-                            if(menuListadoEvento(listaEventosDesc)) {
-                                int elecEventoDesc = seleccionarOpcion();
-
-                                EventoDTO eventoDesc = listaEventosDesc.get(elecEventoDesc);
-                                menuEvento(sistema, eventoDesc);
-                            }
+                            EventoDTO eventoDesc = new EventoDTO();
+                            do {
+                                if(menuListadoEvento(listaEventosDesc)) {
+                                    int elecEventoDesc = seleccionarOpcion();
+                                    if(elecEventoDesc <= 0) {
+                                        break;
+                                    }
+                                    eventoDesc = listaEventosDesc.get(elecEventoDesc-1);
+                                }
+                            } while(!menuEvento(sistema, eventoDesc));
                             
                             break;
                     }
@@ -297,12 +307,16 @@ public class ClienteSistema {
                 case 4:
                     List<EventoDTO> listaEventos = sistema.listarEventos();
 
-                    if(menuListadoEvento(listaEventos)) {
-                        int elecEvento = seleccionarOpcion();
-
-                        EventoDTO evento = listaEventos.get(elecEvento);
-                        menuEvento(sistema, evento);
-                    }
+                    EventoDTO evento = new EventoDTO();
+                            do {
+                                if(menuListadoEvento(listaEventos)) {
+                                    int elecEvento = seleccionarOpcion();
+                                    if(elecEvento <= 0) {
+                                        break;
+                                    }
+                                    evento = listaEventos.get(elecEvento-1);
+                                }
+                            } while(!menuEvento(sistema, evento));
 
                     break;
 
@@ -405,7 +419,7 @@ public class ClienteSistema {
                         Date fecha = new Date(anio, mes, dia);
 
                         System.out.println("\n|- Los datos son correctos. Creando evento...");
-                        sistema.nuevoEvento(nombre, fecha, tipo, descripcion, capacidad, localizacion, new ArrayList(), user.getUsername());
+                        sistema.nuevoEvento(nombre, fecha, tipo, descripcion, capacidad, localizacion, user.getUsername());
 
                         EventoDTO newEvento = sistema.buscarEventoPorNombre(nombre);
                         System.out.print("\n|- Evento creado correctamente. ");
@@ -419,7 +433,7 @@ public class ClienteSistema {
                         System.out.print("|- Esta acción no está disponible, seleccione una del menú. ");
 
                     } else {
-
+                        System.out.print("|- Próximamente (Opción 6) ");
                     }
                     break;
 
@@ -428,7 +442,7 @@ public class ClienteSistema {
                         System.out.print("|- Esta acción no está disponible, seleccione una del menú. ");
 
                     } else {
-
+                        System.out.print("|- Próximamente (Opción 7) ");
                     }
                     break;
 
