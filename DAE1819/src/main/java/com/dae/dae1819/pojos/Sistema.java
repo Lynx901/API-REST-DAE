@@ -84,16 +84,17 @@ public class Sistema extends SistemaInterface{
         }
         
         for (Map.Entry<String, Usuario> entry : usuarios.entrySet()) {
-            Usuario u = entry.getValue();
-            if (u != null && u.getToken().equals(token)){
-                 return true;
+            if(entry != null) {
+                Usuario u = entry.getValue();
+                if (u.getToken() != null && u.getToken().equals(token)){
+                    return true;
+                }
             }
         }
         return false;
     }
     
     /* ACCIONES USUARIOS SIN LOGEAR */
-    
     @Override
     public void nuevoUsuario(String username, String password, String email){
         Usuario usuario = new Usuario(username, password, email);

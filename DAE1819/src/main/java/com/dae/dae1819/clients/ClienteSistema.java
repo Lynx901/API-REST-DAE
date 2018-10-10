@@ -107,21 +107,22 @@ public class ClienteSistema {
         user = null;
         Scanner capt = new Scanner(System.in);
         int eleccion;
-
         
         System.out.print("\n|---------------------------------------------------------------------|" + "\n"
-                    + "|-                                                                   -|" + "\n"
-                    + "|-                            Práctica 1                             -|" + "\n"
-                    + "|-                        Gestión de Eventos                         -|" + "\n"
-                    + "|-                                                                   -|" + "\n"
-                    + "|---------------------------------------------------------------------|" + "\n"
-                    + "|- ¿Desea comenzar la ejecución con algunos datos de prueba? [S/N]: ");
-        
-        String testData = capt.next();
+                        + "|-                                                                   -|" + "\n"
+                        + "|-                            Práctica 1                             -|" + "\n"
+                        + "|-                        Gestión de Eventos                         -|" + "\n"
+                        + "|-                                                                   -|" + "\n"
+                        + "|---------------------------------------------------------------------|" + "\n");
 
-        if (testData.equalsIgnoreCase("n") || testData.equals("0")) {
-            eleccion = 0;
-        } else {
+        String testData;
+        do {
+            System.out.print("|- ¿Desea comenzar la ejecución con algunos datos de prueba? [S/N]: ");
+            testData = capt.next();
+            boolean test = (testData.equalsIgnoreCase("S") || testData.equalsIgnoreCase("N"));
+        } while(!(testData.equalsIgnoreCase("S") || testData.equalsIgnoreCase("N")));
+            
+        if (testData.equalsIgnoreCase("s")) {
             sistema.nuevoUsuario("admin", "admin", "admin@ujaen.es");
             sistema.nuevoUsuario("user1", "asdf", "user@uja.es");
             sistema.nuevoUsuario("user2", "1234", "usuario@gmail.com");
@@ -132,11 +133,8 @@ public class ClienteSistema {
             sistema.nuevoEvento("Partido2", new Date(), "ACTIVIDAD_DEPORTIVA", "Partido de 1ª división", (Integer) 5, "Campo de fútbol", "user1");
             System.out.println("|- Creados 4 usuarios y 3 eventos                                    -|");
         }
-        
-        
 
         do {
-            
             System.out.print("|---------------------------------------------------------------------|" + "\n"
                     + "|- Seleccione una opción:                                            -|" + "\n"
                     + "|-                                                                   -|" + "\n");
@@ -201,19 +199,21 @@ public class ClienteSistema {
                 case 2:
                     if (!sistema.isTokenValid(token)) {
                         String nombreusuario, contrasena;
-                        
+
                         System.out.print("\n|- Nombre de usuario: ");
                         nombreusuario = capt.next();
-                        
+
                         System.out.print("|- Contraseña: ");
                         contrasena = capt.next();
                         token = sistema.login(nombreusuario, contrasena);
-                        if (token != 0) {
+
+                        if (sistema.isTokenValid(token)) {
                             System.out.print("\n|- Ha iniciado sesión correctamente.\n");
                             user = sistema.buscarUsuario(nombreusuario);
                         } else {
                             System.out.print("\n|- Algo ha fallado. Compruebe los datos de inicio de sesión.\n");
                         }
+
                     } else {
                         System.out.print("|---------------------------------------------------------------------|" + "\n"
                                 + "|- Username: \t" + user.getUsername() + "\n"
@@ -275,7 +275,7 @@ public class ClienteSistema {
                                     break;
                                 }
                             } while(!menuEvento(sistema, eventoTipo));
-                            
+
                             break;
 
                         case 2:
@@ -287,7 +287,7 @@ public class ClienteSistema {
                             descEvento = capt.next();
 
                             List<EventoDTO> listaEventosDesc = sistema.buscarEventosPorDescripcion(descEvento);
-                            
+
                             EventoDTO eventoDesc = new EventoDTO();
                             do {
                                 if(menuListadoEvento(listaEventosDesc)) {
@@ -298,7 +298,7 @@ public class ClienteSistema {
                                     eventoDesc = listaEventosDesc.get(elecEventoDesc-1);
                                 }
                             } while(!menuEvento(sistema, eventoDesc));
-                            
+
                             break;
                     }
 
@@ -453,7 +453,7 @@ public class ClienteSistema {
                     }
                     break;
             }
-//            
+//
 //            if (eleccion != 0) {
 //                capt = new Scanner(System.in);
 //                System.out.print("|- ¿Continuar? [Y/N]: ");
@@ -461,7 +461,7 @@ public class ClienteSistema {
 //
 //                if (end.equalsIgnoreCase("n") || end.equals("0")) {
 //                    eleccion = 0;
-//                } 
+//                }
 //            }
 
         } while (eleccion != 0);
