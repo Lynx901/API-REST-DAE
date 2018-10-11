@@ -232,6 +232,30 @@ public class Sistema extends SistemaInterface{
         return false;
     }
     
+    @Override
+    public List<EventoDTO> buscarEventosInscritos(UsuarioDTO user) {
+        List<EventoDTO> eventosInscritos = new ArrayList();
+        
+        for (String nombre : user.getEventos()) {
+            EventoDTO e = this.buscarEventoPorNombre(nombre);
+             eventosInscritos.add(e);
+        }
+        
+        return eventosInscritos;
+    }
+    
+    @Override
+    public List<EventoDTO> buscarEventosOrganizados(UsuarioDTO user) {
+        List<EventoDTO> eventosOrganizados = new ArrayList();
+        
+        for (String nombre : user.getOrganizados()) {
+            EventoDTO e = this.buscarEventoPorNombre(nombre);
+             eventosOrganizados.add(e);
+        }
+        
+        return eventosOrganizados;
+    }
+    
     
     public UsuarioDTO usuarioToDTO(Usuario u) {
         UsuarioDTO uDTO = new UsuarioDTO();
@@ -278,7 +302,5 @@ public class Sistema extends SistemaInterface{
         
         return eDTO;
     }
-    
-    
     
 }

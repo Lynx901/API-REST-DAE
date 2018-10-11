@@ -68,13 +68,13 @@ public class ClienteSistema {
         return true;
     }
 
-    private boolean menuListadoEvento(List<EventoDTO> listaEventos) {
+    private boolean menuListadoEvento(List<EventoDTO> listaEventos, String nombreListado) {
         if (listaEventos.isEmpty()) {
             System.out.println("|- No existen eventos disponibles actualmente.                       -|");
             return false;
         } else {
             System.out.println("|---------------------------------------------------------------------|");
-            System.out.println("|- Lista de eventos disponibles: ");
+            System.out.println("|- Lista de eventos " + nombreListado + ": ");
 
             for (int i = 1; i <= listaEventos.size(); i++) {
                 System.out.println("|- [" + i + "]. " + listaEventos.get(i - 1).getNombre());
@@ -348,26 +348,33 @@ public class ClienteSistema {
 
                             int elecTipo = seleccionarOpcion();
                             List<EventoDTO> listaEventosTipo = new ArrayList();
+                            String tipo = "";
                             switch (elecTipo) {
                                 case 1:
                                     listaEventosTipo = sistema.buscarEventosPorTipo("CHARLA");
+                                    tipo = "CHARLA";
                                     break;
                                 case 2:
                                     listaEventosTipo = sistema.buscarEventosPorTipo("CURSO");
+                                    tipo = "CURSO";
                                     break;
                                 case 3:
                                     listaEventosTipo = sistema.buscarEventosPorTipo("ACTIVIDAD_DEPORTIVA");
+                                    tipo = "ACTIVIDAD_DEPORTIVA";
                                     break;
                                 case 4:
                                     listaEventosTipo = sistema.buscarEventosPorTipo("VISITA_CULTURAL");
+                                    tipo = "VISITA_CULTURAL";
                                     break;
                                 default:
                                     break;
                             }
+                            
+                            tipo = "del tipo " + tipo;
 
                             EventoDTO eventoTipo = new EventoDTO();
                             do {
-                                if (menuListadoEvento(listaEventosTipo)) {
+                                if (menuListadoEvento(listaEventosTipo, tipo)) {
                                     int elecEventoTipo = seleccionarOpcion();
                                     if (elecEventoTipo <= 0) {
                                         break;
@@ -392,12 +399,14 @@ public class ClienteSistema {
 
                             EventoDTO eventoDesc = new EventoDTO();
                             do {
-                                if (menuListadoEvento(listaEventosDesc)) {
+                                if (menuListadoEvento(listaEventosDesc, "con '" + descEvento + "' en la descripción")) {
                                     int elecEventoDesc = seleccionarOpcion();
                                     if (elecEventoDesc <= 0) {
                                         break;
                                     }
                                     eventoDesc = listaEventosDesc.get(elecEventoDesc - 1);
+                                } else {
+                                    break;
                                 }
                             } while (!menuEvento(sistema, eventoDesc));
 
@@ -411,12 +420,14 @@ public class ClienteSistema {
 
                     EventoDTO evento = new EventoDTO();
                     do {
-                        if (menuListadoEvento(listaEventos)) {
+                        if (menuListadoEvento(listaEventos, "disponibles actualmente")) {
                             int elecEvento = seleccionarOpcion();
                             if (elecEvento <= 0) {
                                 break;
                             }
                             evento = listaEventos.get(elecEvento - 1);
+                        } else {
+                            break;
                         }
                     } while (!menuEvento(sistema, evento));
 
@@ -533,8 +544,23 @@ public class ClienteSistema {
                     if (!sistema.isTokenValid(token)) {
                         System.out.println("|- Esta acción no está disponible, seleccione una del menú.          -|");
                     } else {
-                        System.out.println("|- Próximamente (Opción 6) ");
+                        List<EventoDTO> listaEventosInscritos = sistema.buscarEventosInscritos(user);
+                        
+
+                        EventoDTO eventoUsuario = new EventoDTO();
+                        do {
+                            if (menuListadoEvento(listaEventosInscritos, "en los que se ha inscrito")) {
+                                int elecEvento = seleccionarOpcion();
+                                if (elecEvento <= 0) {
+                                    break;
+                                }
+                                evento = listaEventosInscritos.get(elecEvento - 1);
+                            } else {
+                                break;
+                            }
+                        } while (!menuEvento(sistema, eventoUsuario));
                     }
+                    
                     break;
 
                 case 7:
@@ -542,7 +568,21 @@ public class ClienteSistema {
                         System.out.println("|- Esta acción no está disponible, seleccione una del menú.          -|");
 
                     } else {
-                        System.out.println("|- Próximamente (Opción 7) ");
+                        List<EventoDTO> listaEventosOrganizados = sistema.buscarEventosOrganizados(user);
+                        
+
+                        EventoDTO eventoUsuario = new EventoDTO();
+                        do {
+                            if (menuListadoEvento(listaEventosOrganizados, "organizados")) {
+                                int elecEvento = seleccionarOpcion();
+                                if (elecEvento <= 0) {
+                                    break;
+                                }
+                                evento = listaEventosOrganizados.get(elecEvento - 1);
+                            } else {
+                                break;
+                            }
+                        } while (!menuEvento(sistema, eventoUsuario));
                     }
                     break;
 
