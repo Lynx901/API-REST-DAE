@@ -182,12 +182,12 @@ public class Evento {
     }
     
     public boolean inscribir(Usuario u) {
+        boolean ret = false;
         if(this.asistentes.size() < this.capacidad) {
-            this.asistentes.add(u);
-            return true;
+            ret = true;
         }
-        
-        return false;
+        this.asistentes.add(u);
+        return ret;
     }
     
     public boolean cancelar() {

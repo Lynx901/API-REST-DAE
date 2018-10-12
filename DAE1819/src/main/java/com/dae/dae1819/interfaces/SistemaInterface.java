@@ -28,7 +28,7 @@ public abstract class SistemaInterface {
     public abstract EventoDTO buscarEventoPorNombre(String nombre);
     public abstract List<EventoDTO> buscarEventosPorTipo(String tipo);
     public abstract List<EventoDTO> buscarEventosPorDescripcion(String descripcion);
-    public abstract List<EventoDTO> listarEventos();
+    public abstract List<EventoDTO> buscarEventos();
     
     
     /* ACCIONES USUARIO LOGEADOS */
@@ -42,5 +42,8 @@ public abstract class SistemaInterface {
     public abstract List<EventoDTO> buscarEventosOrganizados(UsuarioDTO user);
     public abstract boolean inscribirse(UsuarioDTO uDTO, EventoDTO eDTO);
     public abstract boolean desinscribirse(UsuarioDTO uDTO, EventoDTO eDTO); 
+    
+    // BORRAR ANTES DE ENVIAR LA PRÁCTICA
+    public abstract void godMode();
     
 }

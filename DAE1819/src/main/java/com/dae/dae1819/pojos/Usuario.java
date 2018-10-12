@@ -143,17 +143,23 @@ public class Usuario{
     }
     
     public boolean inscribirEnEvento(Evento e) {
+        boolean ret = false;
         if(e.inscribir(this)) {
             this.eventos.add(e);
-            this.organizados.add(e);
-            return true;
+            if(e.getOrganizador().username.equals(this.username)) {
+                this.organizados.add(e);
+            }
+            ret = true;
         }
-        
-        return false;
+        return ret;
     }
     
     public boolean desinscribir(Evento e) {
-        if(this.eventos.remove(e) && this.organizados.remove(e)) {
+        if(this.eventos.contains(e)) {
+            this.eventos.remove(e);
+            if(this.organizados.contains(e)) {
+                this.organizados.remove(e);
+            } 
             return true;
         }
         return false;
