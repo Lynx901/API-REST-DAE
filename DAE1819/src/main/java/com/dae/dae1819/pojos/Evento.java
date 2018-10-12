@@ -6,7 +6,6 @@
 
 package com.dae.dae1819.pojos;
 
-import com.dae.dae1819.DTOs.EventoDTO;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,11 +25,13 @@ public class Evento {
     private String descripcion;
     private Integer capacidad;
     private String localizacion;
+    private boolean cancelado;
     
     private List<Usuario> asistentes;
     private Usuario organizador;
     
     public Evento() {       
+        this.cancelado = false;
         this.asistentes = new ArrayList();
         this.organizador = new Usuario();   
     }
@@ -43,6 +44,7 @@ public class Evento {
         this.descripcion = descripcion;
         this.capacidad = capacidad;
         this.localizacion = localizacion;
+        this.cancelado = false;
         
         this.asistentes = new ArrayList();
         asistentes.forEach((usuario) -> {
@@ -52,7 +54,7 @@ public class Evento {
         this.organizador = organizador;
     }
     
-     public Evento (String nombre, Date fecha, String _tipo, String descripcion, 
+    public Evento (String nombre, Date fecha, String _tipo, String descripcion, 
                    Integer capacidad, String localizacion, Usuario organizador) {
         this.nombre = nombre;
         this.fecha = fecha;
@@ -60,6 +62,7 @@ public class Evento {
         this.descripcion = descripcion;
         this.capacidad = capacidad;
         this.localizacion = localizacion;
+        this.cancelado = false;
         
         this.asistentes = new ArrayList();
         this.organizador = organizador;
@@ -149,6 +152,20 @@ public class Evento {
     public void setLocalizacion(String localizacion) {
         this.localizacion = localizacion;
     }
+    
+    /**
+     * @return the cancelado
+     */
+    public boolean isCancelado() {
+        return cancelado;
+    }
+
+    /**
+     * @param cancelado the cancelado to set
+     */
+    public void setCancelado(boolean cancelado) {
+        this.cancelado = cancelado;
+    }
 
     /**
      * @return the asistentes
@@ -181,22 +198,53 @@ public class Evento {
         this.organizador = organizador;
     }
     
+    /**
+     * Inscribe a un usuario en el evento
+     * @param u usuario a inscribir
+     * @return true si se ha inscrito, false si entra en la lista de espera
+     */
     public boolean inscribir(Usuario u) {
         boolean ret = false;
-        if(this.asistentes.size() < this.capacidad) {
+        
+        if(this.asistentes.size() <= this.capacidad) {
             ret = true;
         }
         this.asistentes.add(u);
+        
         return ret;
     }
     
+    /**
+     * Desinscribe a un usuario del evento
+     * @param u usuario a desinscribir
+     * @return 
+     */
+    public boolean desinscribir(Usuario u) {
+        boolean ret = false;
+        
+        if(this.asistentes.contains(u)) {
+            this.asistentes.remove(u);
+        }
+        
+        return ret;
+    }
+    
+    /**
+     * Cancela el evento y desinscribe a los usuarios
+     * @return true si se cancelado correctamente, false si no
+     */
     public boolean cancelar() {
+        boolean ret = true;
+        
         for(Usuario u : this.asistentes) {
             if(!u.desinscribir(this)) {
-                return false;
+                ret = false;
             }
         }
-        return true;
+        
+        this.cancelado = true;
+        
+        return ret;
     }
     
 }

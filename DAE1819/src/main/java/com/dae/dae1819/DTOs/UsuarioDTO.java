@@ -17,10 +17,12 @@ public class UsuarioDTO {
     
     private List<String> eventos;
     private List<String> organizados;
+    private List<String> listaEspera;
     
     public UsuarioDTO() {
         eventos = new ArrayList();
         organizados = new ArrayList();
+        listaEspera = new ArrayList();
     }
     
     public UsuarioDTO(String username, String email) {
@@ -28,6 +30,7 @@ public class UsuarioDTO {
         this.email = email;
         eventos = new ArrayList();
         organizados = new ArrayList();
+        listaEspera = new ArrayList();
     }
     
     public UsuarioDTO(String username, String email, List<String> eventos, List<String> organizados) {
@@ -42,6 +45,11 @@ public class UsuarioDTO {
         this.organizados.clear();
         organizados.forEach((evento) -> {
             this.organizados.add(evento);
+        });
+        
+        this.listaEspera.clear();
+        listaEspera.forEach((evento) -> {
+            this.listaEspera.add(evento);
         });
     }
 
@@ -105,5 +113,19 @@ public class UsuarioDTO {
         organizados.forEach((evento) -> {
             this.organizados.add(evento);
         });
+    }
+
+    /**
+     * @return the listaEspera
+     */
+    public List<String> getListaEspera() {
+        return listaEspera;
+    }
+
+    /**
+     * @param listaEspera the listaEspera to set
+     */
+    public void setListaEspera(List<String> listaEspera) {
+        this.listaEspera = listaEspera;
     }
 }

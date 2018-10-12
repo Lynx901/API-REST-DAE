@@ -19,12 +19,14 @@ public class EventoDTO {
     private String descripcion;
     private Integer capacidad;
     private String localizacion;
+    private boolean cancelado;
     
     private List<String> asistentes;
     private String organizador;
     
     public EventoDTO() {    
         nombre = "";
+        this.cancelado = false;
         asistentes = new ArrayList();
     }
     
@@ -36,6 +38,7 @@ public class EventoDTO {
         this.descripcion = descripcion;
         this.capacidad = capacidad;
         this.localizacion = localizacion;
+        this.cancelado = false;
         
         this.asistentes = new ArrayList();
         asistentes.forEach((usuario) -> {
@@ -158,6 +161,20 @@ public class EventoDTO {
      */
     public void setOrganizador(String organizador) {
         this.organizador = organizador;
+    }
+
+    /**
+     * @return the cancelado
+     */
+    public boolean isCancelado() {
+        return cancelado;
+    }
+
+    /**
+     * @param cancelado the cancelado to set
+     */
+    public void setCancelado(boolean cancelado) {
+        this.cancelado = cancelado;
     }
     
 }

@@ -21,6 +21,7 @@ public class Usuario{
     private Integer token;
     
     private List<Evento> eventos;
+    private List<Evento> listaEspera;
     private List<Evento> organizados;
     
     public Usuario() {
@@ -34,6 +35,7 @@ public class Usuario{
         this.email = email;
         eventos = new ArrayList();
         organizados = new ArrayList();
+        listaEspera = new ArrayList();
     }
     
     public Usuario(String username, String password, String email, List<Evento> eventos, List<Evento> organizados) {
@@ -49,6 +51,11 @@ public class Usuario{
         this.organizados = new ArrayList();
         for (Evento evento : organizados) {
             this.organizados.add(evento);
+        }
+        
+        this.listaEspera = new ArrayList();
+        for (Evento evento : listaEspera) {
+            this.listaEspera.add(evento);
         }
     }
 
@@ -110,6 +117,23 @@ public class Usuario{
             this.eventos.add(evento);
         }
     }
+    
+    /**
+     * @return the eventos
+     */
+    public List<Evento> getListaEspera() {
+        return listaEspera;
+    }
+
+    /**
+     * @param listaEspera the eventos in the lista de espera to set
+     */
+    public void setListaEspera(List<Evento> listaEspera) {
+        this.listaEspera.clear();
+        for (Evento evento : listaEspera) {
+            this.listaEspera.add(evento);
+        }
+    }
 
     /**
      * @return the organizados
@@ -142,26 +166,43 @@ public class Usuario{
         this.token = token;
     }
     
+    /**
+     * Inscribe al usuario en un evento y maneja si es el organizador del evento
+     * @param e evento en el que se va a inscribir al usuario
+     * @return true si se inscribe, false si entra en la lista de espera
+     */
     public boolean inscribirEnEvento(Evento e) {
         boolean ret = false;
-        if(e.inscribir(this)) {
+        
+        if(!e.inscribir(this)) {
+            this.listaEspera.add(e);
+        } else {
             this.eventos.add(e);
             if(e.getOrganizador().username.equals(this.username)) {
                 this.organizados.add(e);
             }
             ret = true;
         }
+        
         return ret;
     }
     
+    /**
+     * Desinscribe al usuario de un evento. Si es el organizador, no se elimina
+     * de su listado, ya que el evento no se cancela si el organizador no asiste
+     * @param e evento del que se va a desinscribir al usuario
+     * @return true si se desinscribe bien, false si no
+     */
     public boolean desinscribir(Evento e) {
-        if(this.eventos.contains(e)) {
-            this.eventos.remove(e);
-            if(this.organizados.contains(e)) {
-                this.organizados.remove(e);
-            } 
-            return true;
+        boolean ret = false;
+        
+        if(this.eventos.contains(e)) { // Comprobamos que el usuario asista al evento
+            if(e.desinscribir(this)) { // Comprobamos que se desinscribe del evento antes de borrar el evento de la lista de inscritos
+                this.eventos.remove(e);
+                ret = true;
+            }
         }
-        return false;
+        
+        return ret;
     }
 }

@@ -77,6 +77,11 @@ public class Sistema extends SistemaInterface{
         this.eventos = eventos;
     }
     
+    /**
+     * Comprueba si el token de sesión es válido
+     * @param token el token a comprobar
+     * @return true si el token es válido, false si no
+     */
     @Override
     public boolean isTokenValid(Integer token) {
         if(token == -1) {
@@ -95,12 +100,24 @@ public class Sistema extends SistemaInterface{
     }
     
     /* ACCIONES USUARIOS SIN LOGEAR */
+    /**
+     * Registra a un usuario en el sistema
+     * @param username el nombre de usuario
+     * @param password la contraseña del usuario
+     * @param email el email del usuario
+     */
     @Override
     public void nuevoUsuario(String username, String password, String email){
         Usuario usuario = new Usuario(username, password, email);
         usuarios.put(username, usuario);
     };
     
+    /**
+     * Inicia la sesión de un usuario registrado en el sistema
+     * @param username el nombre de usuario
+     * @param password la contraseña del usuario
+     * @return un token válido si se ha iniciado sesión correctamente, 0 si no
+     */
     @Override
     public Integer login(String username, String password) {
         Usuario user = usuarios.get(username);
@@ -114,23 +131,33 @@ public class Sistema extends SistemaInterface{
         return 0;
     };
     
+    /**
+     * Busca un evento por el nombre del mismo
+     * @param nombre el nombre del evento a buscar
+     * @return un EventoDTO del evento encontrado, o un EventoDTO vacío si no lo encuentra
+     */
     @Override
     public EventoDTO buscarEventoPorNombre(String nombre) {
         EventoDTO e = new EventoDTO();
         for (Map.Entry<String, Evento> entry : eventos.entrySet()) {
-            if (entry.getValue().getNombre().equals(nombre)){
+            if (entry.getValue().getNombre().equalsIgnoreCase(nombre)){
                 e = eventoToDTO(entry.getValue());
             }
         }
         return e;
     };
     
+    /**
+     * Busca un evento por el tipo del mismo
+     * @param tipo el tipo del evento a buscar
+     * @return una lista de EventoDTO encontrados, o una lista vacía si no encuentra ninguno
+     */
     @Override
     public List<EventoDTO> buscarEventosPorTipo(String tipo){
         List<EventoDTO> eventosPorTipo = new ArrayList();
         
         for (Map.Entry<String, Evento> entry : eventos.entrySet()) {
-            if (entry.getValue().getTipo().equals(tipo)){
+            if (entry.getValue().getTipo().equalsIgnoreCase(tipo)){
                 EventoDTO e = eventoToDTO(entry.getValue());
                 eventosPorTipo.add(e);
             }
@@ -138,6 +165,11 @@ public class Sistema extends SistemaInterface{
         return eventosPorTipo;
     };
     
+    /**
+     * Busca un evento por la descripción del mismo
+     * @param descripcion la descripción del evento a buscar
+     * @return una lista de EventoDTO encontrados, o una lista vacía si no encuentra ninguno
+     */
     @Override
     public List<EventoDTO> buscarEventosPorDescripcion(String descripcion){
         List<EventoDTO> eventosPorDescripcion = new ArrayList();
@@ -153,6 +185,10 @@ public class Sistema extends SistemaInterface{
         return eventosPorDescripcion;
     };
     
+    /**
+     * Lista todos los eventos del sistema
+     * @return una lista con todos los eventos creados en forma DTO (vacía si no encuentra ninguno)
+     */
     @Override
     public List<EventoDTO> buscarEventos() {
         List<EventoDTO> lista = new ArrayList();
@@ -163,27 +199,45 @@ public class Sistema extends SistemaInterface{
         return lista;
     }
     
-    private Usuario buscarUserPorUsername(String username) {
-        Usuario u = usuarios.get(username);
-        return (u == null) ? new Usuario() : u;
-    }
-    
     /* ACCIONES USUARIOS LOGEADOS */
+    /**
+     * Crea un nuevo evento
+     * @param nombre el nombre del evento
+     * @param fecha la fecha en la que se realiza el evento
+     * @param tipo el tipo del evento
+     * @param descripcion la descripción del evento
+     * @param capacidad la capacidad de asistentes al evento
+     * @param localizacion el lugar donde se realiza el evento
+     * @param organizador el usuario que ha creado el evento
+     */
     @Override
     public void nuevoEvento(String nombre,      Date fecha,         String tipo, 
                             String descripcion, Integer capacidad,  String localizacion,
                             String organizador) {
+        
         Usuario u = usuarios.get(organizador);
         Evento evento = new Evento(nombre, fecha, tipo, descripcion, capacidad, localizacion, u);
+        
         u.inscribirEnEvento(evento);
+        
         eventos.put(nombre, evento);
     };
     
+    /**
+     * Cancela un evento, borrando en cascada
+     * @param nombreEvento el nombre del evento a borrar
+     * @return true si se ha cancelado bien, false si ha habido algún error
+     */
     @Override
-    public boolean cancelarEvento(String nombreEvento) {
+    public boolean cancelarEvento(String nombreEvento) {   
         return eventos.get(nombreEvento).cancelar();
     };
     
+    /**
+     * Busca un usuario por su nombre de usuario
+     * @param username el nombre de usuario a buscar
+     * @return un UsuarioDTO del usuario encontrado, o uno vacío si no encuentra nada 
+     */
     @Override
     public UsuarioDTO buscarUsuario(String username) {
         Usuario u = new Usuario();
@@ -194,33 +248,58 @@ public class Sistema extends SistemaInterface{
         return usuarioDTO;        
     }
     
+    /**
+     * Inscribe a un usuario en un evento
+     * @param uDTO el usuario al que se inscribirá en el evento
+     * @param eDTO el evento en el que se inscribirá el usuario
+     * @return true si se inscribe al usuario, false si entra en la lista de espera
+     */
     @Override
     public boolean inscribirse(UsuarioDTO uDTO, EventoDTO eDTO) {
+        boolean ret = false;
+        
         Usuario u = usuarios.get(uDTO.getUsername());
         Evento e = eventos.get(eDTO.getNombre());
-        if(!e.getAsistentes().contains(u)) {
+        if(!e.getAsistentes().contains(u)) { // Comprobamos que no esté el usuario ya inscrito previamente
             if(u.inscribirEnEvento(e)) {
-                usuarios.replace(uDTO.getUsername(), u);
-                eventos.replace(eDTO.getNombre(), e);
-                return true;
+                ret = true;
             }
+            // Si entra en la lista de espera, igualmente los incluímos en el mapa con las listas actualizadas
+            usuarios.replace(uDTO.getUsername(), u);
+            eventos.replace(eDTO.getNombre(), e);
         }
-        return false;
+        
+        return ret;
     }
     
+    /**
+     * Desinscribe a un usuario de un evento
+     * @param uDTO el usuario al que se desinscribirá del evento
+     * @param eDTO el evento del que se desinscribirá el usuario
+     * @return true si se ha desinscrito correctamente, false si no
+     */
     @Override
     public boolean desinscribirse(UsuarioDTO uDTO, EventoDTO eDTO) {
+        boolean ret = false;
         Usuario u = usuarios.get(uDTO.getUsername());
         Evento e = eventos.get(eDTO.getNombre());
         
-        if(u.desinscribir(e)) {
-            usuarios.replace(uDTO.getUsername(), u);
-            eventos.replace(eDTO.getNombre(), e);
-            return true;
+        if(e.getAsistentes().contains(u)) { // Comprobamos que el usuario esté inscrito
+            if(u.desinscribir(e)) {
+                usuarios.replace(uDTO.getUsername(), u);
+                eventos.replace(eDTO.getNombre(), e);
+                ret = true;
+            }
         }
-        return false;
+        
+        return ret;
     }
     
+    /**
+     * Busca los eventos en los que se ha inscrito el usuario
+     * @param user usuario del que se comprobará el listado de eventos
+     * @return una lista de EventoDTO con los eventos inscritos, o una vacía si no encuentra ninguno
+     */
     @Override
     public List<EventoDTO> buscarEventosInscritos(UsuarioDTO user) {
         List<EventoDTO> eventosInscritos = new ArrayList();
@@ -233,6 +312,11 @@ public class Sistema extends SistemaInterface{
         return eventosInscritos;
     }
     
+    /**
+     * Busca los eventos organizados por el usuario
+     * @param user usuario del que se comprobará el listado de eventos organizados
+     * @return una lista de EventoDTO con los eventos organizados, o una vacía si no encuentra ninguno
+     */
     @Override
     public List<EventoDTO> buscarEventosOrganizados(UsuarioDTO user) {
         List<EventoDTO> eventosOrganizados = new ArrayList();
@@ -245,7 +329,11 @@ public class Sistema extends SistemaInterface{
         return eventosOrganizados;
     }
     
-    
+    /**
+     * Mapea un Usuario en un UsuarioDTO
+     * @param u el usuario a mapear
+     * @return UsuarioDTO mapeado
+     */
     public UsuarioDTO usuarioToDTO(Usuario u) {
         UsuarioDTO uDTO = new UsuarioDTO();
         uDTO.setUsername(u.getUsername());
@@ -257,7 +345,9 @@ public class Sistema extends SistemaInterface{
                 e.add(evento.getNombre());
             });
             uDTO.setEventos(e);
-            
+        }
+        
+        if(!u.getOrganizados().isEmpty()) {
             List<String> o = new ArrayList();
             u.getOrganizados().forEach((organizado) -> {
                 o.add(organizado.getNombre());
@@ -265,9 +355,22 @@ public class Sistema extends SistemaInterface{
             uDTO.setOrganizados(o);
         }
         
+        if(!u.getListaEspera().isEmpty()) {
+            List<String> l = new ArrayList();
+            u.getListaEspera().forEach((listaEspera) -> {
+                l.add(listaEspera.getNombre());
+            });
+            uDTO.setListaEspera(l);
+        }
+        
         return uDTO;
     }
     
+    /**
+     * Mapea un Evento en un EventoDTO
+     * @param e el evento a mapear
+     * @return EventoDTO mapeado
+     */
     public EventoDTO eventoToDTO(Evento e) {
         EventoDTO eDTO = new EventoDTO();
         eDTO.setNombre(e.getNombre());
@@ -293,6 +396,9 @@ public class Sistema extends SistemaInterface{
     }
     
     // BORRAR ANTES DE ENVIAR LA PRÁCTICA
+    /**
+     * Muestra los datos de todas las instancias en memoria con las que se trabaja
+     */
     @Override
     public void godMode() {
         for (Map.Entry<String, Usuario> entry : usuarios.entrySet()) {

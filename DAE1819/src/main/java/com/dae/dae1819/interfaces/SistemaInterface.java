@@ -23,9 +23,9 @@ public abstract class SistemaInterface {
     public abstract boolean isTokenValid(Integer token);
     
     /* ACCIONES USUARIOS SIN LOGEAR */
-    public abstract void nuevoUsuario(String username, String password, String email);
-    public abstract Integer login(String username, String password);
-    public abstract EventoDTO buscarEventoPorNombre(String nombre);
+    public abstract void            nuevoUsuario(String username, String password, String email);
+    public abstract Integer         login(String username, String password);
+    public abstract EventoDTO       buscarEventoPorNombre(String nombre);
     public abstract List<EventoDTO> buscarEventosPorTipo(String tipo);
     public abstract List<EventoDTO> buscarEventosPorDescripcion(String descripcion);
     public abstract List<EventoDTO> buscarEventos();
@@ -36,12 +36,12 @@ public abstract class SistemaInterface {
                                      String descripcion, Integer capacidad, String localizacion, 
                                      String organizador);
     
-    public abstract boolean cancelarEvento(String nombreEvento);
-    public abstract UsuarioDTO buscarUsuario(String username);
+    public abstract boolean         cancelarEvento(String nombreEvento);
+    public abstract UsuarioDTO      buscarUsuario(String username);
     public abstract List<EventoDTO> buscarEventosInscritos(UsuarioDTO uDTO);
     public abstract List<EventoDTO> buscarEventosOrganizados(UsuarioDTO user);
-    public abstract boolean inscribirse(UsuarioDTO uDTO, EventoDTO eDTO);
-    public abstract boolean desinscribirse(UsuarioDTO uDTO, EventoDTO eDTO); 
+    public abstract boolean         inscribirse(UsuarioDTO uDTO, EventoDTO eDTO);
+    public abstract boolean         desinscribirse(UsuarioDTO uDTO, EventoDTO eDTO); 
     
     // BORRAR ANTES DE ENVIAR LA PRÁCTICA
     public abstract void godMode();
