@@ -41,7 +41,7 @@ public class ClienteSistema {
         Scanner sc = new Scanner(System.in);
 
         do {
-            System.out.print("|- Opción: ");
+            System.out.print("|- Opción (0 para salir): ");
             try {
                 opt = sc.nextInt();
                 badOption = false;
@@ -82,6 +82,10 @@ public class ClienteSistema {
 
     /**
      * Muestra un menú con un listado de asistentes a un evento
+     * 
+     * [1] Quizá aquí no haría falta pasar la lista de usuarios, ya que solo se usa
+     * el nombre y eso está en e.getAsistentes().get(i), pero por futura escalabilidad
+     * se ha dejado, por si quisiéramos mostrar también otros datos del usuario.
      *
      * @post debe pedirse al usuario elegir una opción si se desea interactuar
      * con el listado
@@ -99,17 +103,22 @@ public class ClienteSistema {
             System.out.println("|- Lista de usuarios inscritos en " + e.getNombre());
             System.out.println("|- " + listaUsuarios.size() + " inscritos de " + e.getCapacidad() + " posibles. ");
             System.out.println("|- Elija uno para obtener sus datos:                                 -|");
+            System.out.println("|-                                                                   -|");
+            System.out.println("|- Usuarios admitidos: " + listaUsuarios.size());
 
-            for (int i = 1; i <= e.getCapacidad(); i++) {
+            boolean lleno = listaUsuarios.size() > e.getCapacidad();
+            int limit = lleno ? e.getCapacidad() : listaUsuarios.size();
+            
+            for (int i = 1; i <= limit; i++) {
+                // Leer anotación [1] en la documentación de esta función
                 System.out.println("|- [" + i + "]. " + listaUsuarios.get(i - 1).getUsername());
             }
 
-            if (e.getAsistentes().size() > e.getCapacidad()) {
+            if (lleno) {
                 System.out.println("|-                                                                   -|");
-                System.out.println("|- Lista de usuarios inscritos en la lista de espera:                -|");
-                System.out.println("|- " + (listaUsuarios.size() - e.getCapacidad()) + " usuarios en la lista de espera ");
+                System.out.println("|- Usuarios en la lista de espera: " + (listaUsuarios.size() - e.getCapacidad()));
 
-                for (int i = e.getCapacidad(); i <= listaUsuarios.size(); i++) {
+                for (int i = e.getCapacidad() + 1; i <= listaUsuarios.size(); i++) {
                     System.out.println("|- [" + i + "]. " + listaUsuarios.get(i - 1).getUsername());
                 }
             }
@@ -237,8 +246,8 @@ public class ClienteSistema {
                 }
 
                 if (user.getUsername().equals(evento.getOrganizador())) {
-                    System.out.println("|- [2]. Cancelar evento                                              -|");
-                    System.out.println("|- [3]. Mostrar asistentes                                           -|");
+                    System.out.println("|- [2]. Mostrar asistentes                                           -|");
+                    System.out.println("|- [3]. Cancelar el evento                                           -|");
                 }
 
                 System.out.println("|---------------------------------------------------------------------|");
@@ -293,7 +302,7 @@ public class ClienteSistema {
                         System.out.println("|- Debe ser el organizador para acceder a esta sección.                  -|");
                     } else {
 
-                        UsuarioDTO usuario = null;
+                        UsuarioDTO usuario = new UsuarioDTO();
                         List<UsuarioDTO> listaUsuarios = new ArrayList();
 
                         evento.getAsistentes().forEach((u) -> {
@@ -302,22 +311,26 @@ public class ClienteSistema {
 
                         int elecUsuario = 0;
                         do {
-                            if (menuListadoAsistentes(evento, listaUsuarios)) {
+                            if (this.menuListadoAsistentes(evento, listaUsuarios)) {
                                 elecUsuario = this.seleccionarOpcion();
-                                if (elecUsuario <= 0) {
+                                if (elecUsuario <= 0 || elecUsuario > listaUsuarios.size()) {
                                     break;
                                 }
                                 usuario = listaUsuarios.get(elecUsuario - 1);
                             } else {
                                 break;
                             }
-                        } while (usuario == null);
-
-                        if (usuario != null) {
-                            if (elecUsuario != 0) {
-                                this.menuUsuario(sistema, usuario);
-                            }
-                        }
+                        } while (!this.menuUsuario(sistema, usuario));
+                        
+                        // Cuando sea necesario, se podrá gestionar el usuario desde aquí
+//                        if (usuario != null) {
+//                            if (elecUsuario != 0) {
+//                                this.gestionarUsuario(sistema, usuario);
+//                            }
+//                        } else {
+//                            System.out.println("|- El usuario no es válido.                                           -|");
+//                        }
+                        eleccion = 0;
                     }
                     break;
 
@@ -355,7 +368,7 @@ public class ClienteSistema {
      * con el listado
      * @param sistema el servidor con el que interactúa el cliente
      * @param usuario el evento del que se muestra la información
-     * @return true si el evento es válido, false si no
+     * @return true si el usuario es válido, false si no
      */
     private boolean menuUsuario(SistemaInterface sistema, UsuarioDTO usuario) {
         boolean ret = false;

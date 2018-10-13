@@ -322,7 +322,7 @@ public class Sistema extends SistemaInterface{
         List<EventoDTO> eventosOrganizados = new ArrayList();
         
         for (Evento e : usuarios.get(user.getUsername()).getOrganizados()) {
-            EventoDTO eDTO = this.buscarEventoPorNombre(nombre);
+            EventoDTO eDTO = this.buscarEventoPorNombre(e.getNombre());
             eventosOrganizados.add(eDTO);
         }
         
