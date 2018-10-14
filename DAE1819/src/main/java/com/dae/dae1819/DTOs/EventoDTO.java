@@ -169,12 +169,4 @@ public class EventoDTO {
     public boolean isCancelado() {
         return cancelado;
     }
-
-    /**
-     * @param cancelado the cancelado to set
-     */
-    public void setCancelado(boolean cancelado) {
-        this.cancelado = cancelado;
-    }
-    
 }

@@ -5,7 +5,6 @@
  */
 
 package com.dae.dae1819.pojos;
-import com.dae.dae1819.DTOs.UsuarioDTO;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -197,10 +196,8 @@ public class Usuario{
         boolean ret = false;
         
         if(this.eventos.contains(e)) { // Comprobamos que el usuario asista al evento
-            if(e.desinscribir(this)) { // Comprobamos que se desinscribe del evento antes de borrar el evento de la lista de inscritos
-                this.eventos.remove(e);
+           this.eventos.remove(e);
                 ret = true;
-            }
         }
         
         return ret;

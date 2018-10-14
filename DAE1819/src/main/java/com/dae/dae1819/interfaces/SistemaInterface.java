@@ -36,14 +36,15 @@ public abstract class SistemaInterface {
                                      String descripcion, Integer capacidad, String localizacion, 
                                      String organizador);
     
-    public abstract boolean         cancelarEvento(String nombreEvento);
+    public abstract boolean         cancelarEvento(EventoDTO eDTO);
+    public abstract boolean         reactivarEvento(EventoDTO eDTO);
     public abstract UsuarioDTO      buscarUsuario(String username);
     public abstract List<EventoDTO> buscarEventosInscritos(UsuarioDTO uDTO);
-    public abstract List<EventoDTO> buscarEventosOrganizados(UsuarioDTO user);
+    public abstract List<EventoDTO> buscarEventosOrganizados(UsuarioDTO uDTO);
     public abstract boolean         inscribirse(UsuarioDTO uDTO, EventoDTO eDTO);
     public abstract boolean         desinscribirse(UsuarioDTO uDTO, EventoDTO eDTO); 
     
-    // BORRAR ANTES DE ENVIAR LA PRÁCTICA
+    // MODO DESARROLLADOR
     public abstract void godMode();
     
 }

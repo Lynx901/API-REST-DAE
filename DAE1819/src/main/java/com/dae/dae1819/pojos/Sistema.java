@@ -225,12 +225,32 @@ public class Sistema extends SistemaInterface{
     
     /**
      * Cancela un evento, borrando en cascada
-     * @param nombreEvento el nombre del evento a borrar
+     * @param eDTO el evento a cancelar
      * @return true si se ha cancelado bien, false si ha habido algún error
      */
     @Override
-    public boolean cancelarEvento(String nombreEvento) {   
-        return eventos.get(nombreEvento).cancelar();
+    public boolean cancelarEvento(EventoDTO eDTO) { 
+        boolean ret = false;
+        Evento e = eventos.get(eDTO.getNombre());
+        if (e.setCancelado(true)) {
+            ret = true;
+        }
+        return ret;
+    };
+    
+    /**
+     * Reactiva un evento
+     * @param eDTO el evento a reactivar
+     * @return true si se ha cancelado bien, false si ha habido algún error
+     */
+    @Override
+    public boolean reactivarEvento(EventoDTO eDTO) {
+        boolean ret = false;
+        Evento e = eventos.get(eDTO.getNombre());
+        if (e.setCancelado(false)) {
+            ret = true;
+        }
+        return ret;
     };
     
     /**
@@ -284,12 +304,8 @@ public class Sistema extends SistemaInterface{
         Usuario u = usuarios.get(uDTO.getUsername());
         Evento e = eventos.get(eDTO.getNombre());
         
-        if(e.getAsistentes().contains(u)) { // Comprobamos que el usuario esté inscrito
-            if(u.desinscribir(e)) {
-                usuarios.replace(uDTO.getUsername(), u);
-                eventos.replace(eDTO.getNombre(), e);
-                ret = true;
-            }
+        if( u.desinscribir(e) && e.desinscribir(u) ) {
+            ret = true;
         }
         
         return ret;
@@ -395,7 +411,7 @@ public class Sistema extends SistemaInterface{
         return eDTO;
     }
     
-    // BORRAR ANTES DE ENVIAR LA PRÁCTICA
+    // Modo desarrollador
     /**
      * Muestra los datos de todas las instancias en memoria con las que se trabaja
      */

@@ -160,12 +160,18 @@ public class Evento {
         return cancelado;
     }
 
-    /**
+     /**
      * @param cancelado the cancelado to set
+     * @return boolean true si se ha cambiado de manera correcta, false en otro 
      */
-    public void setCancelado(boolean cancelado) {
+    public boolean setCancelado(boolean cancelado) {
+        if (this.cancelado == cancelado) {
+            return false;
+        }
         this.cancelado = cancelado;
+        return true;
     }
+    
 
     /**
      * @return the asistentes
@@ -224,25 +230,8 @@ public class Evento {
         
         if(this.asistentes.contains(u)) {
             this.asistentes.remove(u);
-        }
-        
-        return ret;
-    }
-    
-    /**
-     * Cancela el evento y desinscribe a los usuarios
-     * @return true si se cancelado correctamente, false si no
-     */
-    public boolean cancelar() {
-        boolean ret = true;
-        
-        for(Usuario u : this.asistentes) {
-            if(!u.desinscribir(this)) {
-                ret = false;
-            }
-        }
-        
-        this.cancelado = true;
+            ret = true;
+        } 
         
         return ret;
     }
