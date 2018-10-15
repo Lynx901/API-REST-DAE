@@ -160,16 +160,11 @@ public class Evento {
         return cancelado;
     }
 
-     /**
+    /**
      * @param cancelado the cancelado to set
-     * @return boolean true si se ha cambiado de manera correcta, false en otro 
      */
-    public boolean setCancelado(boolean cancelado) {
-        if (this.cancelado == cancelado) {
-            return false;
-        }
+    public void setCancelado(boolean cancelado) {
         this.cancelado = cancelado;
-        return true;
     }
     
 

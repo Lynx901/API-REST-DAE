@@ -99,7 +99,8 @@ public class Sistema extends SistemaInterface {
         return false;
     }
 
-    /* ACCIONES USUARIOS SIN LOGEAR */
+    /************* ACCIONES USUARIOS QUE NO HAN INICIADO SESIÓN ***************/
+    
     /**
      * Registra a un usuario en el sistema
      *
@@ -113,10 +114,9 @@ public class Sistema extends SistemaInterface {
         usuarios.put(username, usuario);
     }
 
-    ;
-    
     /**
      * Inicia la sesión de un usuario registrado en el sistema
+     *
      * @param username el nombre de usuario
      * @param password la contraseña del usuario
      * @return un token válido si se ha iniciado sesión correctamente, 0 si no
@@ -134,41 +134,35 @@ public class Sistema extends SistemaInterface {
         return 0;
     }
 
-    ;
-    
     /**
      * Busca un evento por el nombre del mismo
+     *
      * @param nombre el nombre del evento a buscar
-     * @return un EventoDTO del evento encontrado, o un EventoDTO vacío si no lo encuentra
+     * @return un EventoDTO del evento encontrado, o null si no lo encuentra
      */
     @Override
     public EventoDTO buscarEventoPorNombre(String nombre) {
-        EventoDTO e = new EventoDTO();
-        for (Map.Entry<String, Evento> entry : eventos.entrySet()) {
-            if (entry.getValue().getNombre().equalsIgnoreCase(nombre)) {
-                e = eventoToDTO(entry.getValue());
-            }
-        }
-        return e;
+        return eventoToDTO(eventos.get(nombre));
     }
 
-    ;
-    
     /**
      * Busca un evento por el tipo del mismo
+     *
      * @param tipo el tipo del evento a buscar
-     * @return una lista de EventoDTO encontrados, o una lista vacía si no encuentra ninguno
+     * @return una lista de EventoDTO encontrados, o una lista vacía si no
+     * encuentra ninguno
      */
     @Override
     public List<EventoDTO> buscarEventosPorTipo(String tipo) {
         List<EventoDTO> eventosPorTipo = new ArrayList();
 
-        for (Map.Entry<String, Evento> entry : eventos.entrySet()) {
+        eventos.entrySet().forEach((entry) -> {
             if (entry.getValue().getTipo().equalsIgnoreCase(tipo)) {
                 EventoDTO e = eventoToDTO(entry.getValue());
                 eventosPorTipo.add(e);
             }
-        }
+        });
+        
         return eventosPorTipo;
     }
 
@@ -183,34 +177,37 @@ public class Sistema extends SistemaInterface {
     public List<EventoDTO> buscarEventosPorDescripcion(String descripcion) {
         List<EventoDTO> eventosPorDescripcion = new ArrayList();
 
-        for (Map.Entry<String, Evento> entry : eventos.entrySet()) {
+        eventos.entrySet().forEach((entry) -> {
             if (entry.getValue().getDescripcion().contains(descripcion)) {
 
                 EventoDTO e = eventoToDTO(entry.getValue());
                 eventosPorDescripcion.add(e);
             }
-        }
+        });
 
         return eventosPorDescripcion;
     }
 
-    ;
-    
     /**
      * Lista todos los eventos del sistema
-     * @return una lista con todos los eventos creados en forma DTO (vacía si no encuentra ninguno)
+     *
+     * @return una lista con todos los eventos creados en forma DTO (vacía si no
+     * encuentra ninguno)
      */
     @Override
     public List<EventoDTO> buscarEventos() {
         List<EventoDTO> lista = new ArrayList();
+        
         eventos.entrySet().forEach((entry) -> {
             EventoDTO e = eventoToDTO(entry.getValue());
             lista.add(e);
         });
+        
         return lista;
     }
 
-    /* ACCIONES USUARIOS LOGEADOS */
+    /*************** ACCIONES USUARIOS QUE HAN INICIADO SESIÓN ****************/
+    
     /**
      * Crea un nuevo evento
      *
@@ -235,48 +232,39 @@ public class Sistema extends SistemaInterface {
         eventos.put(nombre, evento);
     }
 
-    ;
-    
     /**
      * Cancela un evento, borrando en cascada
+     *
      * @param eDTO el evento a cancelar
-     * @return true si se ha cancelado bien, false si ha habido algún error
      */
     @Override
-    public boolean cancelarEvento(EventoDTO eDTO) {
-        boolean ret = false;
+    public void cancelarEvento(EventoDTO eDTO) {
         Evento e = eventos.get(eDTO.getNombre());
-        if (e.setCancelado(true)) {
-            ret = true;
-        }
-        eventos.replace(eDTO.getNombre(), e);
-        return ret;
+        e.setCancelado(true);
+        eDTO.setCancelado(true);
+        
+        eventos.replace(e.getNombre(), e);
     }
 
-    ;
-    
     /**
      * Reactiva un evento
+     *
      * @param eDTO el evento a reactivar
-     * @return true si se ha cancelado bien, false si ha habido algún error
      */
     @Override
-    public boolean reactivarEvento(EventoDTO eDTO) {
-        boolean ret = false;
+    public void reactivarEvento(EventoDTO eDTO) {
         Evento e = eventos.get(eDTO.getNombre());
-        if (e.setCancelado(false)) {
-            ret = true;
-        }
+        e.setCancelado(false);
+        eDTO.setCancelado(false);
+
         eventos.replace(eDTO.getNombre(), e);
-        return ret;
     }
 
-    ;
-    
     /**
      * Busca un usuario por su nombre de usuario
+     *
      * @param username el nombre de usuario a buscar
-     * @return un UsuarioDTO del usuario encontrado, o uno vacío si no encuentra nada 
+     * @return un UsuarioDTO del usuario encontrado, o null si no lo encuentra
      */
     @Override
     public UsuarioDTO buscarUsuario(String username) {
@@ -332,15 +320,15 @@ public class Sistema extends SistemaInterface {
     /**
      * Busca los eventos en los que se ha inscrito el usuario
      *
-     * @param user usuario del que se comprobará el listado de eventos
+     * @param uDTO usuario del que se comprobará el listado de eventos
      * @return una lista de EventoDTO con los eventos inscritos, o una vacía si
      * no encuentra ninguno
      */
     @Override
-    public List<EventoDTO> buscarEventosInscritos(UsuarioDTO user) {
+    public List<EventoDTO> buscarEventosInscritos(UsuarioDTO uDTO) {
         List<EventoDTO> eventosInscritos = new ArrayList();
 
-        for (Evento e : usuarios.get(user.getUsername()).getEventos()) {
+        for (Evento e : usuarios.get(uDTO.getUsername()).getEventos()) {
             EventoDTO eDTO = this.buscarEventoPorNombre(e.getNombre());
             eventosInscritos.add(eDTO);
         }
@@ -351,16 +339,16 @@ public class Sistema extends SistemaInterface {
     /**
      * Busca los eventos organizados por el usuario
      *
-     * @param user usuario del que se comprobará el listado de eventos
+     * @param uDTO usuario del que se comprobará el listado de eventos
      * organizados
      * @return una lista de EventoDTO con los eventos organizados, o una vacía
      * si no encuentra ninguno
      */
     @Override
-    public List<EventoDTO> buscarEventosOrganizados(UsuarioDTO user) {
+    public List<EventoDTO> buscarEventosOrganizados(UsuarioDTO uDTO) {
         List<EventoDTO> eventosOrganizados = new ArrayList();
 
-        for (Evento e : usuarios.get(user.getUsername()).getOrganizados()) {
+        for (Evento e : usuarios.get(uDTO.getUsername()).getOrganizados()) {
             EventoDTO eDTO = this.buscarEventoPorNombre(e.getNombre());
             eventosOrganizados.add(eDTO);
         }
@@ -419,6 +407,7 @@ public class Sistema extends SistemaInterface {
         eDTO.setFecha(e.getFecha());
         eDTO.setLocalizacion(e.getLocalizacion());
         eDTO.setCapacidad(e.getCapacidad());
+        eDTO.setCancelado(e.isCancelado());
 
         if (!e.getAsistentes().isEmpty()) {
             List<String> asistentes = new ArrayList();
@@ -447,7 +436,7 @@ public class Sistema extends SistemaInterface {
     @Override
     public boolean godMode(String pass) {
         boolean ret = true;
-        
+
         if (!pass.equals("dae1819")) {
             ret = false;
         } else {
@@ -505,7 +494,7 @@ public class Sistema extends SistemaInterface {
                 }
             }
         }
-        
+
         return ret;
     }
 
