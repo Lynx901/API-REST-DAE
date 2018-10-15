@@ -144,7 +144,6 @@ public class ClienteSistema {
             System.out.println("|- No existen eventos " + nombreListado + " disponibles actualmente.");
             return false;
         } else {
-            System.out.println("|----------Menú Selección de Eventos ---------------------------------|");
             System.out.println("|---------------------------------------------------------------------|");
             System.out.println("|- Lista de eventos " + nombreListado + ": ");
 
@@ -200,10 +199,9 @@ public class ClienteSistema {
     /**
      * Muestra un menú con la información de un evento
      *
-     * @post debe pedirse al usuario elegir una opción si se desea interactuar
-     * con el listado
      * @param sistema el servidor con el que interactúa el cliente
      * @param evento el evento del que se muestra la información
+     * @param procedencia para comprobar desde dónde se accede al menú
      * @return true si el evento es válido, false si no
      */
     private boolean menuEvento(SistemaInterface sistema, EventoDTO evento, String procedencia) {
@@ -496,7 +494,7 @@ public class ClienteSistema {
                 case 1: // Registrarse o cerrar sesión
                     if (!sistema.isTokenValid(token)) {
 
-                        String email, nombreUsuario, contrasena, contrasena2 ;
+                        String email, nombreUsuario, pass, pass2 ;
                         System.out.print("|- Escriba su correo electrónico: ");
                         email = capt.nextLine();
                         
@@ -504,22 +502,29 @@ public class ClienteSistema {
                         nombreUsuario = capt.nextLine();
 
                         System.out.print("|- Introduzca una contraseña: ");
-                        contrasena = capt.nextLine();
+                        pass = capt.nextLine();
 
                         System.out.print("|- Repita la contraseña: ");
-                        contrasena2 = capt.nextLine();
+                        pass2 = capt.nextLine();
                         
                         // Comprobación de datos introducidos
                         int posiciona = email.indexOf("@");
                         int posicionp = email.indexOf(".");
                         if ( posiciona < 0 || posicionp < 0 ) {
                             System.out.println("|- El correo electronico debe tener el formato (nombre@servidor.com).-|");
-                        } else if (!contrasena.equals(contrasena2)) {
+                        } else if (!pass.equals(pass2)) {
                             System.out.println("|- Las contraseñas no coinciden, vuelva a intentarlo.                -|");
                         } else {
-                            sistema.nuevoUsuario(nombreUsuario, contrasena, email);
-                            System.out.println("|- Usuario creado correctamente con username: " + nombreUsuario + " y contraseña: " + contrasena);
-                            System.out.println("|- ¡Ya puede iniciar sesión!                                         -|");
+                            sistema.nuevoUsuario(nombreUsuario, pass, email);
+                            System.out.println("|- Usuario creado correctamente con username: " + nombreUsuario + " y contraseña: " + pass);
+                            
+                            token = sistema.login(nombreUsuario, pass2);
+                            if (sistema.isTokenValid(token)) {
+                                System.out.println("|- Ha iniciado sesión correctamente.                                 -|");
+                                user = sistema.buscarUsuario(nombreUsuario);
+                            } else {
+                                System.out.println("|- Algo ha fallado. Compruebe los datos de inicio de sesión.         -|");
+                            }
                         }
 
                     } else {
@@ -536,18 +541,18 @@ public class ClienteSistema {
                 case 2: // Iniciar sesión o mostrar el perfil
                     if (!sistema.isTokenValid(token)) {
 
-                        String nombreusuario, contrasena;
+                        String nombreUsuario, pass;
 
                         System.out.print("|- Nombre de usuario: ");
-                        nombreusuario = capt.nextLine();
+                        nombreUsuario = capt.nextLine();
 
                         System.out.print("|- Contraseña: ");
-                        contrasena = capt.nextLine();
-                        token = sistema.login(nombreusuario, contrasena);
+                        pass = capt.nextLine();
+                        token = sistema.login(nombreUsuario, pass);
 
                         if (sistema.isTokenValid(token)) {
                             System.out.println("|- Ha iniciado sesión correctamente.                                 -|");
-                            user = sistema.buscarUsuario(nombreusuario);
+                            user = sistema.buscarUsuario(nombreUsuario);
                         } else {
                             System.out.println("|- Algo ha fallado. Compruebe los datos de inicio de sesión.         -|");
                         }
@@ -792,7 +797,7 @@ public class ClienteSistema {
                         EventoDTO eventoUsuario = new EventoDTO();
                         int elecEventoOrganizado = 0;
                         do {
-                            if (this.menuListadoEvento(listaEventosOrganizados, "organizados")) {
+                            if (this.menuListadoEvento(listaEventosOrganizados, ("organizados por " + user.getUsername()))) {
                                 elecEventoOrganizado = this.seleccionarOpcion();
                                 if (elecEventoOrganizado <= 0 || elecEventoOrganizado > listaEventosOrganizados.size()) {
                                     break;
