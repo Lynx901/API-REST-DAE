@@ -29,7 +29,13 @@ public abstract class SistemaInterface {
      */
     public abstract boolean isTokenValid(Integer token);
 
-    /* ACCIONES USUARIOS SIN LOGEAR */
+    /*
+     ***************************************************************************
+     ***************************************************************************
+     ************ ACCIONES USUARIOS QUE NO HAN INICIADO SESIÓN *****************
+     ***************************************************************************
+     ***************************************************************************
+     */
     /**
      * Registra a un usuario en el sistema
      *
@@ -82,7 +88,13 @@ public abstract class SistemaInterface {
      */
     public abstract List<EventoDTO> buscarEventos();
 
-    /* ACCIONES USUARIO LOGEADOS */
+    /*
+     ***************************************************************************
+     ***************************************************************************
+     *************** ACCIONES USUARIOS QUE HAN INICIADO SESIÓN *****************
+     ***************************************************************************
+     ***************************************************************************
+     */
     /**
      * Crea un nuevo evento
      *
@@ -158,7 +170,13 @@ public abstract class SistemaInterface {
      */
     public abstract boolean desinscribirse(UsuarioDTO uDTO, EventoDTO eDTO);
 
-    // MODO DESARROLLADOR
+    /*
+     ***************************************************************************
+     ***************************************************************************
+     **************************** MODO DESARROLLADO ****************************
+     ***************************************************************************
+     ***************************************************************************
+     */
     /**
      * Muestra los datos de todas las instancias en memoria con las que se
      * trabaja

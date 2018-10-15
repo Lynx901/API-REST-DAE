@@ -3,21 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.dae.dae1819.pojos;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
 /**
  *
  * @author dml y jfaf
  */
 public class Evento {
+
     private String nombre;
     private Date fecha;
+
     private enum Tipo {
         CHARLA, CURSO, ACTIVIDAD_DEPORTIVA, VISITA_CULTURAL
     }
@@ -26,18 +26,18 @@ public class Evento {
     private Integer capacidad;
     private String localizacion;
     private boolean cancelado;
-    
+
     private List<Usuario> asistentes;
     private Usuario organizador;
-    
-    public Evento() {       
+
+    public Evento() {
         this.cancelado = false;
         this.asistentes = new ArrayList();
-        this.organizador = new Usuario();   
+        this.organizador = new Usuario();
     }
-    
-    public Evento (String nombre, Date fecha, String _tipo, String descripcion, 
-                   Integer capacidad, String localizacion, List<Usuario> asistentes, Usuario organizador) {
+
+    public Evento(String nombre, Date fecha, String _tipo, String descripcion,
+            Integer capacidad, String localizacion, List<Usuario> asistentes, Usuario organizador) {
         this.nombre = nombre;
         this.fecha = fecha;
         Tipo tipo = Tipo.valueOf(_tipo);
@@ -45,17 +45,17 @@ public class Evento {
         this.capacidad = capacidad;
         this.localizacion = localizacion;
         this.cancelado = false;
-        
+
         this.asistentes = new ArrayList();
         asistentes.forEach((usuario) -> {
             this.asistentes.add(usuario);
         });
-        
+
         this.organizador = organizador;
     }
-    
-    public Evento (String nombre, Date fecha, String _tipo, String descripcion, 
-                   Integer capacidad, String localizacion, Usuario organizador) {
+
+    public Evento(String nombre, Date fecha, String _tipo, String descripcion,
+            Integer capacidad, String localizacion, Usuario organizador) {
         this.nombre = nombre;
         this.fecha = fecha;
         this.tipo = Tipo.valueOf(_tipo);
@@ -63,10 +63,10 @@ public class Evento {
         this.capacidad = capacidad;
         this.localizacion = localizacion;
         this.cancelado = false;
-        
+
         this.asistentes = new ArrayList();
         this.organizador = organizador;
-        
+
     }
 
     /**
@@ -103,7 +103,7 @@ public class Evento {
     public String getTipo() {
         return tipo.name();
     }
-    
+
     /**
      * @param tipo the tipo to set
      */
@@ -152,7 +152,7 @@ public class Evento {
     public void setLocalizacion(String localizacion) {
         this.localizacion = localizacion;
     }
-    
+
     /**
      * @return the cancelado
      */
@@ -166,7 +166,6 @@ public class Evento {
     public void setCancelado(boolean cancelado) {
         this.cancelado = cancelado;
     }
-    
 
     /**
      * @return the asistentes
@@ -198,37 +197,39 @@ public class Evento {
     public void setOrganizador(Usuario organizador) {
         this.organizador = organizador;
     }
-    
+
     /**
      * Inscribe a un usuario en el evento
+     *
      * @param u usuario a inscribir
      * @return true si se ha inscrito, false si entra en la lista de espera
      */
     public boolean inscribir(Usuario u) {
         boolean ret = false;
-        
-        if(this.asistentes.size() <= this.capacidad) {
+
+        if (this.asistentes.size() <= this.capacidad) {
             ret = true;
         }
         this.asistentes.add(u);
-        
+
         return ret;
     }
-    
+
     /**
      * Desinscribe a un usuario del evento
+     *
      * @param u usuario a desinscribir
-     * @return 
+     * @return
      */
     public boolean desinscribir(Usuario u) {
         boolean ret = false;
-        
-        if(this.asistentes.contains(u)) {
+
+        if (this.asistentes.contains(u)) {
             this.asistentes.remove(u);
             ret = true;
-        } 
-        
+        }
+
         return ret;
     }
-    
+
 }

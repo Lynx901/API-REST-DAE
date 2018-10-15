@@ -84,22 +84,30 @@ public class Sistema extends SistemaInterface {
      */
     @Override
     public boolean isTokenValid(Integer token) {
+        boolean ret = true;
+        
         if (token == -1) {
-            return false;
-        }
-
-        for (Map.Entry<String, Usuario> entry : usuarios.entrySet()) {
-            if (entry != null) {
+            ret = false;
+        } else {
+            for (Map.Entry<String, Usuario> entry : usuarios.entrySet()) {
                 Usuario u = entry.getValue();
                 if (u.getToken() != null && u.getToken().equals(token)) {
-                    return true;
+                    ret = true;
+                    break;
                 }
             }
         }
-        return false;
+        
+        return ret;
     }
 
-    /************* ACCIONES USUARIOS QUE NO HAN INICIADO SESIÓN ***************/
+    /*
+     ***************************************************************************
+     ***************************************************************************
+     ************ ACCIONES USUARIOS QUE NO HAN INICIADO SESIÓN *****************
+     ***************************************************************************
+     ***************************************************************************
+     */
     
     /**
      * Registra a un usuario en el sistema
@@ -162,7 +170,7 @@ public class Sistema extends SistemaInterface {
                 eventosPorTipo.add(e);
             }
         });
-        
+
         return eventosPorTipo;
     }
 
@@ -197,16 +205,22 @@ public class Sistema extends SistemaInterface {
     @Override
     public List<EventoDTO> buscarEventos() {
         List<EventoDTO> lista = new ArrayList();
-        
+
         eventos.entrySet().forEach((entry) -> {
             EventoDTO e = eventoToDTO(entry.getValue());
             lista.add(e);
         });
-        
+
         return lista;
     }
-
-    /*************** ACCIONES USUARIOS QUE HAN INICIADO SESIÓN ****************/
+    
+    /*
+     ***************************************************************************
+     ***************************************************************************
+     *************** ACCIONES USUARIOS QUE HAN INICIADO SESIÓN *****************
+     ***************************************************************************
+     ***************************************************************************
+     */
     
     /**
      * Crea un nuevo evento
@@ -242,7 +256,7 @@ public class Sistema extends SistemaInterface {
         Evento e = eventos.get(eDTO.getNombre());
         e.setCancelado(true);
         eDTO.setCancelado(true);
-        
+
         eventos.replace(e.getNombre(), e);
     }
 
@@ -425,7 +439,15 @@ public class Sistema extends SistemaInterface {
         return eDTO;
     }
 
-    // Modo desarrollador
+    /*
+     ***************************************************************************
+     ***************************************************************************
+     **************************** MODO DESARROLLADO ****************************
+     ***************************************************************************
+     ***************************************************************************
+     */
+    
+    
     /**
      * Muestra los datos de todas las instancias en memoria con las que se
      * trabaja

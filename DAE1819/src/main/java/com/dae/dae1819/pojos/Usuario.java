@@ -3,32 +3,32 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package com.dae.dae1819.pojos;
+
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  *
  * @author dml y jfaf
  */
-public class Usuario{
+public class Usuario {
+
     private String username;
     private String password;
     private String email;
     private Integer token;
-    
+
     private List<Evento> eventos;
     private List<Evento> listaEspera;
     private List<Evento> organizados;
-    
+
     public Usuario() {
         eventos = new ArrayList();
         organizados = new ArrayList();
     }
-    
-     public Usuario(String username, String password, String email) {
+
+    public Usuario(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -36,22 +36,22 @@ public class Usuario{
         organizados = new ArrayList();
         listaEspera = new ArrayList();
     }
-    
+
     public Usuario(String username, String password, String email, List<Evento> eventos, List<Evento> organizados) {
         this.username = username;
         this.password = password;
         this.email = email;
-        
+
         this.eventos = new ArrayList();
         for (Evento evento : eventos) {
             this.eventos.add(evento);
         }
-        
+
         this.organizados = new ArrayList();
         for (Evento evento : organizados) {
             this.organizados.add(evento);
         }
-        
+
         this.listaEspera = new ArrayList();
         for (Evento evento : listaEspera) {
             this.listaEspera.add(evento);
@@ -116,7 +116,7 @@ public class Usuario{
             this.eventos.add(evento);
         }
     }
-    
+
     /**
      * @return the eventos
      */
@@ -164,42 +164,44 @@ public class Usuario{
     public void setToken(Integer token) {
         this.token = token;
     }
-    
+
     /**
      * Inscribe al usuario en un evento y maneja si es el organizador del evento
+     *
      * @param e evento en el que se va a inscribir al usuario
      * @return true si se inscribe, false si entra en la lista de espera
      */
     public boolean inscribirEnEvento(Evento e) {
         boolean ret = false;
-        
-        if(!e.inscribir(this)) {
+
+        if (!e.inscribir(this)) {
             this.listaEspera.add(e);
         } else {
             this.eventos.add(e);
-            if(e.getOrganizador().username.equals(this.username)) {
+            if (e.getOrganizador().username.equals(this.username)) {
                 this.organizados.add(e);
             }
             ret = true;
         }
-        
+
         return ret;
     }
-    
+
     /**
      * Desinscribe al usuario de un evento. Si es el organizador, no se elimina
      * de su listado, ya que el evento no se cancela si el organizador no asiste
+     *
      * @param e evento del que se va a desinscribir al usuario
      * @return true si se desinscribe bien, false si no
      */
     public boolean desinscribir(Evento e) {
         boolean ret = false;
-        
-        if(this.eventos.contains(e)) { // Comprobamos que el usuario asista al evento
-           this.eventos.remove(e);
-                ret = true;
+
+        if (this.eventos.contains(e)) { // Comprobamos que el usuario asista al evento
+            this.eventos.remove(e);
+            ret = true;
         }
-        
+
         return ret;
     }
 }

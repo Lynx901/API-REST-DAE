@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package com.dae.dae1819.DTOs;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
  * @author juanf
  */
 public class EventoDTO {
+
     private String nombre;
     private Date fecha;
     private String tipo;
@@ -20,18 +22,18 @@ public class EventoDTO {
     private Integer capacidad;
     private String localizacion;
     private boolean cancelado;
-    
+
     private List<String> asistentes;
     private String organizador;
-    
-    public EventoDTO() {    
+
+    public EventoDTO() {
         nombre = "";
         this.cancelado = false;
         asistentes = new ArrayList();
     }
-    
-    public EventoDTO (String nombre, Date fecha, String _tipo, String descripcion, 
-                   Integer capacidad, String localizacion, List<String> asistentes, String organizador) {
+
+    public EventoDTO(String nombre, Date fecha, String _tipo, String descripcion,
+            Integer capacidad, String localizacion, List<String> asistentes, String organizador) {
         this.nombre = nombre;
         this.fecha = fecha;
         this.tipo = _tipo;
@@ -39,15 +41,15 @@ public class EventoDTO {
         this.capacidad = capacidad;
         this.localizacion = localizacion;
         this.cancelado = false;
-        
+
         this.asistentes = new ArrayList();
         asistentes.forEach((usuario) -> {
             this.asistentes.add(usuario);
         });
-        
+
         this.organizador = organizador;
     }
-    
+
     /**
      * @return the nombre
      */
@@ -82,7 +84,7 @@ public class EventoDTO {
     public String getTipo() {
         return tipo;
     }
-    
+
     /**
      * @param tipo the tipo to set
      */
@@ -169,7 +171,7 @@ public class EventoDTO {
     public boolean isCancelado() {
         return cancelado;
     }
-    
+
     /**
      * @param cancelado the cancelado to set
      */

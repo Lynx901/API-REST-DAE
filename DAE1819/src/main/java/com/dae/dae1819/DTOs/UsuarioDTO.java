@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package com.dae.dae1819.DTOs;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,19 +13,20 @@ import java.util.List;
  * @author juanf
  */
 public class UsuarioDTO {
+
     private String username;
     private String email;
-    
+
     private List<String> eventos;
     private List<String> organizados;
     private List<String> listaEspera;
-    
+
     public UsuarioDTO() {
         eventos = new ArrayList();
         organizados = new ArrayList();
         listaEspera = new ArrayList();
     }
-    
+
     public UsuarioDTO(String username, String email) {
         this.username = username;
         this.email = email;
@@ -32,21 +34,21 @@ public class UsuarioDTO {
         organizados = new ArrayList();
         listaEspera = new ArrayList();
     }
-    
+
     public UsuarioDTO(String username, String email, List<String> eventos, List<String> organizados) {
         this.username = username;
         this.email = email;
-        
+
         this.eventos.clear();
         eventos.forEach((evento) -> {
             this.eventos.add(evento);
         });
-        
+
         this.organizados.clear();
         organizados.forEach((evento) -> {
             this.organizados.add(evento);
         });
-        
+
         this.listaEspera.clear();
         listaEspera.forEach((evento) -> {
             this.listaEspera.add(evento);

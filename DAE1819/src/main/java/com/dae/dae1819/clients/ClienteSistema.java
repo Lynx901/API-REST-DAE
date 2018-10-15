@@ -366,14 +366,14 @@ public class ClienteSistema {
                         System.out.println("|- Debe ser el organizador para acceder a esta sección.                  -|");
                     } else {
                         sistema.cancelarEvento(evento);
-                        
+
                         if (evento.isCancelado()) {
                             System.out.println("|- Se ha cancelado el evento correctamente.                          -|");
                         } else {
                             System.out.println("|- Se ha producido un error al cancelar el evento.                   -|");
                         }
                     }
-                    
+
                     eleccion = 0;
                     break;
 
@@ -412,7 +412,7 @@ public class ClienteSistema {
         for (String evento : eventos) {
             EventoDTO e = sistema.buscarEventoPorNombre(evento);
             System.out.println("|-\t|- Nombre: \t\t" + e.getNombre());
-            if(e.isCancelado()) {
+            if (e.isCancelado()) {
                 System.out.println("|-\t|- Este evento está cancelado.                           -|");
             } else {
                 System.out.println("|-\t|- Fecha: \t\t" + e.getFecha().toString());
