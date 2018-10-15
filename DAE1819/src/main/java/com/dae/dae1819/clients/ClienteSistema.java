@@ -816,7 +816,12 @@ public class ClienteSistema {
 
                 // BORRAR ANTES DE ENVIAR LA PRÁCTICA
                 case 8:
-                    sistema.godMode();
+                    String pass = "";
+                    System.out.print("|- Introduzca la contraseña de administrador: ");
+                    pass = capt.nextLine();
+                    if(!sistema.godMode(pass)) {
+                        System.out.println("|- No tiene permiso para acceder. ");
+                    }
                     break;
 
                 case 0:

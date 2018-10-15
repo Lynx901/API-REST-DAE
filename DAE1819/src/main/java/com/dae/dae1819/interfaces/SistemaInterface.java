@@ -45,6 +45,6 @@ public abstract class SistemaInterface {
     public abstract boolean         desinscribirse(UsuarioDTO uDTO, EventoDTO eDTO); 
     
     // MODO DESARROLLADOR
-    public abstract void godMode();
+    public abstract boolean godMode(String pass);
     
 }
