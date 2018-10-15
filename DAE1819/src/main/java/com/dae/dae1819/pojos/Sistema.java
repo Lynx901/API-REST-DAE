@@ -235,6 +235,7 @@ public class Sistema extends SistemaInterface{
         if (e.setCancelado(true)) {
             ret = true;
         }
+        eventos.replace(eDTO.getNombre(), e);
         return ret;
     };
     
@@ -250,6 +251,7 @@ public class Sistema extends SistemaInterface{
         if (e.setCancelado(false)) {
             ret = true;
         }
+        eventos.replace(eDTO.getNombre(), e);
         return ret;
     };
     
