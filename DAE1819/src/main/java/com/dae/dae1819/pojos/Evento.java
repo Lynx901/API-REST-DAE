@@ -27,7 +27,7 @@ public class Evento {
     private String localizacion;
     private boolean cancelado;
 
-    private List<Usuario> asistentes;
+    private final List<Usuario> asistentes;
     private Usuario organizador;
 
     public Evento() {
@@ -40,7 +40,7 @@ public class Evento {
             Integer capacidad, String localizacion, List<Usuario> asistentes, Usuario organizador) {
         this.nombre = nombre;
         this.fecha = fecha;
-        Tipo tipo = Tipo.valueOf(_tipo);
+        this.tipo = Tipo.valueOf(_tipo);
         this.descripcion = descripcion;
         this.capacidad = capacidad;
         this.localizacion = localizacion;

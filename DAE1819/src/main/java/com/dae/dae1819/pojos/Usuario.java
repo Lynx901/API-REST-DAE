@@ -19,12 +19,13 @@ public class Usuario {
     private String email;
     private Integer token;
 
-    private List<Evento> eventos;
-    private List<Evento> listaEspera;
-    private List<Evento> organizados;
+    private final List<Evento> eventos;
+    private final List<Evento> listaEspera;
+    private final List<Evento> organizados;
 
     public Usuario() {
         eventos = new ArrayList();
+        listaEspera = new ArrayList();
         organizados = new ArrayList();
     }
 
@@ -43,19 +44,19 @@ public class Usuario {
         this.email = email;
 
         this.eventos = new ArrayList();
-        for (Evento evento : eventos) {
+        eventos.forEach((evento) -> {
             this.eventos.add(evento);
-        }
+        });
 
         this.organizados = new ArrayList();
-        for (Evento evento : organizados) {
+        organizados.forEach((evento) -> {
             this.organizados.add(evento);
-        }
+        });
 
         this.listaEspera = new ArrayList();
-        for (Evento evento : listaEspera) {
+        listaEspera.forEach((evento) -> {
             this.listaEspera.add(evento);
-        }
+        });
     }
 
     /**
@@ -112,9 +113,9 @@ public class Usuario {
      */
     public void setEventos(List<Evento> eventos) {
         this.eventos.clear();
-        for (Evento evento : eventos) {
+        eventos.forEach((evento) -> {
             this.eventos.add(evento);
-        }
+        });
     }
 
     /**
@@ -129,9 +130,9 @@ public class Usuario {
      */
     public void setListaEspera(List<Evento> listaEspera) {
         this.listaEspera.clear();
-        for (Evento evento : listaEspera) {
+        listaEspera.forEach((evento) -> {
             this.listaEspera.add(evento);
-        }
+        });
     }
 
     /**
@@ -146,9 +147,9 @@ public class Usuario {
      */
     public void setOrganizados(List<Evento> organizados) {
         this.organizados.clear();
-        for (Evento evento : organizados) {
+        organizados.forEach((evento) -> {
             this.organizados.add(evento);
-        }
+        });
     }
 
     /**
