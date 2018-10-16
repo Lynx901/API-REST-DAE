@@ -16,6 +16,7 @@ public class UsuarioDTO {
 
     private String username;
     private String email;
+    private Integer token;
 
     private List<String> eventos;
     private List<String> organizados;
@@ -23,6 +24,7 @@ public class UsuarioDTO {
 
     public UsuarioDTO() {
         eventos = new ArrayList();
+        this. token = 0;
         organizados = new ArrayList();
         listaEspera = new ArrayList();
     }
@@ -30,6 +32,7 @@ public class UsuarioDTO {
     public UsuarioDTO(String username, String email) {
         this.username = username;
         this.email = email;
+        this. token = 0;
         eventos = new ArrayList();
         organizados = new ArrayList();
         listaEspera = new ArrayList();
@@ -38,6 +41,7 @@ public class UsuarioDTO {
     public UsuarioDTO(String username, String email, List<String> eventos, List<String> organizados) {
         this.username = username;
         this.email = email;
+        this.token = 0;
 
         this.eventos.clear();
         eventos.forEach((evento) -> {
@@ -129,5 +133,19 @@ public class UsuarioDTO {
      */
     public void setListaEspera(List<String> listaEspera) {
         this.listaEspera = listaEspera;
+    }
+
+    /**
+     * @return the token
+     */
+    public Integer getToken() {
+        return token;
+    }
+
+    /**
+     * @param token the token to set
+     */
+    public void setToken(Integer token) {
+        this.token = token;
     }
 }

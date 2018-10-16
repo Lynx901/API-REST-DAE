@@ -23,7 +23,6 @@ public class ClienteSistema {
 
     ApplicationContext context;
     UsuarioDTO user;
-    Integer token = -1;
 
     public ClienteSistema(ApplicationContext context) {
         this.context = context;
@@ -223,7 +222,7 @@ public class ClienteSistema {
             } else {
                 System.out.println("|- Nombre: \t\t" + evento.getNombre());
                 System.out.println("|- Descripción: \t" + evento.getDescripcion());
-                System.out.println("|- Fecha: \t\t" + evento.getFecha().getHours() + ":" + evento.getFecha().getMinutes() 
+                System.out.println("|- Fecha: \t\t" + evento.getFecha().getHours() + ":" + evento.getFecha().getMinutes()
                         + " del " + evento.getFecha().getDate() + "/" + evento.getFecha().getMonth() + "/" + evento.getFecha().getYear());
                 System.out.println("|- Tipo: \t\t" + evento.getTipo());
                 System.out.println("|- Lugar: \t\t" + evento.getLocalizacion());
@@ -237,7 +236,7 @@ public class ClienteSistema {
                 System.out.println("|---------------------------------------------------------------------|");
             }
 
-            if (!sistema.isTokenValid(token)) {
+            if (!sistema.isTokenValid(user.getToken())) {
                 System.out.println("|- Debe iniciar sesión para realizar cualquier acción.               -|");
             } else if (!procedencia.equals("crear")) {
 
@@ -297,7 +296,7 @@ public class ClienteSistema {
                     if (evento.isCancelado()) {
 
                         if (evento.getOrganizador().equals(user.getUsername())) {
-                            sistema.reactivarEvento(evento);
+                            sistema.reactivarEvento(evento, user);
                             System.out.println("|- Se ha reactivado correctamente.                                      -|");
                         } else {
                             System.out.println("|- Ha habido un error al reactivar el evento.                           -|");
@@ -366,7 +365,7 @@ public class ClienteSistema {
                     if (!user.getUsername().equals(evento.getOrganizador())) {
                         System.out.println("|- Debe ser el organizador para acceder a esta sección.                  -|");
                     } else {
-                        sistema.cancelarEvento(evento);
+                        sistema.cancelarEvento(evento, user);
 
                         if (evento.isCancelado()) {
                             System.out.println("|- Se ha cancelado el evento correctamente.                          -|");
@@ -443,7 +442,7 @@ public class ClienteSistema {
 
     public void run() {
         SistemaInterface sistema = (SistemaInterface) context.getBean("sistema");
-        user = null;
+        user = new UsuarioDTO();
         Scanner capt = new Scanner(System.in);
         int eleccion;
 
@@ -457,30 +456,30 @@ public class ClienteSistema {
 
         if (this.seleccionarSN("Desea comenzar la ejecución con algunos datos de prueba")) {
             List<UsuarioDTO> uTest = new ArrayList();
-            sistema.nuevoUsuario("admin", "admin", "admin@ujaen.es");
+            sistema.nuevoUsuario("admin", "admin", "admin", "admin@ujaen.es");
             uTest.add(sistema.buscarUsuario("admin"));
-            sistema.nuevoUsuario("user1", "asdf", "user@uja.es");
+            sistema.nuevoUsuario("user1", "asdf", "asdf", "user@uja.es");
             uTest.add(sistema.buscarUsuario("user1"));
-            sistema.nuevoUsuario("user2", "1234", "usuario@gmail.com");
+            sistema.nuevoUsuario("user2", "1234", "1234", "usuario@gmail.com");
             uTest.add(sistema.buscarUsuario("user2"));
-            sistema.nuevoUsuario("USER3", "1a2b", "el3@yo.com");
+            sistema.nuevoUsuario("USER3", "1a2b", "1a2b", "el3@yo.com");
             uTest.add(sistema.buscarUsuario("USER3"));
 
-            List<EventoDTO> eTest = new ArrayList();
-            sistema.nuevoEvento("Clase1", new Date(), "CHARLA", "Clase de DAE", (Integer) 15, "Edificio A3", "admin");
-            eTest.add(sistema.buscarEventoPorNombre("Clase1"));
-            sistema.nuevoEvento("Partido1", new Date(), "ACTIVIDAD_DEPORTIVA", "Partido de 2ª división", (Integer) 2, "Pabellón", "user1");
-            eTest.add(sistema.buscarEventoPorNombre("Partido1"));
-            sistema.nuevoEvento("Partido2", new Date(), "ACTIVIDAD_DEPORTIVA", "Partido de 1ª división", (Integer) 5, "Campo de fútbol", "user1");
-            eTest.add(sistema.buscarEventoPorNombre("Partido2"));
-            sistema.nuevoEvento("Lista de Espera", new Date(), "CURSO", "Evento con lista de espera", (Integer) 2, "Ejemplo", "USER3");
-            eTest.add(sistema.buscarEventoPorNombre("Lista de Espera"));
-
-            for (int i = 0; i < uTest.size(); i++) {
-                sistema.inscribirse(uTest.get(i), sistema.buscarEventoPorNombre("Lista de Espera"));
-            }
-
-            System.out.println("|- Creados 4 usuarios y " + sistema.buscarEventos().size() + " eventos                                    -|");
+//            List<EventoDTO> eTest = new ArrayList();
+//            sistema.nuevoEvento("Clase1", new Date(), "CHARLA", "Clase de DAE", (Integer) 15, "Edificio A3", "admin");
+//            eTest.add(sistema.buscarEventoPorNombre("Clase1"));
+//            sistema.nuevoEvento("Partido1", new Date(), "ACTIVIDAD_DEPORTIVA", "Partido de 2ª división", (Integer) 2, "Pabellón", "user1");
+//            eTest.add(sistema.buscarEventoPorNombre("Partido1"));
+//            sistema.nuevoEvento("Partido2", new Date(), "ACTIVIDAD_DEPORTIVA", "Partido de 1ª división", (Integer) 5, "Campo de fútbol", "user1");
+//            eTest.add(sistema.buscarEventoPorNombre("Partido2"));
+//            sistema.nuevoEvento("Lista de Espera", new Date(), "CURSO", "Evento con lista de espera", (Integer) 2, "Ejemplo", "USER3");
+//            eTest.add(sistema.buscarEventoPorNombre("Lista de Espera"));
+//
+//            for (int i = 0; i < uTest.size(); i++) {
+//                sistema.inscribirse(uTest.get(i), sistema.buscarEventoPorNombre("Lista de Espera"));
+//            }
+//
+//            System.out.println("|- Creados 4 usuarios y " + sistema.buscarEventos().size() + " eventos                                    -|");
         }
 
         do {
@@ -488,7 +487,7 @@ public class ClienteSistema {
             System.out.println("|- Seleccione una opción:                                            -|");
             System.out.println("|-                                                                   -|");
 
-            if (!sistema.isTokenValid(token)) {
+            if (!sistema.isTokenValid(user.getToken())) {
                 System.out.println("|- [1]. Registrarse                                                  -|");
                 System.out.println("|- [2]. Iniciar sesión                                               -|");
                 System.out.println("|- [3]. Buscar evento                                                -|");
@@ -515,13 +514,13 @@ public class ClienteSistema {
 
             switch (eleccion) {
                 case 1: // Registrarse o cerrar sesión
-                    if (!sistema.isTokenValid(token)) {
+                    if (!sistema.isTokenValid(user.getToken())) {
 
                         String email, nombreUsuario, pass, pass2;
-                        
+
                         System.out.print("|- Escriba su correo electrónico: ");
                         email = capt.nextLine();
-                        while(!email.contains("@") && !email.contains(".") && !email.contains(" ")) {
+                        while (!email.contains("@") && !email.contains(".") && !email.contains(" ")) {
                             System.out.println("|- El correo electronico debe tener el formato \"nombre@servidor.com\" -|");
                             System.out.print("|- Escriba su correo electrónico: ");
                             email = capt.nextLine();
@@ -536,26 +535,25 @@ public class ClienteSistema {
                         pass2 = capt.nextLine();
 
                         // Comprobación de datos introducidos
-                        if (!pass.equals(pass2)) {
+                        if (!sistema.nuevoUsuario(nombreUsuario, pass, pass2, email)) {
                             System.out.println("|- Las contraseñas no coinciden, vuelva a intentarlo.                -|");
                         } else {
-                            sistema.nuevoUsuario(nombreUsuario, pass, email);
                             System.out.println("|- Usuario creado correctamente con username: " + nombreUsuario + " y contraseña: " + pass);
 
-                            token = sistema.login(nombreUsuario, pass2);
-                            if (sistema.isTokenValid(token)) {
-                                System.out.println("|- Ha iniciado sesión correctamente.                                 -|");
-                                user = sistema.buscarUsuario(nombreUsuario);
-                            } else {
-                                System.out.println("|- Algo ha fallado. Compruebe los datos de inicio de sesión.         -|");
-                            }
+                            user = sistema.login(nombreUsuario, pass);
+
+                        if (sistema.isTokenValid(user.getToken())) {
+                            System.out.println("|- Ha iniciado sesión correctamente.                                 -|");
+                            user = sistema.buscarUsuario(nombreUsuario);
+                        } else {
+                            System.out.println("|- Algo ha fallado. Compruebe los datos de inicio de sesión.         -|");
                         }
-                        
+                        }
+
                     } else {
 
                         if (this.seleccionarSN("Desea cerrar la sesión")) {
-                            user = null;
-                            token = -1;
+                            user = sistema.logout(user);
                             System.out.println("|- ¡Vuelva pronto!                                                   -|");
                         }
 
@@ -563,7 +561,7 @@ public class ClienteSistema {
                     break;
 
                 case 2: // Iniciar sesión o mostrar el perfil
-                    if (!sistema.isTokenValid(token)) {
+                    if (!sistema.isTokenValid(user.getToken())) {
 
                         String nombreUsuario, pass;
 
@@ -572,9 +570,10 @@ public class ClienteSistema {
 
                         System.out.print("|- Contraseña: ");
                         pass = capt.nextLine();
-                        token = sistema.login(nombreUsuario, pass);
+                        
+                        user = sistema.login(nombreUsuario, pass);
 
-                        if (sistema.isTokenValid(token)) {
+                        if (sistema.isTokenValid(user.getToken())) {
                             System.out.println("|- Ha iniciado sesión correctamente.                                 -|");
                             user = sistema.buscarUsuario(nombreUsuario);
                         } else {
@@ -583,7 +582,7 @@ public class ClienteSistema {
 
                     } else {
 
-                        menuUsuario(sistema, user);
+                        this.menuUsuario(sistema, user);
 
                     }
                     break;
@@ -702,7 +701,7 @@ public class ClienteSistema {
                     break;
 
                 case 5:
-                    if (!sistema.isTokenValid(token)) {
+                    if (!sistema.isTokenValid(user.getToken())) {
                         System.out.println("|- Esta acción no está disponible, seleccione una del menú.          -|");
                     } else {
 
@@ -721,7 +720,7 @@ public class ClienteSistema {
 
                         boolean correcto = true;
                         do {
-                            if(!correcto) {
+                            if (!correcto) {
                                 System.out.println("|- No es un día válido, elija un número entre 1 y 30.                  -|");
                             }
                             try {
@@ -733,10 +732,10 @@ public class ClienteSistema {
                                 correcto = false;
                             }
                         } while (!correcto);
-                        
+
                         correcto = true;
                         do {
-                            if(!correcto) {
+                            if (!correcto) {
                                 System.out.println("|- No es un mes válido, elija un número entre 1 y 12.                  -|");
                             }
                             try {
@@ -748,10 +747,10 @@ public class ClienteSistema {
                                 correcto = false;
                             }
                         } while (correcto);
-                        
+
                         correcto = true;
                         do {
-                            if(!correcto) {
+                            if (!correcto) {
                                 System.out.println("|- No es un año válido, elija un número después de 2017                -|");
                             }
                             try {
@@ -763,10 +762,10 @@ public class ClienteSistema {
                                 correcto = false;
                             }
                         } while (correcto);
-                        
+
                         correcto = true;
                         do {
-                            if(!correcto) {
+                            if (!correcto) {
                                 System.out.println("|- No es una hora válida, elija un número entre 0 y 23               -|");
                             }
                             try {
@@ -778,10 +777,10 @@ public class ClienteSistema {
                                 correcto = false;
                             }
                         } while (correcto);
-                        
+
                         correcto = true;
                         do {
-                            if(!correcto) {
+                            if (!correcto) {
                                 System.out.println("|- No es una cantidad válida, elija una cantidad entre 0 y 59        -|");
                             }
                             try {
@@ -793,10 +792,10 @@ public class ClienteSistema {
                                 correcto = false;
                             }
                         } while (correcto);
-                        
-                        correcto = true;                        
+
+                        correcto = true;
                         do {
-                            if(!correcto) {
+                            if (!correcto) {
                                 System.out.println("|- No es un número válido, elija un número entero mayor de 0.        -|");
                             }
                             try {
@@ -822,7 +821,7 @@ public class ClienteSistema {
                     break;
 
                 case 6:
-                    if (!sistema.isTokenValid(token)) {
+                    if (!sistema.isTokenValid(user.getToken())) {
                         System.out.println("|- Esta acción no está disponible, seleccione una del menú.          -|");
                     } else {
                         List<EventoDTO> listaEventosInscritos = sistema.buscarEventosInscritos(user);
@@ -853,7 +852,7 @@ public class ClienteSistema {
                     break;
 
                 case 7:
-                    if (!sistema.isTokenValid(token)) {
+                    if (!sistema.isTokenValid(user.getToken())) {
                         System.out.println("|- Esta acción no está disponible, seleccione una del menú.          -|");
 
                     } else {

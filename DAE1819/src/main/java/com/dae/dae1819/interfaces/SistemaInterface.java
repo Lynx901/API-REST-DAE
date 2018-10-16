@@ -41,18 +41,28 @@ public abstract class SistemaInterface {
      *
      * @param username el nombre de usuario
      * @param password la contraseña del usuario
+     * @param password2 la contraseña para comprobar
      * @param email el email del usuario
+     * @return true si los datos son correctos, false si no
      */
-    public abstract void nuevoUsuario(String username, String password, String email);
+    public abstract boolean nuevoUsuario(String username, String password, String password2, String email);
 
     /**
      * Inicia la sesión de un usuario registrado en el sistema
      *
      * @param username el nombre de usuario
      * @param password la contraseña del usuario
-     * @return un token válido si se ha iniciado sesión correctamente, 0 si no
+     * @return un UsuarioDTO válido si se ha iniciado sesión correctamente
      */
-    public abstract Integer login(String username, String password);
+    public abstract UsuarioDTO login(String username, String password);
+    
+    /**
+     * Inicia la sesión de un usuario registrado en el sistema
+     *
+     * @param uDTO el usuario que saldrá del sistema
+     * @return null si se ha salido de la sesión correctamente
+     */
+    public abstract UsuarioDTO logout(UsuarioDTO uDTO);
 
     /**
      * Busca un evento por el nombre del mismo
@@ -105,8 +115,9 @@ public abstract class SistemaInterface {
      * @param capacidad la capacidad de asistentes al evento
      * @param localizacion el lugar donde se realiza el evento
      * @param organizador el usuario que ha creado el evento
+     * @return true si se ha creado bien, false si no
      */
-    public abstract void nuevoEvento(String nombre, Date fecha, String tipo,
+    public abstract boolean nuevoEvento(String nombre, Date fecha, String tipo,
             String descripcion, Integer capacidad, String localizacion,
             String organizador);
 
@@ -114,15 +125,19 @@ public abstract class SistemaInterface {
      * Cancela un evento, borrando en cascada
      *
      * @param eDTO el evento a cancelar
+     * @param uDTO el usuario que cancela el evento
+     * @return true si se cancela, false si no
      */
-    public abstract void cancelarEvento(EventoDTO eDTO);
+    public abstract boolean cancelarEvento(EventoDTO eDTO, UsuarioDTO uDTO);
 
     /**
      * Reactiva un evento
      *
      * @param eDTO el evento a reactivar
+     * @param uDTO el usuario que reactiva el evento
+     * @return true si se cancela, false si no
      */
-    public abstract void reactivarEvento(EventoDTO eDTO);
+    public abstract boolean reactivarEvento(EventoDTO eDTO, UsuarioDTO uDTO);
 
     /**
      * Busca un usuario por su nombre de usuario

@@ -25,6 +25,8 @@ public class Usuario {
 
     public Usuario() {
         eventos = new ArrayList();
+        this.token = 0;
+
         listaEspera = new ArrayList();
         organizados = new ArrayList();
     }
@@ -33,6 +35,8 @@ public class Usuario {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.token = 0;
+
         eventos = new ArrayList();
         organizados = new ArrayList();
         listaEspera = new ArrayList();
@@ -42,6 +46,7 @@ public class Usuario {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.token = 0;
 
         this.eventos = new ArrayList();
         eventos.forEach((evento) -> {

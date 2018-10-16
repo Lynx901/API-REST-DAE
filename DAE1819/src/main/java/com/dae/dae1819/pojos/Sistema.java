@@ -85,8 +85,8 @@ public class Sistema extends SistemaInterface {
     @Override
     public boolean isTokenValid(Integer token) {
         boolean ret = true;
-        
-        if (token == -1) {
+
+        if (token == 0) {
             ret = false;
         } else {
             for (Map.Entry<String, Usuario> entry : usuarios.entrySet()) {
@@ -97,7 +97,7 @@ public class Sistema extends SistemaInterface {
                 }
             }
         }
-        
+
         return ret;
     }
 
@@ -108,18 +108,26 @@ public class Sistema extends SistemaInterface {
      ***************************************************************************
      ***************************************************************************
      */
-    
     /**
      * Registra a un usuario en el sistema
      *
      * @param username el nombre de usuario
      * @param password la contraseña del usuario
+     * @param password2 la contraseña para comprobar
      * @param email el email del usuario
+     * @return true si los datos son correctos, false si no
      */
     @Override
-    public void nuevoUsuario(String username, String password, String email) {
-        Usuario usuario = new Usuario(username, password, email);
-        usuarios.put(username, usuario);
+    public boolean nuevoUsuario(String username, String password, String password2, String email) {
+        boolean ret = false;
+
+        if (password.equals(password2)) {
+            Usuario usuario = new Usuario(username, password, email);
+            usuarios.put(username, usuario);
+            ret = true;
+        }
+
+        return ret;
     }
 
     /**
@@ -127,30 +135,53 @@ public class Sistema extends SistemaInterface {
      *
      * @param username el nombre de usuario
      * @param password la contraseña del usuario
-     * @return un token válido si se ha iniciado sesión correctamente, 0 si no
+     * @return un UsuarioDTO válido si se ha iniciado sesión correctamente
      */
     @Override
-    public Integer login(String username, String password) {
+    public UsuarioDTO login(String username, String password) {
         Usuario user = usuarios.get(username);
         if (user != null) {
             if (user.getPassword().equals(password)) {
+                System.out.println("[debug]");
                 Integer token = ThreadLocalRandom.current().nextInt(10000000, 100000000);
                 user.setToken(token);
-                return token;
+                UsuarioDTO uDTO = this.usuarioToDTO(user);
+                uDTO.setToken(user.getToken());
+                return uDTO;
             }
         }
-        return 0;
+        return new UsuarioDTO();
+    }
+    
+    /**
+     * Inicia la sesión de un usuario registrado en el sistema
+     *
+     * @param uDTO el usuario que saldrá del sistema
+     * @return null si se ha salido de la sesión correctamente
+     */
+    @Override
+    public UsuarioDTO logout(UsuarioDTO uDTO) {
+        if(this.isTokenValid(uDTO.getToken())) {
+            usuarios.get(uDTO.getUsername()).setToken(0);
+            return null;
+        } else {
+            return uDTO;
+        }
     }
 
     /**
      * Busca un evento por el nombre del mismo
      *
      * @param nombre el nombre del evento a buscar
-     * @return un EventoDTO del evento encontrado, o null si no lo encuentra
+     * @return un EventoDTO del evento encontrado, o uno vacío si no lo encuentra
      */
     @Override
     public EventoDTO buscarEventoPorNombre(String nombre) {
-        return eventoToDTO(eventos.get(nombre));
+        if(!eventos.isEmpty()) {
+            return eventoToDTO(eventos.get(nombre));
+        } else {
+            return new EventoDTO();
+        }
     }
 
     /**
@@ -213,7 +244,7 @@ public class Sistema extends SistemaInterface {
 
         return lista;
     }
-    
+
     /*
      ***************************************************************************
      ***************************************************************************
@@ -221,7 +252,6 @@ public class Sistema extends SistemaInterface {
      ***************************************************************************
      ***************************************************************************
      */
-    
     /**
      * Crea un nuevo evento
      *
@@ -232,46 +262,71 @@ public class Sistema extends SistemaInterface {
      * @param capacidad la capacidad de asistentes al evento
      * @param localizacion el lugar donde se realiza el evento
      * @param organizador el usuario que ha creado el evento
+     * @return true si se ha creado bien, false si no
      */
     @Override
-    public void nuevoEvento(String nombre, Date fecha, String tipo,
+    public boolean nuevoEvento(String nombre, Date fecha, String tipo,
             String descripcion, Integer capacidad, String localizacion,
             String organizador) {
 
         Usuario u = usuarios.get(organizador);
-        Evento evento = new Evento(nombre, fecha, tipo, descripcion, capacidad, localizacion, u);
+        if (!this.isTokenValid(u.getToken())) {
+            return false;
+        } else {
+            Evento evento = new Evento(nombre, fecha, tipo, descripcion, capacidad, localizacion, u);
 
-        u.inscribirEnEvento(evento);
+            u.inscribirEnEvento(evento);
 
-        eventos.put(nombre, evento);
+            eventos.put(nombre, evento);
+        }
+        return true;
     }
+    
 
     /**
      * Cancela un evento, borrando en cascada
      *
      * @param eDTO el evento a cancelar
+     * @param uDTO el usuario que cancela el evento
+     * @return true si se cancela, false si no
      */
     @Override
-    public void cancelarEvento(EventoDTO eDTO) {
-        Evento e = eventos.get(eDTO.getNombre());
-        e.setCancelado(true);
-        eDTO.setCancelado(true);
+    public boolean cancelarEvento(EventoDTO eDTO, UsuarioDTO uDTO) {
+        if (!this.isTokenValid(uDTO.getToken())) {
+            return false;
+        } else if(!eDTO.getOrganizador().equals(uDTO.getUsername())){
+            return false;
+        } else {
+            Evento e = eventos.get(eDTO.getNombre());
+            e.setCancelado(true);
+            eDTO.setCancelado(true);
 
-        eventos.replace(e.getNombre(), e);
+            eventos.replace(e.getNombre(), e);
+        }
+        return true;
     }
 
     /**
      * Reactiva un evento
      *
      * @param eDTO el evento a reactivar
+     * @param uDTO el usuario que reactiva el evento
+     * @return true si se cancela, false si no
      */
     @Override
-    public void reactivarEvento(EventoDTO eDTO) {
-        Evento e = eventos.get(eDTO.getNombre());
-        e.setCancelado(false);
-        eDTO.setCancelado(false);
+    public boolean reactivarEvento(EventoDTO eDTO, UsuarioDTO uDTO) {
+        if (!this.isTokenValid(uDTO.getToken())) {
+            return false;
+        } else if(!eDTO.getOrganizador().equals(uDTO.getUsername())){
+            return false;
+        } else {
+            Evento e = eventos.get(eDTO.getNombre());
+            e.setCancelado(false);
+            eDTO.setCancelado(false);
 
-        eventos.replace(eDTO.getNombre(), e);
+            eventos.replace(eDTO.getNombre(), e);
+        }
+        return true;
     }
 
     /**
@@ -295,20 +350,24 @@ public class Sistema extends SistemaInterface {
      */
     @Override
     public boolean inscribirse(UsuarioDTO uDTO, EventoDTO eDTO) {
-        boolean ret = false;
+        if (!this.isTokenValid(uDTO.getToken())) {
+            return false;
+        } else {
+            boolean ret = false;
 
-        Usuario u = usuarios.get(uDTO.getUsername());
-        Evento e = eventos.get(eDTO.getNombre());
-        if (!e.getAsistentes().contains(u)) { // Comprobamos que no esté el usuario ya inscrito previamente
-            if (u.inscribirEnEvento(e)) {
-                ret = true;
+            Usuario u = usuarios.get(uDTO.getUsername());
+            Evento e = eventos.get(eDTO.getNombre());
+            if (!e.getAsistentes().contains(u)) { // Comprobamos que no esté el usuario ya inscrito previamente
+                if (u.inscribirEnEvento(e)) {
+                    ret = true;
+                }
+                // Si entra en la lista de espera, igualmente los incluímos en el mapa con las listas actualizadas
+                usuarios.replace(uDTO.getUsername(), u);
+                eventos.replace(eDTO.getNombre(), e);
             }
-            // Si entra en la lista de espera, igualmente los incluímos en el mapa con las listas actualizadas
-            usuarios.replace(uDTO.getUsername(), u);
-            eventos.replace(eDTO.getNombre(), e);
-        }
 
-        return ret;
+            return ret;
+        }
     }
 
     /**
@@ -320,15 +379,19 @@ public class Sistema extends SistemaInterface {
      */
     @Override
     public boolean desinscribirse(UsuarioDTO uDTO, EventoDTO eDTO) {
-        boolean ret = false;
-        Usuario u = usuarios.get(uDTO.getUsername());
-        Evento e = eventos.get(eDTO.getNombre());
+        if (!this.isTokenValid(uDTO.getToken())) {
+            return false;
+        } else {
+            boolean ret = false;
+            Usuario u = usuarios.get(uDTO.getUsername());
+            Evento e = eventos.get(eDTO.getNombre());
 
-        if (u.desinscribir(e) && e.desinscribir(u)) {
-            ret = true;
+            if (u.desinscribir(e) && e.desinscribir(u)) {
+                ret = true;
+            }
+
+            return ret;
         }
-
-        return ret;
     }
 
     /**
@@ -340,14 +403,18 @@ public class Sistema extends SistemaInterface {
      */
     @Override
     public List<EventoDTO> buscarEventosInscritos(UsuarioDTO uDTO) {
-        List<EventoDTO> eventosInscritos = new ArrayList();
+        if (!this.isTokenValid(uDTO.getToken())) {
+            return new ArrayList();
+        } else {
+            List<EventoDTO> eventosInscritos = new ArrayList();
 
-        for (Evento e : usuarios.get(uDTO.getUsername()).getEventos()) {
-            EventoDTO eDTO = this.buscarEventoPorNombre(e.getNombre());
-            eventosInscritos.add(eDTO);
+            for (Evento e : usuarios.get(uDTO.getUsername()).getEventos()) {
+                EventoDTO eDTO = this.buscarEventoPorNombre(e.getNombre());
+                eventosInscritos.add(eDTO);
+            }
+
+            return eventosInscritos;
         }
-
-        return eventosInscritos;
     }
 
     /**
@@ -360,14 +427,18 @@ public class Sistema extends SistemaInterface {
      */
     @Override
     public List<EventoDTO> buscarEventosOrganizados(UsuarioDTO uDTO) {
-        List<EventoDTO> eventosOrganizados = new ArrayList();
+        if (!this.isTokenValid(uDTO.getToken())) {
+            return new ArrayList();
+        } else {
+            List<EventoDTO> eventosOrganizados = new ArrayList();
 
-        for (Evento e : usuarios.get(uDTO.getUsername()).getOrganizados()) {
-            EventoDTO eDTO = this.buscarEventoPorNombre(e.getNombre());
-            eventosOrganizados.add(eDTO);
+            for (Evento e : usuarios.get(uDTO.getUsername()).getOrganizados()) {
+                EventoDTO eDTO = this.buscarEventoPorNombre(e.getNombre());
+                eventosOrganizados.add(eDTO);
+            }
+
+            return eventosOrganizados;
         }
-
-        return eventosOrganizados;
     }
 
     /**
@@ -380,6 +451,7 @@ public class Sistema extends SistemaInterface {
         UsuarioDTO uDTO = new UsuarioDTO();
         uDTO.setUsername(u.getUsername());
         uDTO.setEmail(u.getEmail());
+        uDTO.setToken(u.getToken());
 
         List<String> e = new ArrayList();
         if (!u.getEventos().isEmpty()) {
@@ -446,8 +518,6 @@ public class Sistema extends SistemaInterface {
      ***************************************************************************
      ***************************************************************************
      */
-    
-    
     /**
      * Muestra los datos de todas las instancias en memoria con las que se
      * trabaja
