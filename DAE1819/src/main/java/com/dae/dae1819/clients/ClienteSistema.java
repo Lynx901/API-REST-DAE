@@ -719,90 +719,95 @@ public class ClienteSistema {
                         System.out.print("|- Introduzca el lugar donde se realizará: ");
                         localizacion = capt.nextLine();
 
-                        boolean badOption = true;
-                        System.out.print("|- Introduzca el día del evento: ");
+                        boolean correcto = true;
                         do {
-                            if(!badOption) {
-                                System.out.println("|- No es un día válido, elija un número entre 1 y 31.                  -|");
+                            if(!correcto) {
+                                System.out.println("|- No es un día válido, elija un número entre 1 y 30.                  -|");
                             }
                             try {
+                                System.out.print("|- Introduzca el día del evento: ");
                                 dia = capt.nextInt();
-                                badOption = (dia < 1 || dia > 30);
+                                correcto = (dia > 0 && dia < 31);
                             } catch (InputMismatchException e) {
-                                System.out.println("|- No es un día válido, elija un número entre 1 y 31.                  -|");
-                                badOption = false;
+                                System.out.println("|- No es un día válido, elija un número entre 1 y 30.                  -|");
+                                correcto = false;
                             }
-                        } while (badOption);
-
-                        System.out.print("|- Introduzca el mes del evento (en número): ");
+                        } while (!correcto);
+                        
+                        correcto = true;
                         do {
-                            if(!badOption) {
+                            if(!correcto) {
                                 System.out.println("|- No es un mes válido, elija un número entre 1 y 12.                  -|");
                             }
                             try {
+                                System.out.print("|- Introduzca el mes del evento (en número): ");
                                 mes = capt.nextInt();
-                                badOption = (mes < 1 || mes > 12);
+                                correcto = (mes > 0 && mes < 13);
                             } catch (InputMismatchException e) {
                                 System.out.println("|- No es un mes válido, elija un número entre 1 y 12.                  -|");
-                                badOption = false;
+                                correcto = false;
                             }
-                        } while (badOption);
-
-                        System.out.print("|- Introduzca el año del evento: ");
+                        } while (correcto);
+                        
+                        correcto = true;
                         do {
-                            if(!badOption) {
+                            if(!correcto) {
                                 System.out.println("|- No es un año válido, elija un número después de 2017                -|");
                             }
                             try {
+                                System.out.print("|- Introduzca el año del evento: ");
                                 anio = capt.nextInt();
-                                badOption = (anio < 2018);
+                                correcto = (anio > 2017);
                             } catch (InputMismatchException e) {
                                 System.out.println("|- No es un año válido, elija un número después de 2017                -|");
-                                badOption = false;
+                                correcto = false;
                             }
-                        } while (badOption);
+                        } while (correcto);
                         
-                        System.out.print("|- Introduzca la hora del evento (formato 24h): ");
+                        correcto = true;
                         do {
-                            if(!badOption) {
+                            if(!correcto) {
                                 System.out.println("|- No es una hora válida, elija un número entre 0 y 23               -|");
                             }
                             try {
+                                System.out.print("|- Introduzca la hora del evento (formato 24h): ");
                                 hora = capt.nextInt();
-                                badOption = (hora < 0 || hora > 23);
+                                correcto = (hora > -1 && hora < 24);
                             } catch (InputMismatchException e) {
                                 System.out.println("|- No es una hora válida, elija un número entre 0 y 23               -|");
-                                badOption = false;
+                                correcto = false;
                             }
-                        } while (badOption);
+                        } while (correcto);
                         
-                        System.out.print("|- Introduzca los minutos del evento: ");
+                        correcto = true;
                         do {
-                            if(!badOption) {
+                            if(!correcto) {
                                 System.out.println("|- No es una cantidad válida, elija una cantidad entre 0 y 59        -|");
                             }
                             try {
+                                System.out.print("|- Introduzca los minutos del evento: ");
                                 minutos = capt.nextInt();
-                                badOption = (minutos < 0 || minutos > 59);
+                                correcto = (minutos > -1 && minutos < 60);
                             } catch (InputMismatchException e) {
                                 System.out.println("|- No es una cantidad válida, elija una cantidad entre 0 y 59        -|");
-                                badOption = false;
+                                correcto = false;
                             }
-                        } while (badOption);
-
-                        System.out.print("|- ¿Qué capacidad máxima tendrá?: ");
+                        } while (correcto);
+                        
+                        correcto = true;                        
                         do {
-                            if(!badOption) {
+                            if(!correcto) {
                                 System.out.println("|- No es un número válido, elija un número entero mayor de 0.        -|");
                             }
                             try {
+                                System.out.print("|- ¿Qué capacidad máxima tendrá?: ");
                                 capacidad = capt.nextInt();
-                                badOption = (capacidad < 0);
+                                correcto = (capacidad > -1);
                             } catch (InputMismatchException e) {
                                 System.out.println("|- No es un número válido, elija un número entero mayor de 0.        -|");
-                                badOption = true;
+                                correcto = false;
                             }
-                        } while (badOption);
+                        } while (correcto);
 
                         tipo = this.menuTipoEvento();
                         Date fecha = new Date(anio, mes, dia, hora, minutos);
