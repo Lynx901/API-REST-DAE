@@ -7,6 +7,8 @@ package com.dae.dae1819.interfaces;
 
 import com.dae.dae1819.DTOs.EventoDTO;
 import com.dae.dae1819.DTOs.UsuarioDTO;
+import com.dae.dae1819.Excepciones.ListaEventosVacia;
+import com.dae.dae1819.Excepciones.UsuarioExistente;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -43,9 +45,10 @@ public abstract class SistemaInterface {
      * @param password la contraseña del usuario
      * @param password2 la contraseña para comprobar
      * @param email el email del usuario
+     * @throws UsuarioExistente Excepcion de usuario existente
      * @return true si los datos son correctos, false si no
      */
-    public abstract boolean nuevoUsuario(String username, String password, String password2, String email);
+    public abstract boolean nuevoUsuario(String username, String password, String password2, String email) throws UsuarioExistente;
 
     /**
      * Inicia la sesión de un usuario registrado en el sistema
@@ -68,35 +71,38 @@ public abstract class SistemaInterface {
      * Busca un evento por el nombre del mismo
      *
      * @param nombre el nombre del evento a buscar
+     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
      * @return un EventoDTO del evento encontrado, o null si no lo encuentra
      */
-    public abstract EventoDTO buscarEventoPorNombre(String nombre);
+    public abstract EventoDTO buscarEventoPorNombre(String nombre) throws ListaEventosVacia;
 
     /**
      * Busca un evento por el tipo del mismo
      *
      * @param tipo el tipo del evento a buscar
+     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
      * @return una lista de EventoDTO encontrados, o una lista vacía si no
      * encuentra ninguno
      */
-    public abstract List<EventoDTO> buscarEventosPorTipo(String tipo);
+    public abstract List<EventoDTO> buscarEventosPorTipo(String tipo) throws ListaEventosVacia;
 
     /**
      * Busca un evento por la descripción del mismo
      *
      * @param descripcion la descripción del evento a buscar
+     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
      * @return una lista de EventoDTO encontrados, o una lista vacía si no
      * encuentra ninguno
      */
-    public abstract List<EventoDTO> buscarEventosPorDescripcion(String descripcion);
+    public abstract List<EventoDTO> buscarEventosPorDescripcion(String descripcion) throws ListaEventosVacia;
 
     /**
      * Lista todos los eventos del sistema
-     *
+     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
      * @return una lista con todos los eventos creados en forma DTO (vacía si no
      * encuentra ninguno)
      */
-    public abstract List<EventoDTO> buscarEventos();
+    public abstract List<EventoDTO> buscarEventos() throws ListaEventosVacia;
 
     /*
      ***************************************************************************
@@ -151,20 +157,22 @@ public abstract class SistemaInterface {
      * Busca los eventos en los que se ha inscrito el usuario
      *
      * @param uDTO usuario del que se comprobará el listado de eventos
+     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
      * @return una lista de EventoDTO con los eventos inscritos, o una vacía si
      * no encuentra ninguno
      */
-    public abstract List<EventoDTO> buscarEventosInscritos(UsuarioDTO uDTO);
+    public abstract List<EventoDTO> buscarEventosInscritos(UsuarioDTO uDTO) throws ListaEventosVacia;
 
     /**
      * Busca los eventos organizados por el usuario
      *
      * @param uDTO usuario del que se comprobará el listado de eventos
      * organizados
+     *  @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
      * @return una lista de EventoDTO con los eventos organizados, o una vacía
      * si no encuentra ninguno
      */
-    public abstract List<EventoDTO> buscarEventosOrganizados(UsuarioDTO uDTO);
+    public abstract List<EventoDTO> buscarEventosOrganizados(UsuarioDTO uDTO) throws ListaEventosVacia;
 
     /**
      * Inscribe a un usuario en un evento

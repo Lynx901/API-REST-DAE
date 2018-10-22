@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import com.dae.dae1819.DTOs.EventoDTO;
 import com.dae.dae1819.DTOs.UsuarioDTO;
+import com.dae.dae1819.Excepciones.ListaEventosVacia;
+import com.dae.dae1819.Excepciones.UsuarioExistente;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -115,15 +117,20 @@ public class Sistema extends SistemaInterface {
      * @param password la contraseña del usuario
      * @param password2 la contraseña para comprobar
      * @param email el email del usuario
+     * @throws UsuarioExistente Excepcion si el usuario existe
      * @return true si los datos son correctos, false si no
      */
     @Override
-    public boolean nuevoUsuario(String username, String password, String password2, String email) {
+    public boolean nuevoUsuario(String username, String password, String password2, String email) throws UsuarioExistente {
         boolean ret = false;
 
         if (password.equals(password2)) {
             Usuario usuario = new Usuario(username, password, email);
-            usuarios.put(username, usuario);
+            try {
+                usuarios.put(username, usuario);
+            } catch (Exception e){
+                throw new UsuarioExistente("The user is already stored ", e);
+            }
             ret = true;
         }
 
@@ -173,12 +180,17 @@ public class Sistema extends SistemaInterface {
      * Busca un evento por el nombre del mismo
      *
      * @param nombre el nombre del evento a buscar
+     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
      * @return un EventoDTO del evento encontrado, o uno vacío si no lo encuentra
      */
     @Override
-    public EventoDTO buscarEventoPorNombre(String nombre) {
+    public EventoDTO buscarEventoPorNombre(String nombre) throws ListaEventosVacia {
         if(!eventos.isEmpty()) {
-            return eventoToDTO(eventos.get(nombre));
+            try {
+                return eventoToDTO(eventos.get(nombre));
+            } catch (Exception e) {
+                throw new ListaEventosVacia("The list of events is empty ", e);
+            }
         } else {
             return new EventoDTO();
         }
@@ -188,19 +200,23 @@ public class Sistema extends SistemaInterface {
      * Busca un evento por el tipo del mismo
      *
      * @param tipo el tipo del evento a buscar
+     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
      * @return una lista de EventoDTO encontrados, o una lista vacía si no
      * encuentra ninguno
      */
     @Override
-    public List<EventoDTO> buscarEventosPorTipo(String tipo) {
+    public List<EventoDTO> buscarEventosPorTipo(String tipo) throws ListaEventosVacia {
         List<EventoDTO> eventosPorTipo = new ArrayList();
-
-        eventos.entrySet().forEach((entry) -> {
-            if (entry.getValue().getTipo().equalsIgnoreCase(tipo)) {
-                EventoDTO e = eventoToDTO(entry.getValue());
-                eventosPorTipo.add(e);
-            }
-        });
+        try {
+            eventos.entrySet().forEach((entry) -> {
+                if (entry.getValue().getTipo().equalsIgnoreCase(tipo)) {
+                    EventoDTO e = eventoToDTO(entry.getValue());
+                    eventosPorTipo.add(e);
+                }
+            });
+        } catch (Exception e) {
+                throw new ListaEventosVacia("The list of events is empty ", e);
+        }
 
         return eventosPorTipo;
     }
@@ -210,38 +226,44 @@ public class Sistema extends SistemaInterface {
     /**
      * Busca un evento por la descripción del mismo
      * @param descripcion la descripción del evento a buscar
+     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
      * @return una lista de EventoDTO encontrados, o una lista vacía si no encuentra ninguno
      */
     @Override
-    public List<EventoDTO> buscarEventosPorDescripcion(String descripcion) {
+    public List<EventoDTO> buscarEventosPorDescripcion(String descripcion) throws ListaEventosVacia {
         List<EventoDTO> eventosPorDescripcion = new ArrayList();
+        try {
+            eventos.entrySet().forEach((entry) -> {
+                if (entry.getValue().getDescripcion().contains(descripcion)) {
 
-        eventos.entrySet().forEach((entry) -> {
-            if (entry.getValue().getDescripcion().contains(descripcion)) {
-
-                EventoDTO e = eventoToDTO(entry.getValue());
-                eventosPorDescripcion.add(e);
-            }
-        });
+                    EventoDTO e = eventoToDTO(entry.getValue());
+                    eventosPorDescripcion.add(e);
+                }
+            });
+        } catch (Exception e) {
+            throw new ListaEventosVacia("The list of events is empty ", e);
+        }
 
         return eventosPorDescripcion;
     }
 
     /**
      * Lista todos los eventos del sistema
-     *
+     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
      * @return una lista con todos los eventos creados en forma DTO (vacía si no
      * encuentra ninguno)
      */
     @Override
-    public List<EventoDTO> buscarEventos() {
+    public List<EventoDTO> buscarEventos() throws ListaEventosVacia {
         List<EventoDTO> lista = new ArrayList();
-
-        eventos.entrySet().forEach((entry) -> {
-            EventoDTO e = eventoToDTO(entry.getValue());
-            lista.add(e);
-        });
-
+        try {
+            eventos.entrySet().forEach((entry) -> {
+                EventoDTO e = eventoToDTO(entry.getValue());
+                lista.add(e);
+            });
+        } catch (Exception e) {
+            throw new ListaEventosVacia("The list of events is empty ", e);
+        }
         return lista;
     }
 
@@ -398,21 +420,24 @@ public class Sistema extends SistemaInterface {
      * Busca los eventos en los que se ha inscrito el usuario
      *
      * @param uDTO usuario del que se comprobará el listado de eventos
+     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
      * @return una lista de EventoDTO con los eventos inscritos, o una vacía si
      * no encuentra ninguno
      */
     @Override
-    public List<EventoDTO> buscarEventosInscritos(UsuarioDTO uDTO) {
+    public List<EventoDTO> buscarEventosInscritos(UsuarioDTO uDTO) throws ListaEventosVacia {
         if (!this.isTokenValid(uDTO.getToken())) {
             return new ArrayList();
         } else {
             List<EventoDTO> eventosInscritos = new ArrayList();
-
-            for (Evento e : usuarios.get(uDTO.getUsername()).getEventos()) {
-                EventoDTO eDTO = this.buscarEventoPorNombre(e.getNombre());
-                eventosInscritos.add(eDTO);
+            try {
+                for (Evento e : usuarios.get(uDTO.getUsername()).getEventos()) {
+                    EventoDTO eDTO = this.buscarEventoPorNombre(e.getNombre());
+                    eventosInscritos.add(eDTO);
+                }
+            } catch (Exception e) {
+                throw new ListaEventosVacia("The list of events is empty ", e);
             }
-
             return eventosInscritos;
         }
     }
@@ -422,19 +447,23 @@ public class Sistema extends SistemaInterface {
      *
      * @param uDTO usuario del que se comprobará el listado de eventos
      * organizados
+     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
      * @return una lista de EventoDTO con los eventos organizados, o una vacía
      * si no encuentra ninguno
      */
     @Override
-    public List<EventoDTO> buscarEventosOrganizados(UsuarioDTO uDTO) {
+    public List<EventoDTO> buscarEventosOrganizados(UsuarioDTO uDTO) throws ListaEventosVacia {
         if (!this.isTokenValid(uDTO.getToken())) {
             return new ArrayList();
         } else {
             List<EventoDTO> eventosOrganizados = new ArrayList();
-
-            for (Evento e : usuarios.get(uDTO.getUsername()).getOrganizados()) {
-                EventoDTO eDTO = this.buscarEventoPorNombre(e.getNombre());
-                eventosOrganizados.add(eDTO);
+            try {
+                for (Evento e : usuarios.get(uDTO.getUsername()).getOrganizados()) {
+                    EventoDTO eDTO = this.buscarEventoPorNombre(e.getNombre());
+                    eventosOrganizados.add(eDTO);
+                }
+            } catch (Exception e) {
+                throw new ListaEventosVacia("The list of events is empty ", e);
             }
 
             return eventosOrganizados;
