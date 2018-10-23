@@ -8,14 +8,21 @@ package com.dae.dae1819.pojos;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.*;
 
 /**
  *
  * @author dml y jfaf
  */
+@Entity
 public class Evento {
 
+    @Id
+    @GeneratedValue
+    private int id;
     private String nombre;
+    
+    @Temporal(TemporalType.TIMESTAMP)
     private Date fecha;
 
     private enum Tipo {
@@ -27,6 +34,7 @@ public class Evento {
     private String localizacion;
     private boolean cancelado;
 
+    @ManyToMany(mappedBy="eventos")
     private final List<Usuario> asistentes;
     private Usuario organizador;
 

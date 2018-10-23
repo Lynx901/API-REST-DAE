@@ -1,0 +1,10 @@
+## YAML Template.
+---
+spring.datasource.driver-class-name: org.apache.derby.jdbc.ClientDriver
+spring.datasource.url: jdbc:derby://localhost:1527/DAE1819
+spring.datasource.username: dae
+spring.datasource.password: dae
+spring.datasource.tomcat.max-active: 50
+
+spring.jpa.hibernate.ddl-auto: create
+spring.jpa.properties.hibernate.dialect: org.hibernate.dialect.DerbyTenSevenDialect

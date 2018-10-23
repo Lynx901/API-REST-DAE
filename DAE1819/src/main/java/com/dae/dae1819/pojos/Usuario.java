@@ -7,20 +7,30 @@ package com.dae.dae1819.pojos;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.*;
 
 /**
  *
  * @author dml y jfaf
  */
+@Entity
 public class Usuario {
 
+    @Id
     private String username;
     private String password;
     private String email;
+    
+    @Transient
     private Integer token;
 
+    @ManyToMany
     private final List<Evento> eventos;
+    
+    @ManyToMany
     private final List<Evento> listaEspera;
+    
+    @OneToMany(mappedBy="usuario")
     private final List<Evento> organizados;
 
     public Usuario() {

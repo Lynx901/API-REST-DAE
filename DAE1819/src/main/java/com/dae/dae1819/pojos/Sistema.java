@@ -149,7 +149,6 @@ public class Sistema extends SistemaInterface {
         Usuario user = usuarios.get(username);
         if (user != null) {
             if (user.getPassword().equals(password)) {
-                System.out.println("[debug]");
                 Integer token = ThreadLocalRandom.current().nextInt(10000000, 100000000);
                 user.setToken(token);
                 UsuarioDTO uDTO = this.usuarioToDTO(user);
@@ -569,8 +568,8 @@ public class Sistema extends SistemaInterface {
                     System.out.println("[debug]- Email:\t\t" + u.getEmail());
                     System.out.println("[debug]- Contraseña:\t" + u.getPassword());
                     System.out.println("[debug]- Eventos Inscritos:\t" + u.getEventos().size());
-                    List<Evento> eventos = u.getEventos();
-                    for (Evento evento : eventos) {
+                    List<Evento> leventos = u.getEventos();
+                    for (Evento evento : leventos) {
                         System.out.println("\t|-----------------------------------------------------------------|");
                         System.out.println("\t[debug]- Nombre: \t\t" + evento.getNombre());
                         System.out.println("\t[debug]- Descripción: \t\t" + evento.getDescripcion());
