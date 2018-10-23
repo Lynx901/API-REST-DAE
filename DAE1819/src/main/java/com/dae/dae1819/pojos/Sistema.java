@@ -128,7 +128,7 @@ public class Sistema extends SistemaInterface {
             Usuario usuario = new Usuario(username, password, email);
             try {
                 usuarios.put(username, usuario);
-            } catch (Exception e){
+            } catch (NullPointerException e){
                 throw new UsuarioExistente("The user is already stored ", e);
             }
             ret = true;
@@ -188,7 +188,7 @@ public class Sistema extends SistemaInterface {
         if(!eventos.isEmpty()) {
             try {
                 return eventoToDTO(eventos.get(nombre));
-            } catch (Exception e) {
+            } catch (NullPointerException e) {
                 throw new ListaEventosVacia("The list of events is empty ", e);
             }
         } else {
@@ -214,7 +214,7 @@ public class Sistema extends SistemaInterface {
                     eventosPorTipo.add(e);
                 }
             });
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
                 throw new ListaEventosVacia("The list of events is empty ", e);
         }
 
@@ -240,7 +240,7 @@ public class Sistema extends SistemaInterface {
                     eventosPorDescripcion.add(e);
                 }
             });
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             throw new ListaEventosVacia("The list of events is empty ", e);
         }
 
@@ -261,7 +261,7 @@ public class Sistema extends SistemaInterface {
                 EventoDTO e = eventoToDTO(entry.getValue());
                 lista.add(e);
             });
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             throw new ListaEventosVacia("The list of events is empty ", e);
         }
         return lista;
@@ -435,7 +435,7 @@ public class Sistema extends SistemaInterface {
                     EventoDTO eDTO = this.buscarEventoPorNombre(e.getNombre());
                     eventosInscritos.add(eDTO);
                 }
-            } catch (Exception e) {
+            } catch (NullPointerException e) {
                 throw new ListaEventosVacia("The list of events is empty ", e);
             }
             return eventosInscritos;
@@ -462,7 +462,7 @@ public class Sistema extends SistemaInterface {
                     EventoDTO eDTO = this.buscarEventoPorNombre(e.getNombre());
                     eventosOrganizados.add(eDTO);
                 }
-            } catch (Exception e) {
+            } catch (NullPointerException e) {
                 throw new ListaEventosVacia("The list of events is empty ", e);
             }
 
