@@ -8,6 +8,7 @@ package com.dae.dae1819.pojos;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -18,19 +19,23 @@ public class Usuario {
 
     @Id
     private String username;
+    
+    @NotNull
     private String password;
+    
+    @NotNull
     private String email;
     
     @Transient
     private Integer token;
 
-    @ManyToMany
+    @ManyToMany(mappedBy="AsistentesEventos", fetch=FetchType.LAZY)
     private final List<Evento> eventos;
     
-    @ManyToMany
+    @ManyToMany(mappedBy="AsistentesEventos", fetch=FetchType.LAZY)
     private final List<Evento> listaEspera;
     
-    @OneToMany(mappedBy="usuario")
+    @OneToMany(mappedBy = "usuarios" , fetch=FetchType.LAZY)
     private final List<Evento> organizados;
 
     public Usuario() {

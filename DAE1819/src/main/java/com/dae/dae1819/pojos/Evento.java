@@ -34,8 +34,11 @@ public class Evento {
     private String localizacion;
     private boolean cancelado;
 
-    @ManyToMany(mappedBy="eventos")
+    @ManyToMany(mappedBy="AsistentesEventos")
     private final List<Usuario> asistentes;
+    
+    @ManyToOne
+    @JoinColumn(name="organizados")
     private Usuario organizador;
 
     public Evento() {

@@ -33,5 +33,4 @@ public class UsuarioDAO {
         em.merge(u);
     }
     
-    
 }
