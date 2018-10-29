@@ -51,34 +51,6 @@ public class Sistema extends SistemaInterface {
     }
 
     /**
-     * @return the usuarios
-     */
-    public Map<String, Usuario> getUsuarios() {
-        return usuarios;
-    }
-
-    /**
-     * @param usuarios the usuarios to set
-     */
-    public void setUsuarios(Map<String, Usuario> usuarios) {
-        this.usuarios = usuarios;
-    }
-
-    /**
-     * @return the eventos
-     */
-    public Map<String, Evento> getEventos() {
-        return eventos;
-    }
-
-    /**
-     * @param eventos the eventos to set
-     */
-    public void setEventos(Map<String, Evento> eventos) {
-        this.eventos = eventos;
-    }
-
-    /**
      * Comprueba si el token de sesión es válido
      *
      * @param token el token a comprobar
@@ -313,6 +285,7 @@ public class Sistema extends SistemaInterface {
      */
     @Override
     public boolean cancelarEvento(EventoDTO eDTO, UsuarioDTO uDTO) {
+        //TODO notificacion
         if (!this.isTokenValid(uDTO.getToken())) {
             return false;
         } else if(!eDTO.getOrganizador().equals(uDTO.getUsername())){
@@ -336,6 +309,7 @@ public class Sistema extends SistemaInterface {
      */
     @Override
     public boolean reactivarEvento(EventoDTO eDTO, UsuarioDTO uDTO) {
+        //TODO notificacion
         if (!this.isTokenValid(uDTO.getToken())) {
             return false;
         } else if(!eDTO.getOrganizador().equals(uDTO.getUsername())){

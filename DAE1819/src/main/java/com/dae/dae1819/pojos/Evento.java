@@ -34,8 +34,11 @@ public class Evento {
     private String localizacion;
     private boolean cancelado;
 
-    @ManyToMany(mappedBy="AsistentesEventos")
+    @ManyToMany(mappedBy="eventos", fetch=FetchType.LAZY)
     private final List<Usuario> asistentes;
+    
+    @ManyToMany(mappedBy="listaEspera", fetch=FetchType.LAZY)
+    private List<Usuario> inscritos;
     
     @ManyToOne
     @JoinColumn(name="organizados")
@@ -44,11 +47,12 @@ public class Evento {
     public Evento() {
         this.cancelado = false;
         this.asistentes = new ArrayList();
+        this.inscritos = new ArrayList();
         this.organizador = new Usuario();
     }
 
     public Evento(String nombre, Date fecha, String _tipo, String descripcion,
-            Integer capacidad, String localizacion, List<Usuario> asistentes, Usuario organizador) {
+            Integer capacidad, String localizacion, List<Usuario> asistentes, List<Usuario> inscritos, Usuario organizador) {
         this.nombre = nombre;
         this.fecha = fecha;
         this.tipo = Tipo.valueOf(_tipo);
@@ -60,6 +64,11 @@ public class Evento {
         this.asistentes = new ArrayList();
         asistentes.forEach((usuario) -> {
             this.asistentes.add(usuario);
+        });
+        
+        this.inscritos = new ArrayList();
+        inscritos.forEach((usuario) -> {
+            this.inscritos.add(usuario);
         });
 
         this.organizador = organizador;
@@ -208,6 +217,21 @@ public class Evento {
     public void setOrganizador(Usuario organizador) {
         this.organizador = organizador;
     }
+    
+  
+    /**
+     * @return the inscritos
+     */
+    public List<Usuario> getInscritos() {
+        return inscritos;
+    }
+
+    /**
+     * @param inscritos the inscritos to set
+     */
+    public void setInscritos(List<Usuario> inscritos) {
+        this.inscritos = inscritos;
+    }
 
     /**
      * Inscribe a un usuario en el evento
@@ -219,10 +243,12 @@ public class Evento {
         boolean ret = false;
 
         if (this.asistentes.size() <= this.capacidad) {
+            this.asistentes.add(u);
             ret = true;
+        } else {
+            this.inscritos.add(u);
         }
-        this.asistentes.add(u);
-
+        
         return ret;
     }
 
@@ -237,10 +263,21 @@ public class Evento {
 
         if (this.asistentes.contains(u)) {
             this.asistentes.remove(u);
+            //TODO notificacion de desinscripcion
+            if(!this.inscritos.isEmpty()) {
+                u = this.inscritos.get(0);
+                this.inscribir(u);
+                //TODO notificacion de inscripcion
+                this.inscritos.remove(u);
+            }
+            ret = true;
+        } else if (this.inscritos.contains(u)) {
+            this.inscritos.remove(u);
             ret = true;
         }
 
         return ret;
     }
+
 
 }

@@ -29,10 +29,10 @@ public class Usuario {
     @Transient
     private Integer token;
 
-    @ManyToMany(mappedBy="AsistentesEventos", fetch=FetchType.LAZY)
+    @ManyToMany(mappedBy="asistentes", fetch=FetchType.LAZY)
     private final List<Evento> eventos;
     
-    @ManyToMany(mappedBy="AsistentesEventos", fetch=FetchType.LAZY)
+    @ManyToMany(mappedBy="inscritos", fetch=FetchType.LAZY)
     private final List<Evento> listaEspera;
     
     @OneToMany(mappedBy = "usuarios" , fetch=FetchType.LAZY)
@@ -220,6 +220,9 @@ public class Usuario {
 
         if (this.eventos.contains(e)) { // Comprobamos que el usuario asista al evento
             this.eventos.remove(e);
+            ret = true;
+        } else if (this.listaEspera.contains(e)) {
+            this.listaEspera.remove(e);
             ret = true;
         }
 

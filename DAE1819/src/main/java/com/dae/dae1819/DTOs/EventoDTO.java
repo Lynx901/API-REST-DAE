@@ -24,16 +24,18 @@ public class EventoDTO {
     private boolean cancelado;
 
     private List<String> asistentes;
+    private List<String> inscritos;
     private String organizador;
 
     public EventoDTO() {
         nombre = "";
         this.cancelado = false;
         asistentes = new ArrayList();
+        inscritos = new ArrayList();
     }
 
     public EventoDTO(String nombre, Date fecha, String _tipo, String descripcion,
-            Integer capacidad, String localizacion, List<String> asistentes, String organizador) {
+            Integer capacidad, String localizacion, List<String> asistentes, List<String> inscritos, String organizador) {
         this.nombre = nombre;
         this.fecha = fecha;
         this.tipo = _tipo;
@@ -45,6 +47,11 @@ public class EventoDTO {
         this.asistentes = new ArrayList();
         asistentes.forEach((usuario) -> {
             this.asistentes.add(usuario);
+        });
+        
+        this.inscritos = new ArrayList();
+        inscritos.forEach((usuario) -> {
+            this.inscritos.add(usuario);
         });
 
         this.organizador = organizador;
@@ -177,5 +184,19 @@ public class EventoDTO {
      */
     public void setCancelado(boolean cancelado) {
         this.cancelado = cancelado;
+    }
+
+    /**
+     * @return the inscritos
+     */
+    public List<String> getInscritos() {
+        return inscritos;
+    }
+
+    /**
+     * @param inscritos the inscritos to set
+     */
+    public void setInscritos(List<String> inscritos) {
+        this.inscritos = inscritos;
     }
 }
