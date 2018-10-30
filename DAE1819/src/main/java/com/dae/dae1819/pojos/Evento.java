@@ -34,10 +34,10 @@ public class Evento {
     private String localizacion;
     private boolean cancelado;
 
-    @ManyToMany(mappedBy="eventos", fetch=FetchType.LAZY)
+    @ManyToMany
     private final List<Usuario> asistentes;
     
-    @ManyToMany(mappedBy="listaEspera", fetch=FetchType.LAZY)
+    @ManyToMany
     private List<Usuario> inscritos;
     
     @ManyToOne

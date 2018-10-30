@@ -16,7 +16,6 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.HttpStatus;
 
 /**
  *

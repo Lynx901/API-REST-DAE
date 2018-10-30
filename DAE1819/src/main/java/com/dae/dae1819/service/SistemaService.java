@@ -7,14 +7,13 @@ package com.dae.dae1819.service;
 
 import com.dae.dae1819.clients.ClienteSistema;
 import com.dae.dae1819.pojos.Sistema;
-import org.apache.tomcat.jdbc.pool.DataSource;
+import javax.sql.DataSource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 /**
@@ -25,20 +24,12 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 @EntityScan(basePackages="com.dae.dae1819.pojos")
 public class SistemaService {
 
-    /*@Bean
+    @Bean
     Sistema sistema() {
         Sistema sistema = new Sistema();
         sistema.setNombre("sys");
         return sistema;
-    }*/
-    
-    @Bean
-    JdbcTemplate jdbcTemplate(DataSource dataSource){
-        JdbcTemplate jdbcTemplate = new JdbcTemplate();
-        jdbcTemplate.setDataSource(dataSource);
-        return jdbcTemplate;
     }
-    
 
     public static void main(String[] args) throws Exception {
         SpringApplication servidor = new SpringApplication(SistemaService.class);

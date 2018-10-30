@@ -5,7 +5,7 @@
  */
 package com.dae.dae1819.DAOs;
 
-import com.dae.dae1819.pojos.Usuario;
+import com.dae.dae1819.pojos.Evento;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
@@ -17,20 +17,20 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 @Transactional
-public class UsuarioDAO {
+public class EventoDAO {
     @PersistenceContext
     EntityManager em;
     
-    public Usuario buscar(String username) {
-        return em.find(Usuario.class, username);
+    public Evento buscar(int id) {
+        return em.find(Evento.class, id);
     }
     
-    public void insertar(Usuario u) {
-        em.persist(u);
+    public void insertar(Evento e) {
+        em.persist(e);
     }
     
-    public void actualizar(Usuario u) {
-        em.merge(u);
+    public void actualizar(Evento e) {
+        em.merge(e);
     }
     
 }

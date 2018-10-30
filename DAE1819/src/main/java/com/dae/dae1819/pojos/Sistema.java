@@ -5,17 +5,20 @@
  */
 package com.dae.dae1819.pojos;
 
+import com.dae.dae1819.DAOs.EventoDAO;
+import com.dae.dae1819.DAOs.UsuarioDAO;
 import com.dae.dae1819.interfaces.SistemaInterface;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import com.dae.dae1819.DTOs.EventoDTO;
 import com.dae.dae1819.DTOs.UsuarioDTO;
 import com.dae.dae1819.Excepciones.ListaEventosVacia;
 import com.dae.dae1819.Excepciones.UsuarioExistente;
+import java.sql.SQLException;
 import java.util.concurrent.ThreadLocalRandom;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -24,12 +27,17 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Sistema extends SistemaInterface {
 
     private String nombre;
-    private Map<String, Usuario> usuarios;
-    private Map<String, Evento> eventos;
+    
+    @Autowired
+    private UsuarioDAO usuarios;
+    
+    @Autowired
+    private EventoDAO eventos;
+    
+    private List<Integer> tokenConectados;
 
     public Sistema() {
-        usuarios = new TreeMap();
-        eventos = new TreeMap();
+        
     }
 
     public Sistema(String nombre) {
@@ -58,18 +66,10 @@ public class Sistema extends SistemaInterface {
      */
     @Override
     public boolean isTokenValid(Integer token) {
-        boolean ret = true;
+        boolean ret = false;
 
-        if (token == 0) {
-            ret = false;
-        } else {
-            for (Map.Entry<String, Usuario> entry : usuarios.entrySet()) {
-                Usuario u = entry.getValue();
-                if (u.getToken() != null && u.getToken().equals(token)) {
-                    ret = true;
-                    break;
-                }
-            }
+        if (token != 0) {
+            ret = tokenConectados.contains(token);
         }
 
         return ret;
@@ -99,8 +99,9 @@ public class Sistema extends SistemaInterface {
         if (password.equals(password2)) {
             Usuario usuario = new Usuario(username, password, email);
             try {
-                usuarios.put(username, usuario);
-            } catch (NullPointerException e){
+                usuarios.insertar(usuario);
+                //TODO Controlar excepción
+            } catch (Exception e){
                 throw new UsuarioExistente("The user is already stored ", e);
             }
             ret = true;
@@ -118,17 +119,17 @@ public class Sistema extends SistemaInterface {
      */
     @Override
     public UsuarioDTO login(String username, String password) {
-        Usuario user = usuarios.get(username);
+        Usuario user = usuarios.buscar(username);
         if (user != null) {
             if (user.getPassword().equals(password)) {
                 Integer token = ThreadLocalRandom.current().nextInt(10000000, 100000000);
-                user.setToken(token);
+                tokenConectados.add(token);
                 UsuarioDTO uDTO = this.usuarioToDTO(user);
-                uDTO.setToken(user.getToken());
+                uDTO.setToken(token);
                 return uDTO;
             }
         }
-        return new UsuarioDTO();
+        return null;
     }
     
     /**
@@ -140,7 +141,7 @@ public class Sistema extends SistemaInterface {
     @Override
     public UsuarioDTO logout(UsuarioDTO uDTO) {
         if(this.isTokenValid(uDTO.getToken())) {
-            usuarios.get(uDTO.getUsername()).setToken(0);
+            tokenConectados.remove(uDTO.getToken());
             return null;
         } else {
             return uDTO;
@@ -453,7 +454,6 @@ public class Sistema extends SistemaInterface {
         UsuarioDTO uDTO = new UsuarioDTO();
         uDTO.setUsername(u.getUsername());
         uDTO.setEmail(u.getEmail());
-        uDTO.setToken(u.getToken());
 
         List<String> e = new ArrayList();
         if (!u.getEventos().isEmpty()) {

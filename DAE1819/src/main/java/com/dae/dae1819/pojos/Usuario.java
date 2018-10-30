@@ -5,10 +5,11 @@
  */
 package com.dae.dae1819.pojos;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+
 
 /**
  *
@@ -20,14 +21,9 @@ public class Usuario {
     @Id
     private String username;
     
-    @NotNull
     private String password;
     
-    @NotNull
     private String email;
-    
-    @Transient
-    private Integer token;
 
     @ManyToMany(mappedBy="asistentes", fetch=FetchType.LAZY)
     private final List<Evento> eventos;
@@ -35,12 +31,11 @@ public class Usuario {
     @ManyToMany(mappedBy="inscritos", fetch=FetchType.LAZY)
     private final List<Evento> listaEspera;
     
-    @OneToMany(mappedBy = "usuarios" , fetch=FetchType.LAZY)
+    @OneToMany(mappedBy = "organizador", fetch=FetchType.LAZY)
     private final List<Evento> organizados;
 
     public Usuario() {
         eventos = new ArrayList();
-        this.token = 0;
 
         listaEspera = new ArrayList();
         organizados = new ArrayList();
@@ -50,7 +45,6 @@ public class Usuario {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.token = 0;
 
         eventos = new ArrayList();
         organizados = new ArrayList();
@@ -61,7 +55,6 @@ public class Usuario {
         this.username = username;
         this.password = password;
         this.email = email;
-        this.token = 0;
 
         this.eventos = new ArrayList();
         eventos.forEach((evento) -> {
@@ -170,20 +163,6 @@ public class Usuario {
         organizados.forEach((evento) -> {
             this.organizados.add(evento);
         });
-    }
-
-    /**
-     * @return the token
-     */
-    public Integer getToken() {
-        return token;
-    }
-
-    /**
-     * @param token the token to set
-     */
-    public void setToken(Integer token) {
-        this.token = token;
     }
 
     /**
