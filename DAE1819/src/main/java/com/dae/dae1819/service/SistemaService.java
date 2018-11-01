@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 /**
@@ -22,6 +23,7 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource;
  */
 @SpringBootApplication
 @EntityScan(basePackages="com.dae.dae1819.pojos")
+@ComponentScan({"com.dae.dae1819.pojos"})
 public class SistemaService {
 
     @Bean

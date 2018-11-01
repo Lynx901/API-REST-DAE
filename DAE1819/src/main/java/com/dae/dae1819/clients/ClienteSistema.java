@@ -24,7 +24,7 @@ import org.springframework.context.ApplicationContext;
 public class ClienteSistema {
 
     ApplicationContext context;
-    UsuarioDTO user;
+    UsuarioDTO user = null;
 
     public ClienteSistema(ApplicationContext context) {
         this.context = context;
@@ -409,11 +409,11 @@ public class ClienteSistema {
         System.out.println("|- Correo electrónico: \t\t" + usuario.getEmail());
 
         System.out.println("|- Eventos en los que se ha inscrito:\t" + usuario.getEventos().size());
-        List<String> eventos = usuario.getEventos();
+        List<Integer> eventos = usuario.getEventos();
         System.out.println("|-\t|-------------------------------------------------------------|");
-        for (String evento : eventos) {
+        for (Integer eventoID : eventos) {
             try {
-                EventoDTO e = sistema.buscarEventoPorNombre(evento);
+                EventoDTO e = sistema.buscarEventoPorId(eventoID);
             
                 System.out.println("|-\t|- Nombre: \t\t" + e.getNombre());
                 if (e.isCancelado()) {
@@ -426,24 +426,24 @@ public class ClienteSistema {
                         System.out.println("|-\t|- Estás en la lista de espera");
                     }
                 }
-            } catch (ListaEventosVacia e) {
+            } catch (Exception e) {//TODO
                     System.err.print(e.getMessage());
             }
             System.out.println("|-\t|-------------------------------------------------------------|");
         }
 
         System.out.println("|- Eventos que ha organizado:\t" + usuario.getOrganizados().size());
-        List<String> eventosOrganizados = usuario.getOrganizados();
+        List<Integer> eventosOrganizados = usuario.getOrganizados();
         System.out.println("|-\t|-------------------------------------------------------------|");
         try {
-            for (String evento : eventosOrganizados) {
-                EventoDTO e = sistema.buscarEventoPorNombre(evento);
+            for (Integer eventoID : eventosOrganizados) {
+                EventoDTO e = sistema.buscarEventoPorId(eventoID);
                 System.out.println("|-\t|- Nombre: \t\t" + e.getNombre());
                 System.out.println("|-\t|- Fecha: \t\t" + e.getFecha().toString());
                 System.out.println("|-\t|- Asistentes: \t\t" + e.getAsistentes());
                 System.out.println("|-\t|-------------------------------------------------------------|");
             }
-        } catch (ListaEventosVacia e) {
+        } catch (Exception e) {//TODO
             System.err.print(e.getMessage());
         }
         System.out.println("|---------------------------------------------------------------------|" + "\n");
@@ -837,12 +837,12 @@ public class ClienteSistema {
                         tipo = this.menuTipoEvento();
                         Date fecha = new Date(anio, mes, dia, hora, minutos);
 
-                        sistema.nuevoEvento(nombre, fecha, tipo, descripcion, capacidad, localizacion, user.getUsername());
+                        int id = sistema.nuevoEvento(nombre, fecha, tipo, descripcion, capacidad, localizacion, user);
                         try {
-                            EventoDTO newEvento = sistema.buscarEventoPorNombre(nombre);
+                            EventoDTO newEvento = sistema.buscarEventoPorId(id);
                             System.out.println("|- Evento creado correctamente.                                      -|");
                             this.menuEvento(sistema, newEvento, "crear");
-                        } catch(ListaEventosVacia e) {
+                        } catch (Exception e) {//TODO
                             System.err.print(e.getMessage());
                         }
 

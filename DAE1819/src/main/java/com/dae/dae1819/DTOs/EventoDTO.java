@@ -15,6 +15,7 @@ import java.util.List;
  */
 public class EventoDTO {
 
+    private int id;
     private String nombre;
     private Date fecha;
     private String tipo;
@@ -23,8 +24,8 @@ public class EventoDTO {
     private String localizacion;
     private boolean cancelado;
 
-    private List<String> asistentes;
-    private List<String> inscritos;
+    private final List<String> asistentes;
+    private final List<String> inscritos;
     private String organizador;
 
     public EventoDTO() {
@@ -34,8 +35,9 @@ public class EventoDTO {
         inscritos = new ArrayList();
     }
 
-    public EventoDTO(String nombre, Date fecha, String _tipo, String descripcion,
+    public EventoDTO(int id, String nombre, Date fecha, String _tipo, String descripcion,
             Integer capacidad, String localizacion, List<String> asistentes, List<String> inscritos, String organizador) {
+        this.id = id;
         this.nombre = nombre;
         this.fecha = fecha;
         this.tipo = _tipo;
@@ -55,6 +57,20 @@ public class EventoDTO {
         });
 
         this.organizador = organizador;
+    }
+    
+    /**
+     * @return the id
+     */
+    public int getId() {
+        return id;
+    }
+    
+    /**
+     * @param id the id
+     */
+    public void setId(int id) {
+        this.id = id;
     }
 
     /**
@@ -197,6 +213,9 @@ public class EventoDTO {
      * @param inscritos the inscritos to set
      */
     public void setInscritos(List<String> inscritos) {
-        this.inscritos = inscritos;
+        this.inscritos.clear();
+        inscritos.forEach((usuario) -> {
+            this.inscritos.add(usuario);
+        });
     }
 }

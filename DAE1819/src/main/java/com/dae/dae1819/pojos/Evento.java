@@ -88,6 +88,13 @@ public class Evento {
         this.organizador = organizador;
 
     }
+    
+    /**
+     * @return the id
+     */
+    public int getId() {
+        return id;
+    }
 
     /**
      * @return the nombre

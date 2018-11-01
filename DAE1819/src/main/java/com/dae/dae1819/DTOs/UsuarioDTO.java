@@ -18,13 +18,13 @@ public class UsuarioDTO {
     private String email;
     private Integer token;
 
-    private List<String> eventos;
-    private List<String> organizados;
-    private List<String> listaEspera;
+    private List<Integer> eventos;
+    private List<Integer> organizados;
+    private List<Integer> listaEspera;
 
     public UsuarioDTO() {
         eventos = new ArrayList();
-        this. token = 0;
+        this.token = 0;
         organizados = new ArrayList();
         listaEspera = new ArrayList();
     }
@@ -32,13 +32,13 @@ public class UsuarioDTO {
     public UsuarioDTO(String username, String email) {
         this.username = username;
         this.email = email;
-        this. token = 0;
+        this.token = 0;
         eventos = new ArrayList();
         organizados = new ArrayList();
         listaEspera = new ArrayList();
     }
 
-    public UsuarioDTO(String username, String email, List<String> eventos, List<String> organizados) {
+    public UsuarioDTO(String username, String email, List<Integer> eventos, List<Integer> organizados) {
         this.username = username;
         this.email = email;
         this.token = 0;
@@ -90,14 +90,14 @@ public class UsuarioDTO {
     /**
      * @return the eventos
      */
-    public List<String> getEventos() {
+    public List<Integer> getEventos() {
         return eventos;
     }
 
     /**
      * @param eventos the eventos to set
      */
-    public void setEventos(List<String> eventos) {
+    public void setEventos(List<Integer> eventos) {
         this.eventos.clear();
         eventos.forEach((evento) -> {
             this.eventos.add(evento);
@@ -107,14 +107,14 @@ public class UsuarioDTO {
     /**
      * @return the organizados
      */
-    public List<String> getOrganizados() {
+    public List<Integer> getOrganizados() {
         return organizados;
     }
 
     /**
      * @param organizados the organizados to set
      */
-    public void setOrganizados(List<String> organizados) {
+    public void setOrganizados(List<Integer> organizados) {
         this.organizados.clear();
         organizados.forEach((evento) -> {
             this.organizados.add(evento);
@@ -124,14 +124,14 @@ public class UsuarioDTO {
     /**
      * @return the listaEspera
      */
-    public List<String> getListaEspera() {
+    public List<Integer> getListaEspera() {
         return listaEspera;
     }
 
     /**
      * @param listaEspera the listaEspera to set
      */
-    public void setListaEspera(List<String> listaEspera) {
+    public void setListaEspera(List<Integer> listaEspera) {
         this.listaEspera = listaEspera;
     }
 

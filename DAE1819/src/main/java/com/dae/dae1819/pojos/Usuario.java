@@ -9,6 +9,7 @@ package com.dae.dae1819.pojos;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
+import org.springframework.stereotype.Repository;
 
 
 /**

@@ -5,24 +5,22 @@
  */
 package com.dae.dae1819.interfaces;
 
+import com.dae.dae1819.DAOs.EventoDAO;
+import com.dae.dae1819.DAOs.UsuarioDAO;
 import com.dae.dae1819.DTOs.EventoDTO;
 import com.dae.dae1819.DTOs.UsuarioDTO;
 import com.dae.dae1819.Excepciones.ListaEventosVacia;
 import com.dae.dae1819.Excepciones.UsuarioExistente;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
  * @author dml y jfaf
  */
 public abstract class SistemaInterface {
-
-    private String nombre;
-    private Map<String, UsuarioDTO> usuarios;
-    private Map<Integer, EventoDTO> eventos;
-
+    
     /**
      * Comprueba si el token de sesión es válido
      *
@@ -60,12 +58,19 @@ public abstract class SistemaInterface {
     public abstract UsuarioDTO login(String username, String password);
     
     /**
-     * Inicia la sesión de un usuario registrado en el sistema
+     * Finaliza la sesión de un usuario registrado en el sistema
      *
      * @param uDTO el usuario que saldrá del sistema
      * @return null si se ha salido de la sesión correctamente
      */
     public abstract UsuarioDTO logout(UsuarioDTO uDTO);
+    
+    /**
+     * 
+     * @param id el id del evento a buscar
+     * @return Un eventoDTO del evento encontrado
+     */
+    public abstract EventoDTO buscarEventoPorId(int id);
 
     /**
      * Busca un evento por el nombre del mismo
@@ -74,7 +79,7 @@ public abstract class SistemaInterface {
      * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
      * @return un EventoDTO del evento encontrado, o null si no lo encuentra
      */
-    public abstract EventoDTO buscarEventoPorNombre(String nombre) throws ListaEventosVacia;
+    public abstract List<EventoDTO> buscarEventoPorNombre(String nombre) throws ListaEventosVacia;
 
     /**
      * Busca un evento por el tipo del mismo
@@ -121,11 +126,11 @@ public abstract class SistemaInterface {
      * @param capacidad la capacidad de asistentes al evento
      * @param localizacion el lugar donde se realiza el evento
      * @param organizador el usuario que ha creado el evento
-     * @return true si se ha creado bien, false si no
+     * @return el id del evento creado, -1 si no se ha creado
      */
-    public abstract boolean nuevoEvento(String nombre, Date fecha, String tipo,
+    public abstract int nuevoEvento(String nombre, Date fecha, String tipo,
             String descripcion, Integer capacidad, String localizacion,
-            String organizador);
+            UsuarioDTO organizador);
 
     /**
      * Cancela un evento, borrando en cascada
