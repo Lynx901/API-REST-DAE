@@ -19,7 +19,7 @@ import org.springframework.context.annotation.ComponentScan;
  * @author dml y jfaf
  */
 @SpringBootApplication
-@EntityScan(basePackages="com.dae.dae1819.DAOs")
+@EntityScan(basePackages="com.dae.dae1819.pojos")
 @ComponentScan({"com.dae.dae1819.DAOs"})
 public class SistemaService {
 

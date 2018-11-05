@@ -26,13 +26,13 @@ public class Usuario {
     
     private String email;
 
-    @ManyToMany(mappedBy="asistentes", fetch=FetchType.LAZY)
+    @ManyToMany(mappedBy="asistentes")
     private final List<Evento> eventos;
     
-    @ManyToMany(mappedBy="inscritos", fetch=FetchType.LAZY)
+    @ManyToMany(mappedBy="inscritos")
     private final List<Evento> listaEspera;
     
-    @OneToMany(mappedBy = "organizador", fetch=FetchType.LAZY)
+    @OneToMany(mappedBy = "organizador")
     private final List<Evento> organizados;
 
     public Usuario() {
