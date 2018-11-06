@@ -328,7 +328,6 @@ public class Sistema extends SistemaInterface {
 
     
     public UsuarioDTO usuarioToDTO(Usuario u) {
-        System.out.println("[debug] Mapeando un usuario a DTO...");
         UsuarioDTO uDTO = new UsuarioDTO();
         uDTO.setUsername(u.getUsername());
         uDTO.setEmail(u.getEmail());
@@ -339,8 +338,6 @@ public class Sistema extends SistemaInterface {
                 e.add(evento.getId());
             });
             uDTO.setEventos(e);
-        } else {
-            System.out.println("[debug] Lista de eventos vacía");
         }
 
         List<Integer> o = new ArrayList();
@@ -349,8 +346,6 @@ public class Sistema extends SistemaInterface {
                 o.add(organizado.getId());
             });
             uDTO.setOrganizados(o);
-        } else {
-            System.out.println("[debug] Lista de organizados vacía");
         }
 
         List<Integer> l = new ArrayList();
@@ -359,8 +354,6 @@ public class Sistema extends SistemaInterface {
                 l.add(listaEspera.getId());
             });
             uDTO.setListaEspera(l);
-        } else {
-            System.out.println("[debug] Lista de espera vacía");
         }
 
         return uDTO;

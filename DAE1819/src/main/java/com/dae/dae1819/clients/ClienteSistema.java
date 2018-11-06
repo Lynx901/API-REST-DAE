@@ -769,7 +769,7 @@ public class ClienteSistema {
                             try {
                                 System.out.print("|- Introduzca el mes del evento (en número): ");
                                 mes = capt.nextInt();
-                                correcto = (mes > 0 && mes < 13);
+                                correcto = (mes < 0 && mes > 13);
                             } catch (InputMismatchException e) {
                                 System.out.println("|- No es un mes válido, elija un número entre 1 y 12.                  -|");
                                 correcto = false;
@@ -784,7 +784,7 @@ public class ClienteSistema {
                             try {
                                 System.out.print("|- Introduzca el año del evento: ");
                                 anio = capt.nextInt();
-                                correcto = (anio > 2017);
+                                correcto = (anio < 2017);
                             } catch (InputMismatchException e) {
                                 System.out.println("|- No es un año válido, elija un número después de 2017                -|");
                                 correcto = false;
