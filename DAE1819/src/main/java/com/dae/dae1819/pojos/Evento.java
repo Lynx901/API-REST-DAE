@@ -5,9 +5,13 @@
  */
 package com.dae.dae1819.pojos;
 
+
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import javax.persistence.*;
 
 /**
@@ -23,7 +27,7 @@ public class Evento {
     private String nombre;
     
     @Temporal(TemporalType.TIMESTAMP)
-    private Date fecha;
+    private Calendar fecha;
 
     private enum Tipo {
         CHARLA, CURSO, ACTIVIDAD_DEPORTIVA, VISITA_CULTURAL
@@ -35,10 +39,10 @@ public class Evento {
     private boolean cancelado;
 
     @ManyToMany
-    private final List<Usuario> asistentes;
+    private final Map<String,Usuario> asistentes;
     
     @ManyToMany
-    private List<Usuario> inscritos;
+    private Map<Calendar,Usuario> inscritos;
     
     @ManyToOne
     @JoinColumn(name="organizados")
@@ -46,13 +50,13 @@ public class Evento {
 
     public Evento() {
         this.cancelado = false;
-        this.asistentes = new ArrayList();
-        this.inscritos = new ArrayList();
+        this.asistentes = new HashMap();
+        this.inscritos = new HashMap();
         this.organizador = new Usuario();
     }
 
-    public Evento(String nombre, Date fecha, String _tipo, String descripcion,
-            Integer capacidad, String localizacion, List<Usuario> asistentes, List<Usuario> inscritos, Usuario organizador) {
+    public Evento(String nombre, Calendar fecha, String _tipo, String descripcion,
+            Integer capacidad, String localizacion, Map<Calendar,Usuario> asistentes, Map<Calendar,Usuario> inscritos, Usuario organizador) {
         this.nombre = nombre;
         this.fecha = fecha;
         this.tipo = Tipo.valueOf(_tipo);
@@ -61,20 +65,21 @@ public class Evento {
         this.localizacion = localizacion;
         this.cancelado = false;
 
-        this.asistentes = new ArrayList();
-        asistentes.forEach((usuario) -> {
-            this.asistentes.add(usuario);
+        this.asistentes = new HashMap();
+        asistentes.forEach((fechaIns,usuario) -> {
+            this.asistentes.put(usuario.getUsername(), usuario);
         });
         
-        this.inscritos = new ArrayList();
-        inscritos.forEach((usuario) -> {
-            this.inscritos.add(usuario);
+        this.inscritos = new HashMap();
+        this.inscritos = inscritos;
+        inscritos.forEach((fechaIns,usuario)-> {
+            this.inscritos.put(fechaIns, usuario);
         });
 
         this.organizador = organizador;
     }
 
-    public Evento(String nombre, Date fecha, String _tipo, String descripcion,
+    public Evento(String nombre, Calendar fecha, String _tipo, String descripcion,
             Integer capacidad, String localizacion, Usuario organizador) {
         this.nombre = nombre;
         this.fecha = fecha;
@@ -84,7 +89,7 @@ public class Evento {
         this.localizacion = localizacion;
         this.cancelado = false;
 
-        this.asistentes = new ArrayList();
+        this.asistentes = new HashMap();
         this.organizador = organizador;
 
     }
@@ -113,14 +118,14 @@ public class Evento {
     /**
      * @return the fecha
      */
-    public Date getFecha() {
+    public Calendar getFecha() {
         return fecha;
     }
 
     /**
      * @param fecha the fecha to set
      */
-    public void setFecha(Date fecha) {
+    public void setFecha(Calendar fecha) {
         this.fecha = fecha;
     }
 
@@ -197,17 +202,28 @@ public class Evento {
     /**
      * @return the asistentes
      */
-    public List<Usuario> getAsistentes() {
+    public Map<String,Usuario> getAsistentes() {
         return asistentes;
+    }
+    
+    /**
+     * @return the asistentes
+     */
+    public List<Usuario> getAsistentesLista() {
+        List<Usuario> Lista = new ArrayList();
+        this.asistentes.forEach((username,usuario) -> {
+            Lista.add(usuario);
+        });
+        return Lista;
     }
 
     /**
      * @param asistentes the asistentes to set
      */
-    public void setAsistentes(List<Usuario> asistentes) {
+    public void setAsistentes(Map<String,Usuario> asistentes) {
         this.asistentes.clear();
-        asistentes.forEach((usuario) -> {
-            this.asistentes.add(usuario);
+        asistentes.forEach((clave,usuario) -> {
+            this.asistentes.put(clave,usuario);
         });
     }
 
@@ -229,14 +245,14 @@ public class Evento {
     /**
      * @return the inscritos
      */
-    public List<Usuario> getInscritos() {
+    public Map<Calendar,Usuario> getInscritos() {
         return inscritos;
     }
 
     /**
      * @param inscritos the inscritos to set
      */
-    public void setInscritos(List<Usuario> inscritos) {
+    public void setInscritos(Map<Calendar,Usuario> inscritos) {
         this.inscritos = inscritos;
     }
 
@@ -248,12 +264,12 @@ public class Evento {
      */
     public boolean inscribir(Usuario u) {
         boolean ret = false;
-
+        Calendar fechaIns = Calendar.getInstance();
         if (this.asistentes.size() <= this.capacidad) {
-            this.asistentes.add(u);
+            this.asistentes.put(u.getUsername(),u);
             ret = true;
         } else {
-            this.inscritos.add(u);
+            this.inscritos.put(fechaIns,u);
         }
         
         return ret;
@@ -267,22 +283,27 @@ public class Evento {
      */
     public boolean desinscribir(Usuario u) {
         boolean ret = false;
-
-        if (this.asistentes.contains(u)) {
-            this.asistentes.remove(u);
+        
+        if (this.asistentes.containsValue(u)) {
+            this.asistentes.remove(u.getUsername());
             //TODO notificacion de desinscripcion
             if(!this.inscritos.isEmpty()) {
-                u = this.inscritos.get(0);
+                Entry<Calendar,Usuario> entrada = this.inscritos.entrySet().stream().sorted(Map.Entry.<Calendar, Usuario>comparingByKey()).findFirst().get();
+                u = this.inscritos.get(entrada.getKey());
                 this.inscribir(u);
                 //TODO notificacion de inscripcion
-                this.inscritos.remove(u);
+                this.inscritos.remove(entrada.getKey());
             }
             ret = true;
-        } else if (this.inscritos.contains(u)) {
-            this.inscritos.remove(u);
-            ret = true;
+        } else if (this.inscritos.containsValue(u)) {
+           List<Calendar> fechas = new ArrayList<>(this.inscritos.keySet());
+            for (int i=0; i<this.inscritos.size(); i++){
+                if (this.inscritos.get(fechas.get(i)).getUsername().equals(u.getUsername())) {
+                    this.inscritos.remove(fechas.get(i));
+                    return true;
+                }
+            }
         }
-
         return ret;
     }
 

@@ -12,7 +12,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -56,11 +55,11 @@ public class UsuarioDAO {
 
     private void saveUsuario(Usuario u) {
         System.out.println("[debug] ¡Estamos insertando eventos!");
-        saveEventos(u.getEventos(), "eventos");
+        saveEventos(u.getEventosLista(), "eventos");
         System.out.println("[debug] ¡Estamos insertando listaEspera!");
-        saveEventos(u.getListaEspera(), "listaEspera");
+        saveEventos(u.getListaEsperaLista(), "listaEspera");
         System.out.println("[debug] ¡Estamos insertando organizados!");
-        saveEventos(u.getOrganizados(), "organizados");
+        saveEventos(u.getOrganizadosLista(), "organizados");
         System.out.println("[debug] ¡Todo insertado!");
         em.persist(u);
     }

@@ -6,6 +6,7 @@
 package com.dae.dae1819.DTOs;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class EventoDTO {
 
     private int id;
     private String nombre;
-    private Date fecha;
+    private Calendar fecha;
     private String tipo;
     private String descripcion;
     private Integer capacidad;
@@ -35,7 +36,7 @@ public class EventoDTO {
         inscritos = new ArrayList();
     }
 
-    public EventoDTO(int id, String nombre, Date fecha, String _tipo, String descripcion,
+    public EventoDTO(int id, String nombre, Calendar fecha, String _tipo, String descripcion,
             Integer capacidad, String localizacion, List<String> asistentes, List<String> inscritos, String organizador) {
         this.id = id;
         this.nombre = nombre;
@@ -90,14 +91,14 @@ public class EventoDTO {
     /**
      * @return the fecha
      */
-    public Date getFecha() {
+    public Calendar getFecha() {
         return fecha;
     }
 
     /**
      * @param fecha the fecha to set
      */
-    public void setFecha(Date fecha) {
+    public void setFecha(Calendar fecha) {
         this.fecha = fecha;
     }
 

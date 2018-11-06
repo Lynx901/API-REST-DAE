@@ -11,6 +11,7 @@ import com.dae.dae1819.Excepciones.ListaEventosVacia;
 import com.dae.dae1819.Excepciones.UsuarioExistente;
 import com.dae.dae1819.interfaces.SistemaInterface;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -224,8 +225,8 @@ public class ClienteSistema {
             } else {
                 System.out.println("|- Nombre: \t\t" + evento.getNombre());
                 System.out.println("|- Descripción: \t" + evento.getDescripcion());
-                System.out.println("|- Fecha: \t\t" + evento.getFecha().getHours() + ":" + evento.getFecha().getMinutes()
-                        + " del " + evento.getFecha().getDate() + "/" + evento.getFecha().getMonth() + "/" + evento.getFecha().getYear());
+                System.out.println("|- Fecha: \t\t" + evento.getFecha().get(Calendar.HOUR) + ":" + evento.getFecha().get(Calendar.MINUTE)
+                        + " del " + evento.getFecha().get(Calendar.DATE) + "/" + evento.getFecha().get(Calendar.MONTH) + "/" + evento.getFecha().get(Calendar.YEAR));
                 System.out.println("|- Tipo: \t\t" + evento.getTipo());
                 System.out.println("|- Lugar: \t\t" + evento.getLocalizacion());
                 System.out.println("|- Organizador:\t\t" + evento.getOrganizador());
@@ -469,7 +470,7 @@ public class ClienteSistema {
             try {
                 sistema.nuevoUsuario("admin", "admin", "admin", "admin@ujaen.es");
                 uTest.add(sistema.buscarUsuario("admin"));
-                sistema.nuevoEvento("Clase1", new Date(), "CHARLA", "Clase de DAE", (Integer) 15, "Edificio A3", uTest.get(0));
+                sistema.nuevoEvento("Clase1", Calendar.getInstance(), "CHARLA", "Clase de DAE", (Integer) 15, "Edificio A3", uTest.get(0));
                 
                 sistema.nuevoUsuario("user1", "asdf", "asdf", "user@uja.es");
                 uTest.add(sistema.buscarUsuario("user1"));
@@ -837,7 +838,7 @@ public class ClienteSistema {
                         } while (correcto);
 
                         tipo = this.menuTipoEvento();
-                        Date fecha = new Date(anio, mes, dia, hora, minutos);
+                        Calendar fecha = Calendar.getInstance();
 
                         int id = sistema.nuevoEvento(nombre, fecha, tipo, descripcion, capacidad, localizacion, user);
                         try {

@@ -7,7 +7,10 @@ package com.dae.dae1819.pojos;
 
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.*;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -30,21 +33,21 @@ public class Usuario {
 
     @ManyToMany(mappedBy="asistentes")
     @LazyCollection(LazyCollectionOption.FALSE)
-    private final List<Evento> eventos;
+    private final Map<Calendar,Evento> eventos;
     
     @ManyToMany(mappedBy="inscritos")
     @LazyCollection(LazyCollectionOption.FALSE)
-    private final List<Evento> listaEspera;
+    private final Map<Calendar,Evento> listaEspera;
     
     @OneToMany(mappedBy = "organizador")
     @LazyCollection(LazyCollectionOption.FALSE)
-    private final List<Evento> organizados;
+    private final Map<Calendar,Evento> organizados;
 
     public Usuario() {
-        eventos = new ArrayList();
+        eventos = new HashMap();
 
-        listaEspera = new ArrayList();
-        organizados = new ArrayList();
+        listaEspera = new HashMap();
+        organizados = new HashMap();
     }
 
     public Usuario(String username, String password, String email) {
@@ -52,29 +55,29 @@ public class Usuario {
         this.password = password;
         this.email = email;
 
-        eventos = new ArrayList();
-        organizados = new ArrayList();
-        listaEspera = new ArrayList();
+        eventos = new HashMap();
+        organizados = new HashMap();
+        listaEspera = new HashMap();
     }
 
-    public Usuario(String username, String password, String email, List<Evento> eventos, List<Evento> organizados) {
+    public Usuario(String username, String password, String email, Map<Calendar,Evento> eventos, Map<Calendar,Evento> organizados) {
         this.username = username;
         this.password = password;
         this.email = email;
 
-        this.eventos = new ArrayList();
-        eventos.forEach((evento) -> {
-            this.eventos.add(evento);
+        this.eventos = new HashMap();
+        eventos.forEach((fecha,evento) -> {
+            this.eventos.put(fecha,evento);
         });
 
-        this.organizados = new ArrayList();
-        organizados.forEach((evento) -> {
-            this.organizados.add(evento);
+        this.organizados = new HashMap();
+        organizados.forEach((fecha,evento) -> {
+            this.organizados.put(fecha,evento);
         });
 
-        this.listaEspera = new ArrayList();
-        listaEspera.forEach((evento) -> {
-            this.listaEspera.add(evento);
+        this.listaEspera = new HashMap();
+        listaEspera.forEach((fecha,evento) -> {
+            this.listaEspera.put(fecha,evento);
         });
     }
 
@@ -123,51 +126,115 @@ public class Usuario {
     /**
      * @return the eventos
      */
-    public List<Evento> getEventos() {
+    public Map<Calendar,Evento> getEventos() {
         return eventos;
+    }
+    
+    /**
+     * @return the eventos
+     */
+    public List<Evento> getEventosLista() {
+        List<Evento> lista = new ArrayList();
+        this.eventos.forEach((fecha,evento) -> {
+            lista.add(evento);
+        });
+        return lista;
     }
 
     /**
      * @param eventos the eventos to set
      */
-    public void setEventos(List<Evento> eventos) {
+    public void setEventos(Map<Calendar,Evento> eventos) {
+        this.eventos.clear();
+        eventos.forEach((fecha,evento) -> {
+            this.eventos.put(fecha,evento);
+        });
+    }
+    
+    
+    /**
+     * @param eventos the eventos to set
+     */
+    public void setEventosLista(List<Evento> eventos) {
         this.eventos.clear();
         eventos.forEach((evento) -> {
-            this.eventos.add(evento);
+            this.eventos.put(evento.getFecha(),evento);
         });
     }
 
     /**
      * @return the eventos
      */
-    public List<Evento> getListaEspera() {
+    public Map<Calendar,Evento> getListaEspera() {
         return listaEspera;
+    }
+    
+     /**
+     * @return the eventos
+     */
+    public List<Evento> getListaEsperaLista() {
+        List<Evento> Lista = new ArrayList();
+        this.listaEspera.forEach((fecha,evento) -> {
+            Lista.add(evento);
+        });
+        return Lista;
     }
 
     /**
      * @param listaEspera the eventos in the lista de espera to set
      */
+    public void setListaEspera(Map<Calendar,Evento> listaEspera) {
+        this.listaEspera.clear();
+        listaEspera.forEach((fecha,evento) -> {
+            this.listaEspera.put(fecha,evento);
+        });
+    }
+    
+       /**
+     * @param listaEspera the eventos in the lista de espera to set
+     */
     public void setListaEspera(List<Evento> listaEspera) {
         this.listaEspera.clear();
         listaEspera.forEach((evento) -> {
-            this.listaEspera.add(evento);
+            this.listaEspera.put(evento.getFecha(),evento);
         });
     }
 
     /**
      * @return the organizados
      */
-    public List<Evento> getOrganizados() {
+    public Map<Calendar,Evento> getOrganizados() {
         return organizados;
     }
+    
+    /**
+     * @return the organizados
+     */
+    public List<Evento> getOrganizadosLista() {
+        List<Evento> Lista = new ArrayList();
+        this.organizados.forEach((fecha,evento) -> {
+            Lista.add(evento);
+        });
+        return Lista;
+    }
 
+    /**
+     * @param organizados the organizados to set
+     */
+    public void setOrganizados(Map<Calendar,Evento> organizados) {
+        this.organizados.clear();
+        organizados.forEach((fecha,evento) -> {
+            this.organizados.put(fecha,evento);
+        });
+    }
+    
     /**
      * @param organizados the organizados to set
      */
     public void setOrganizados(List<Evento> organizados) {
         this.organizados.clear();
         organizados.forEach((evento) -> {
-            this.organizados.add(evento);
+            this.organizados.put(evento.getFecha(),evento);
         });
     }
 
@@ -181,11 +248,11 @@ public class Usuario {
         boolean ret = false;
 
         if (!e.inscribir(this)) {
-            this.listaEspera.add(e);
+            this.listaEspera.put(e.getFecha(),e);
         } else {
-            this.eventos.add(e);
+            this.eventos.put(e.getFecha(),e);
             if (e.getOrganizador().username.equals(this.username)) {
-                this.organizados.add(e);
+                this.organizados.put(e.getFecha(),e);
             }
             ret = true;
         }
@@ -203,11 +270,11 @@ public class Usuario {
     public boolean desinscribir(Evento e) {
         boolean ret = false;
 
-        if (this.eventos.contains(e)) { // Comprobamos que el usuario asista al evento
-            this.eventos.remove(e);
+        if (this.eventos.containsValue(e)) { // Comprobamos que el usuario asista al evento
+            this.eventos.remove(e.getFecha());
             ret = true;
-        } else if (this.listaEspera.contains(e)) {
-            this.listaEspera.remove(e);
+        } else if (this.listaEspera.containsValue(e)) {
+            this.listaEspera.remove(e.getFecha());
             ret = true;
         }
 

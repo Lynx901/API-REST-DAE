@@ -9,7 +9,7 @@ import com.dae.dae1819.DTOs.EventoDTO;
 import com.dae.dae1819.DTOs.UsuarioDTO;
 import com.dae.dae1819.Excepciones.ListaEventosVacia;
 import com.dae.dae1819.Excepciones.UsuarioExistente;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -125,7 +125,7 @@ public abstract class SistemaInterface {
      * @param organizador el usuario que ha creado el evento
      * @return el id del evento creado, -1 si no se ha creado
      */
-    public abstract int nuevoEvento(String nombre, Date fecha, String tipo,
+    public abstract int nuevoEvento(String nombre, Calendar fecha, String tipo,
             String descripcion, Integer capacidad, String localizacion,
             UsuarioDTO organizador);
 
