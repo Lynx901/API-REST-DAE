@@ -9,6 +9,8 @@ package com.dae.dae1819.pojos;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.stereotype.Repository;
 
 
@@ -27,12 +29,15 @@ public class Usuario {
     private String email;
 
     @ManyToMany(mappedBy="asistentes")
+    @LazyCollection(LazyCollectionOption.FALSE)
     private final List<Evento> eventos;
     
     @ManyToMany(mappedBy="inscritos")
+    @LazyCollection(LazyCollectionOption.FALSE)
     private final List<Evento> listaEspera;
     
     @OneToMany(mappedBy = "organizador")
+    @LazyCollection(LazyCollectionOption.FALSE)
     private final List<Evento> organizados;
 
     public Usuario() {

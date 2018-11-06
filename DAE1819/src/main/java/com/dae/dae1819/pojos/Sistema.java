@@ -84,12 +84,9 @@ public class Sistema extends SistemaInterface {
 
         if (password.equals(password2)) {
             Usuario usuario = new Usuario(username, password, email);
-            try {
                 usuarios.insertar(usuario);
                 //TODO Controlar excepción
-            } catch (Exception e){
-                throw new UsuarioExistente("The user is already stored ", e);
-            }
+
             ret = true;
         }
 
@@ -99,7 +96,7 @@ public class Sistema extends SistemaInterface {
     
     @Override
     public UsuarioDTO login(String username, String password) {
-        UsuarioDTO ret = null;
+        UsuarioDTO ret = new UsuarioDTO();
         
         Usuario user = usuarios.buscar(username);
         if (user != null) {
@@ -121,7 +118,7 @@ public class Sistema extends SistemaInterface {
         
         if(this.isTokenValid(uDTO.getToken())) {
             tokenConectados.remove(uDTO.getToken());
-            ret = null;
+            ret = new UsuarioDTO();
         } else {
             ret = uDTO;
         }
@@ -138,7 +135,7 @@ public class Sistema extends SistemaInterface {
     @Override
     public List<EventoDTO> buscarEventoPorNombre(String nombre) throws ListaEventosVacia {
         List<Evento> eventosBuscados = eventos.buscarPorNombre(nombre);
-        if(eventosBuscados.isEmpty()) { throw new ListaEventosVacia("La lista de eventos está vacía", new Exception()); }
+        if(eventosBuscados.isEmpty()) { throw new ListaEventosVacia("La lista de eventos está vacía\n", new Exception()); }
         
         List<EventoDTO> eventosBuscadosDTO = new ArrayList();
         for (Evento evento : eventosBuscados) {
@@ -151,7 +148,7 @@ public class Sistema extends SistemaInterface {
     @Override
     public List<EventoDTO> buscarEventosPorTipo(String tipo) throws ListaEventosVacia {
         List<Evento> eventosBuscados = eventos.buscarPorTipo(tipo);
-        if(eventosBuscados.isEmpty()) { throw new ListaEventosVacia("La lista de eventos está vacía", new Exception()); }
+        if(eventosBuscados.isEmpty()) { throw new ListaEventosVacia("La lista de eventos está vacía\n", new Exception()); }
 
         List<EventoDTO> eventosBuscadosDTO = new ArrayList();
         for (Evento evento : eventosBuscados) {
@@ -164,7 +161,7 @@ public class Sistema extends SistemaInterface {
     @Override
     public List<EventoDTO> buscarEventosPorDescripcion(String descripcion) throws ListaEventosVacia {
         List<Evento> eventosBuscados = eventos.buscarPorDescripcion(descripcion);
-        if(eventosBuscados.isEmpty()) { throw new ListaEventosVacia("La lista de eventos está vacía", new Exception()); }
+        if(eventosBuscados.isEmpty()) { throw new ListaEventosVacia("La lista de eventos está vacía\n", new Exception()); }
         
         List<EventoDTO> eventosBuscadosDTO = new ArrayList();
         for (Evento evento : eventosBuscados) {
@@ -178,7 +175,7 @@ public class Sistema extends SistemaInterface {
     @Override
     public List<EventoDTO> buscarEventos() throws ListaEventosVacia {
         List<Evento> eventosBuscados = eventos.listar();
-        if(eventosBuscados.isEmpty()) { throw new ListaEventosVacia("La lista de eventos está vacía", new Exception()); }
+        if(eventosBuscados.isEmpty()) { throw new ListaEventosVacia("La lista de eventos está vacía\n", new Exception()); }
         
         List<EventoDTO> eventosBuscadosDTO = new ArrayList();
         for (Evento evento : eventosBuscados) {
@@ -331,6 +328,7 @@ public class Sistema extends SistemaInterface {
 
     
     public UsuarioDTO usuarioToDTO(Usuario u) {
+        System.out.println("[debug] Mapeando un usuario a DTO...");
         UsuarioDTO uDTO = new UsuarioDTO();
         uDTO.setUsername(u.getUsername());
         uDTO.setEmail(u.getEmail());
@@ -341,6 +339,8 @@ public class Sistema extends SistemaInterface {
                 e.add(evento.getId());
             });
             uDTO.setEventos(e);
+        } else {
+            System.out.println("[debug] Lista de eventos vacía");
         }
 
         List<Integer> o = new ArrayList();
@@ -349,6 +349,8 @@ public class Sistema extends SistemaInterface {
                 o.add(organizado.getId());
             });
             uDTO.setOrganizados(o);
+        } else {
+            System.out.println("[debug] Lista de organizados vacía");
         }
 
         List<Integer> l = new ArrayList();
@@ -357,6 +359,8 @@ public class Sistema extends SistemaInterface {
                 l.add(listaEspera.getId());
             });
             uDTO.setListaEspera(l);
+        } else {
+            System.out.println("[debug] Lista de espera vacía");
         }
 
         return uDTO;

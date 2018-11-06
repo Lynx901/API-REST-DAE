@@ -5,6 +5,7 @@
  */
 package com.dae.dae1819.DAOs;
 
+import com.dae.dae1819.pojos.Evento;
 import com.dae.dae1819.pojos.Usuario;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +31,49 @@ public class UsuarioDAO {
         return usuarios;
     }
     
+    private void saveEventos(List<Evento> eventos, String tipo) {
+        switch(tipo) {
+            case "eventos":
+                eventos.forEach((e) -> {
+                    em.persist(e);
+                });
+                break;
+            case "listaEspera":
+                eventos.forEach((e) -> {
+                    em.persist(e);
+                });
+                break;
+            case "organizados":
+                eventos.forEach((e) -> {
+                    em.persist(e);
+                });
+                break;
+            default:
+                //TODO lanzar excepcion
+                break;
+        }
+    }
+
+    private void saveUsuario(Usuario u) {
+        System.out.println("[debug] ¡Estamos insertando eventos!");
+        saveEventos(u.getEventos(), "eventos");
+        System.out.println("[debug] ¡Estamos insertando listaEspera!");
+        saveEventos(u.getListaEspera(), "listaEspera");
+        System.out.println("[debug] ¡Estamos insertando organizados!");
+        saveEventos(u.getOrganizados(), "organizados");
+        System.out.println("[debug] ¡Todo insertado!");
+        em.persist(u);
+    }
+        
     public Usuario buscar(String username) {
-        return em.find(Usuario.class, username);
+        Usuario result = em.find(Usuario.class, username);
+        return result;
     }
     
     public void insertar(Usuario u) {
+        System.out.println("[debug] ¡Estamos insertando!");
         em.persist(u);
+        System.out.println("[debug] ¿Se ha insertado? " + this.buscar(u.getUsername()).toString());
     }
     
     public void actualizar(Usuario u) {

@@ -24,7 +24,7 @@ import org.springframework.context.ApplicationContext;
 public class ClienteSistema {
 
     ApplicationContext context;
-    UsuarioDTO user = null;
+    UsuarioDTO user = new UsuarioDTO();
 
     public ClienteSistema(ApplicationContext context) {
         this.context = context;
@@ -469,6 +469,8 @@ public class ClienteSistema {
             try {
                 sistema.nuevoUsuario("admin", "admin", "admin", "admin@ujaen.es");
                 uTest.add(sistema.buscarUsuario("admin"));
+                sistema.nuevoEvento("Clase1", new Date(), "CHARLA", "Clase de DAE", (Integer) 15, "Edificio A3", uTest.get(0));
+                
                 sistema.nuevoUsuario("user1", "asdf", "asdf", "user@uja.es");
                 uTest.add(sistema.buscarUsuario("user1"));
                 sistema.nuevoUsuario("user2", "1234", "1234", "usuario@gmail.com");
@@ -502,6 +504,7 @@ public class ClienteSistema {
             System.out.println("|-                                                                   -|");
 
             if (!sistema.isTokenValid(user.getToken())) {
+                System.out.println("|- No ha iniciado sesión                                             -|");
                 System.out.println("|- [1]. Registrarse                                                  -|");
                 System.out.println("|- [2]. Iniciar sesión                                               -|");
                 System.out.println("|- [3]. Buscar evento                                                -|");
@@ -592,7 +595,6 @@ public class ClienteSistema {
 
                         if (sistema.isTokenValid(user.getToken())) {
                             System.out.println("|- Ha iniciado sesión correctamente.                                 -|");
-                            user = sistema.buscarUsuario(nombreUsuario);
                         } else {
                             System.out.println("|- Algo ha fallado. Compruebe los datos de inicio de sesión.         -|");
                         }

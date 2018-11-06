@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @author dml y jfaf
  */
 @Repository
-@Transactional
 public class EventoDAO {
     @PersistenceContext
     EntityManager em;
