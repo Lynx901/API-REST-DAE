@@ -35,11 +35,12 @@ public class Sistema extends SistemaInterface {
     private List<Integer> tokenConectados;
 
     public Sistema() {
-        
+        this.tokenConectados = new ArrayList();
     }
 
     public Sistema(String nombre) {
         this.nombre = nombre;
+        this.tokenConectados = new ArrayList();
     }
 
     /**

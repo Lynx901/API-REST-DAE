@@ -5,15 +5,12 @@
  */
 package com.dae.dae1819.interfaces;
 
-import com.dae.dae1819.DAOs.EventoDAO;
-import com.dae.dae1819.DAOs.UsuarioDAO;
 import com.dae.dae1819.DTOs.EventoDTO;
 import com.dae.dae1819.DTOs.UsuarioDTO;
 import com.dae.dae1819.Excepciones.ListaEventosVacia;
 import com.dae.dae1819.Excepciones.UsuarioExistente;
 import java.util.Date;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
