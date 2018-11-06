@@ -755,7 +755,7 @@ public class ClienteSistema {
                             try {
                                 System.out.print("|- Introduzca el día del evento: ");
                                 dia = capt.nextInt();
-                                correcto = (dia > 0 && dia < 31);
+                                correcto = (dia >= 0 && dia <= 31);
                             } catch (InputMismatchException e) {
                                 System.out.println("|- No es un día válido, elija un número entre 1 y 30.                  -|");
                                 correcto = false;
@@ -770,7 +770,7 @@ public class ClienteSistema {
                             try {
                                 System.out.print("|- Introduzca el mes del evento (en número): ");
                                 mes = capt.nextInt();
-                                correcto = (mes < 0 && mes > 13);
+                                correcto = (mes <= 0 && mes >= 13);
                             } catch (InputMismatchException e) {
                                 System.out.println("|- No es un mes válido, elija un número entre 1 y 12.                  -|");
                                 correcto = false;
@@ -785,7 +785,7 @@ public class ClienteSistema {
                             try {
                                 System.out.print("|- Introduzca el año del evento: ");
                                 anio = capt.nextInt();
-                                correcto = (anio < 2017);
+                                correcto = (anio <= 2017);
                             } catch (InputMismatchException e) {
                                 System.out.println("|- No es un año válido, elija un número después de 2017                -|");
                                 correcto = false;
@@ -800,7 +800,7 @@ public class ClienteSistema {
                             try {
                                 System.out.print("|- Introduzca la hora del evento (formato 24h): ");
                                 hora = capt.nextInt();
-                                correcto = (hora > -1 && hora < 24);
+                                correcto = (hora <= -1 && hora >= 24);
                             } catch (InputMismatchException e) {
                                 System.out.println("|- No es una hora válida, elija un número entre 0 y 23               -|");
                                 correcto = false;
@@ -815,7 +815,7 @@ public class ClienteSistema {
                             try {
                                 System.out.print("|- Introduzca los minutos del evento: ");
                                 minutos = capt.nextInt();
-                                correcto = (minutos > -1 && minutos < 60);
+                                correcto = (minutos <= -1 && minutos >= 60);
                             } catch (InputMismatchException e) {
                                 System.out.println("|- No es una cantidad válida, elija una cantidad entre 0 y 59        -|");
                                 correcto = false;
@@ -830,7 +830,7 @@ public class ClienteSistema {
                             try {
                                 System.out.print("|- ¿Qué capacidad máxima tendrá?: ");
                                 capacidad = capt.nextInt();
-                                correcto = (capacidad > -1);
+                                correcto = (capacidad <= -1);
                             } catch (InputMismatchException e) {
                                 System.out.println("|- No es un número válido, elija un número entero mayor de 0.        -|");
                                 correcto = false;
@@ -839,6 +839,7 @@ public class ClienteSistema {
 
                         tipo = this.menuTipoEvento();
                         Calendar fecha = Calendar.getInstance();
+                        fecha.set(anio, mes, dia, hora, minutos);
 
                         int id = sistema.nuevoEvento(nombre, fecha, tipo, descripcion, capacidad, localizacion, user);
                         try {
