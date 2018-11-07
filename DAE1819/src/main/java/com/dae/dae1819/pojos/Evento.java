@@ -5,7 +5,6 @@
  */
 package com.dae.dae1819.pojos;
 
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -13,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.persistence.*;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 /**
  *
@@ -25,7 +26,7 @@ public class Evento {
     @GeneratedValue
     private int id;
     private String nombre;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar fecha;
 
@@ -38,14 +39,14 @@ public class Evento {
     private String localizacion;
     private boolean cancelado;
 
-    @ManyToMany
-    private final Map<String,Usuario> asistentes;
-    
-    @ManyToMany
-    private Map<Calendar,Usuario> inscritos;
-    
+    @ManyToMany(mappedBy="eventos")
+    private final Map<String, Usuario> asistentes;
+
+    @ManyToMany(mappedBy="listaEspera")
+    private Map<Calendar, Usuario> inscritos;
+
     @ManyToOne
-    @JoinColumn(name="organizados")
+    @JoinColumn(name = "organizador")
     private Usuario organizador;
 
     public Evento() {
@@ -56,7 +57,7 @@ public class Evento {
     }
 
     public Evento(String nombre, Calendar fecha, String _tipo, String descripcion,
-            Integer capacidad, String localizacion, Map<Calendar,Usuario> asistentes, Map<Calendar,Usuario> inscritos, Usuario organizador) {
+            Integer capacidad, String localizacion, Map<Calendar, Usuario> asistentes, Map<Calendar, Usuario> inscritos, Usuario organizador) {
         this.nombre = nombre;
         this.fecha = fecha;
         this.tipo = Tipo.valueOf(_tipo);
@@ -66,13 +67,13 @@ public class Evento {
         this.cancelado = false;
 
         this.asistentes = new HashMap();
-        asistentes.forEach((fechaIns,usuario) -> {
+        asistentes.forEach((fechaIns, usuario) -> {
             this.asistentes.put(usuario.getUsername(), usuario);
         });
-        
+
         this.inscritos = new HashMap();
         this.inscritos = inscritos;
-        inscritos.forEach((fechaIns,usuario)-> {
+        inscritos.forEach((fechaIns, usuario) -> {
             this.inscritos.put(fechaIns, usuario);
         });
 
@@ -90,10 +91,11 @@ public class Evento {
         this.cancelado = false;
 
         this.asistentes = new HashMap();
+        this.inscritos = new HashMap();
         this.organizador = organizador;
 
     }
-    
+
     /**
      * @return the id
      */
@@ -202,16 +204,16 @@ public class Evento {
     /**
      * @return the asistentes
      */
-    public Map<String,Usuario> getAsistentes() {
+    public Map<String, Usuario> getAsistentes() {
         return asistentes;
     }
-    
+
     /**
      * @return the asistentes
      */
     public List<Usuario> getAsistentesLista() {
         List<Usuario> Lista = new ArrayList();
-        this.asistentes.forEach((username,usuario) -> {
+        this.asistentes.forEach((username, usuario) -> {
             Lista.add(usuario);
         });
         return Lista;
@@ -220,10 +222,10 @@ public class Evento {
     /**
      * @param asistentes the asistentes to set
      */
-    public void setAsistentes(Map<String,Usuario> asistentes) {
+    public void setAsistentes(Map<String, Usuario> asistentes) {
         this.asistentes.clear();
-        asistentes.forEach((clave,usuario) -> {
-            this.asistentes.put(clave,usuario);
+        asistentes.forEach((clave, usuario) -> {
+            this.asistentes.put(clave, usuario);
         });
     }
 
@@ -240,19 +242,18 @@ public class Evento {
     public void setOrganizador(Usuario organizador) {
         this.organizador = organizador;
     }
-    
-  
+
     /**
      * @return the inscritos
      */
-    public Map<Calendar,Usuario> getInscritos() {
+    public Map<Calendar, Usuario> getInscritos() {
         return inscritos;
     }
 
     /**
      * @param inscritos the inscritos to set
      */
-    public void setInscritos(Map<Calendar,Usuario> inscritos) {
+    public void setInscritos(Map<Calendar, Usuario> inscritos) {
         this.inscritos = inscritos;
     }
 
@@ -266,12 +267,12 @@ public class Evento {
         boolean ret = false;
         Calendar fechaIns = Calendar.getInstance();
         if (this.asistentes.size() <= this.capacidad) {
-            this.asistentes.put(u.getUsername(),u);
+            this.asistentes.put(u.getUsername(), u);
             ret = true;
         } else {
-            this.inscritos.put(fechaIns,u);
+            this.inscritos.put(fechaIns, u);
         }
-        
+
         return ret;
     }
 
@@ -283,12 +284,12 @@ public class Evento {
      */
     public boolean desinscribir(Usuario u) {
         boolean ret = false;
-        
+
         if (this.asistentes.containsValue(u)) {
             this.asistentes.remove(u.getUsername());
             //TODO notificacion de desinscripcion
-            if(!this.inscritos.isEmpty()) {
-                Entry<Calendar,Usuario> entrada = this.inscritos.entrySet().stream().sorted(Map.Entry.<Calendar, Usuario>comparingByKey()).findFirst().get();
+            if (!this.inscritos.isEmpty()) {
+                Entry<Calendar, Usuario> entrada = this.inscritos.entrySet().stream().sorted(Map.Entry.<Calendar, Usuario>comparingByKey()).findFirst().get();
                 u = this.inscritos.get(entrada.getKey());
                 this.inscribir(u);
                 //TODO notificacion de inscripcion
@@ -296,8 +297,8 @@ public class Evento {
             }
             ret = true;
         } else if (this.inscritos.containsValue(u)) {
-           List<Calendar> fechas = new ArrayList<>(this.inscritos.keySet());
-            for (int i=0; i<this.inscritos.size(); i++){
+            List<Calendar> fechas = new ArrayList<>(this.inscritos.keySet());
+            for (int i = 0; i < this.inscritos.size(); i++) {
                 if (this.inscritos.get(fechas.get(i)).getUsername().equals(u.getUsername())) {
                     this.inscritos.remove(fechas.get(i));
                     return true;
@@ -306,6 +307,5 @@ public class Evento {
         }
         return ret;
     }
-
 
 }

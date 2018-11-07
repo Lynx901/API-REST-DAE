@@ -8,6 +8,7 @@ package com.dae.dae1819.DAOs;
 import com.dae.dae1819.pojos.Evento;
 import com.dae.dae1819.pojos.Usuario;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -29,50 +30,39 @@ public class UsuarioDAO {
         
         return usuarios;
     }
-    
-    private void saveEventos(List<Evento> eventos, String tipo) {
-        switch(tipo) {
-            case "eventos":
-                eventos.forEach((e) -> {
-                    em.persist(e);
-                });
-                break;
-            case "listaEspera":
-                eventos.forEach((e) -> {
-                    em.persist(e);
-                });
-                break;
-            case "organizados":
-                eventos.forEach((e) -> {
-                    em.persist(e);
-                });
-                break;
-            default:
-                //TODO lanzar excepcion
-                break;
-        }
-    }
-
-    private void saveUsuario(Usuario u) {
-        System.out.println("[debug] ¡Estamos insertando eventos!");
-        saveEventos(u.getEventosLista(), "eventos");
-        System.out.println("[debug] ¡Estamos insertando listaEspera!");
-        saveEventos(u.getListaEsperaLista(), "listaEspera");
-        System.out.println("[debug] ¡Estamos insertando organizados!");
-        saveEventos(u.getOrganizadosLista(), "organizados");
-        System.out.println("[debug] ¡Todo insertado!");
-        em.persist(u);
-    }
-        
+   
     public Usuario buscar(String username) {
         Usuario result = em.find(Usuario.class, username);
         return result;
     }
     
+    public boolean inscribir(Usuario u, Evento e) {
+        boolean ret = false;
+        
+        Calendar fechaIns = Calendar.getInstance();
+        // Si está lleno, añadimos el evento a la lista de espera
+        if (e.getAsistentes().size() >= e.getCapacidad()) {
+            System.out.println("[debug] UsuarioDAO: e.getAsistentes().size() = " + e.getAsistentes().size());
+            System.out.println("[debug] UsuarioDAO: e.getCapacidad() = " + e.getCapacidad());
+            System.out.println("[debug] UsuarioDAO: El evento está lleno, añadiendo a la lista de espera");
+            u.getListaEspera().put(fechaIns, e);
+        } else {
+            // Si no está lleno, añadimos el evento a la lista de eventos
+            u.getEventos().put(fechaIns, e);
+            // Si además es el organizador, añadimos el evento a la lista de organizados
+            if (e.getOrganizador().getUsername().equals(u.getUsername())) {
+                u.getOrganizados().put(fechaIns, e);
+            }
+            ret = true;
+        }
+
+        return ret;
+    }
+    
     public void insertar(Usuario u) {
-        System.out.println("[debug] ¡Estamos insertando!");
+        System.out.println("[debug] ¡Estamos insertando un usuario!");
         em.persist(u);
-        System.out.println("[debug] ¿Se ha insertado? " + this.buscar(u.getUsername()).toString());
+        System.out.println("[debug] ¿Se ha insertado el usuario? " + this.buscar(u.getUsername()).getUsername());
     }
     
     public void actualizar(Usuario u) {

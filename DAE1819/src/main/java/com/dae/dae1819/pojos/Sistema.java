@@ -13,6 +13,7 @@ import java.util.List;
 import com.dae.dae1819.DTOs.EventoDTO;
 import com.dae.dae1819.DTOs.UsuarioDTO;
 import com.dae.dae1819.Excepciones.ListaEventosVacia;
+import com.dae.dae1819.Excepciones.TokenInvalido;
 import com.dae.dae1819.Excepciones.UsuarioExistente;
 import java.util.Calendar;
 import java.util.concurrent.ThreadLocalRandom;
@@ -196,20 +197,24 @@ public class Sistema extends SistemaInterface {
     @Override
     public int nuevoEvento(String nombre, Calendar fecha, String tipo,
             String descripcion, Integer capacidad, String localizacion,
-            UsuarioDTO organizador) {
-        
+            UsuarioDTO organizador)  throws TokenInvalido {
         int ret = -1;
-
-        Usuario u = usuarios.buscar(nombre);
+        
+        System.out.println("[debug] Evento: " + organizador.getUsername());
+        System.out.println("[debug] El organizadorDTO es: " + organizador.getUsername());
+        Usuario u = usuarios.buscar(organizador.getUsername());
+        System.out.println("[debug] El organizador es: " + u.getUsername());
         if (!this.isTokenValid(organizador.getToken())) {
-            // TODO Lanzar excepción de TokenNoValido
+            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception()); 
         } else {
-            Evento evento = new Evento(nombre, fecha, tipo, descripcion, capacidad, localizacion, u);
+            Evento e = new Evento(nombre, fecha, tipo, descripcion, capacidad, localizacion, u);
+            System.out.println("[debug] nombre: " + e.getNombre() + " tipo: " + e.getTipo() + " capacidad: " + e.getCapacidad() + " organizador: " + e.getOrganizador().getUsername());
+//            usuarios.inscribir(u, e);
+//            eventos.inscribir(u, e);
+            u.inscribirEnEvento(e);
+            eventos.insertar(e);
             
-            u.inscribirEnEvento(evento);
-
-            eventos.insertar(evento);
-            ret = evento.getId();
+            ret = e.getId();
         }
         return ret;
     }

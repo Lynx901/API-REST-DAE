@@ -31,17 +31,18 @@ public class Usuario {
     
     private String email;
 
-    @ManyToMany(mappedBy="asistentes")
+    @ManyToMany(cascade = {CascadeType.ALL})
     @LazyCollection(LazyCollectionOption.FALSE)
-    private final Map<Calendar,Evento> eventos;
+    private final Map<Calendar, Evento> eventos;
     
-    @ManyToMany(mappedBy="inscritos")
+    @ManyToMany(cascade = {CascadeType.ALL})
     @LazyCollection(LazyCollectionOption.FALSE)
-    private final Map<Calendar,Evento> listaEspera;
+    private final Map<Calendar, Evento> listaEspera;
     
-    @OneToMany(mappedBy = "organizador")
+    @OneToMany(mappedBy = "organizador",
+               cascade = {CascadeType.ALL})
     @LazyCollection(LazyCollectionOption.FALSE)
-    private final Map<Calendar,Evento> organizados;
+    private final Map<Calendar, Evento> organizados;
 
     public Usuario() {
         eventos = new HashMap();
@@ -253,6 +254,7 @@ public class Usuario {
             this.eventos.put(e.getFecha(),e);
             if (e.getOrganizador().username.equals(this.username)) {
                 this.organizados.put(e.getFecha(),e);
+                e.setOrganizador(this);
             }
             ret = true;
         }
