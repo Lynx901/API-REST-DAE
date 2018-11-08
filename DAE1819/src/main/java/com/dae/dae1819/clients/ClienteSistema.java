@@ -8,6 +8,7 @@ package com.dae.dae1819.clients;
 import com.dae.dae1819.DTOs.EventoDTO;
 import com.dae.dae1819.DTOs.UsuarioDTO;
 import com.dae.dae1819.Excepciones.ListaEventosVacia;
+import com.dae.dae1819.Excepciones.TokenInvalido;
 import com.dae.dae1819.Excepciones.UsuarioExistente;
 import com.dae.dae1819.interfaces.SistemaInterface;
 import java.util.ArrayList;
@@ -316,10 +317,17 @@ public class ClienteSistema {
                                 }
                             }
                         } else {
-                            if (sistema.inscribirse(user, evento)) {
-                                System.out.println("|- Se le ha inscrito en la posición: " + (evento.getAsistentes().size() + 1));
-                            } else {
-                                System.out.println("|- Se le ha añadido a la lista de espera en la posición: " + (evento.getAsistentes().size() - evento.getCapacidad() + 1));
+                            try {
+                                if (sistema.inscribirse(user, evento)) {
+                                    //TODO revisar esta actualización de DTOs
+                                    evento = sistema.buscarEventoPorId(evento.getId());
+                                    System.out.println("|- Se le ha inscrito en la posición: " + (evento.getAsistentes().size() + 1));
+                                } else {
+                                    evento = sistema.buscarEventoPorId(evento.getId());
+                                    System.out.println("|- Se le ha añadido a la lista de espera en la posición: " + (evento.getAsistentes().size() - evento.getCapacidad() + 1));
+                                }
+                            } catch (TokenInvalido e) {
+                                System.out.println(e.getMessage());
                             }
                         }
                     }
@@ -460,28 +468,39 @@ public class ClienteSistema {
         System.out.println("|---------------------------------------------------------------------|");
         System.out.println("|---------------------------------------------------------------------|");
         System.out.println("|-                                                                   -|");
-        System.out.println("|-                            Práctica 1                             -|");
+        System.out.println("|-                            Práctica 2                             -|");
         System.out.println("|-                        Gestión de Eventos                         -|");
         System.out.println("|-                                                                   -|");
         System.out.println("|---------------------------------------------------------------------|");
 
-        if (this.seleccionarSN("Desea comenzar la ejecución con algunos datos de prueba")) {
-            List<UsuarioDTO> uTest = new ArrayList();
+        if (this.seleccionarSN("Desea comenzar la ejecución con una sesión iniciada")) {
+            UsuarioDTO uTest = new UsuarioDTO();
             try {
                 sistema.nuevoUsuario("admin", "admin", "admin", "admin@ujaen.es");
-                uTest.add(sistema.buscarUsuario("admin"));
-                sistema.nuevoEvento("Clase1", Calendar.getInstance(), "CHARLA", "Clase de DAE", (Integer) 15, "Edificio A3", uTest.get(0));
-                
-                sistema.nuevoUsuario("user1", "asdf", "asdf", "user@uja.es");
-                uTest.add(sistema.buscarUsuario("user1"));
-                sistema.nuevoUsuario("user2", "1234", "1234", "usuario@gmail.com");
-                uTest.add(sistema.buscarUsuario("user2"));
-                sistema.nuevoUsuario("USER3", "1a2b", "1a2b", "el3@yo.com");
-                uTest.add(sistema.buscarUsuario("USER3"));
-            } catch (Exception e){
+                uTest = sistema.buscarUsuario("admin");
+                user = sistema.login("admin", "admin");
+            } catch (Exception e) {
                 System.err.print(e);
             }
-
+        
+        
+//        if (this.seleccionarSN("Desea comenzar la ejecución con algunos datos de prueba")) {
+//            List<UsuarioDTO> uTest = new ArrayList();
+//            try {
+//                sistema.nuevoUsuario("admin", "admin", "admin", "admin@ujaen.es");
+//                uTest.add(sistema.buscarUsuario("admin"));
+//                sistema.nuevoEvento("Clase1", Calendar.getInstance(), "CHARLA", "Clase de DAE", (Integer) 15, "Edificio A3", uTest.get(0));
+//                
+//                sistema.nuevoUsuario("user1", "asdf", "asdf", "user@uja.es");
+//                uTest.add(sistema.buscarUsuario("user1"));
+//                sistema.nuevoUsuario("user2", "1234", "1234", "usuario@gmail.com");
+//                uTest.add(sistema.buscarUsuario("user2"));
+//                sistema.nuevoUsuario("USER3", "1a2b", "1a2b", "el3@yo.com");
+//                uTest.add(sistema.buscarUsuario("USER3"));
+//            } catch (Exception e){
+//                System.err.print(e);
+//            }
+//
 //            List<EventoDTO> eTest = new ArrayList();
 //            sistema.nuevoEvento("Clase1", new Date(), "CHARLA", "Clase de DAE", (Integer) 15, "Edificio A3", "admin");
 //            eTest.add(sistema.buscarEventoPorNombre("Clase1"));
@@ -525,7 +544,7 @@ public class ClienteSistema {
             System.out.println("|---------------------------------------------------------------------|");
             System.out.println("|- [0]. Finalizar programa                                           -|");
             System.out.println("|---------------------------------------------------------------------|");
-            System.out.println("|-                       Práctica 1: Backend                         -|");
+            System.out.println("|-                     Práctica 2: Persistencia                      -|");
             System.out.println("|-                       (c) 2018 dml y jfaf                         -|");
             System.out.println("|---------------------------------------------------------------------|");
 
@@ -840,25 +859,27 @@ public class ClienteSistema {
 //
 //                        tipo = this.menuTipoEvento();
 //                        Calendar fecha = Calendar.getInstance();
-//                        fecha.set(anio, mes, dia, hora, minutos);
+//                        fecha.set(anio, mes-1, dia, hora, minutos);
 
                         //[debug]
                         Calendar fecha = Calendar.getInstance();
-                        fecha.set(2018, 3, 1, 20, 30);
+                        fecha.set(2018, 2, 1, 20, 30);
                         nombre = descripcion = localizacion = "a";
                         capacidad= 2;
                         tipo = "CHARLA";
 
+                        EventoDTO newEvento = null;
                         try {
                             int id = sistema.nuevoEvento(nombre, fecha, tipo, descripcion, capacidad, localizacion, user);
                             System.out.println("|- Evento creado correctamente con ID: " + id);
 
-                            EventoDTO newEvento = sistema.buscarEventoPorId(id);
+                            newEvento = sistema.buscarEventoPorId(id);
+                            sistema.inscribirse(user, newEvento);
                             this.menuEvento(sistema, newEvento, "crear");
                         } catch (Exception e) {//TODO
                             System.err.print(e.getMessage());
                         }
-
+                        
                     }
                     break;
 

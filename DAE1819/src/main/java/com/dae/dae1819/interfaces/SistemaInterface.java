@@ -185,7 +185,7 @@ public abstract class SistemaInterface {
      * @return true si se inscribe al usuario, false si entra en la lista de
      * espera
      */
-    public abstract boolean inscribirse(UsuarioDTO uDTO, EventoDTO eDTO);
+    public abstract boolean inscribirse(UsuarioDTO uDTO, EventoDTO eDTO) throws TokenInvalido;
 
     /**
      * Desinscribe a un usuario de un evento

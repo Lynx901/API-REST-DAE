@@ -23,7 +23,6 @@ import org.hibernate.annotations.LazyCollectionOption;
 public class Evento {
 
     @Id
-    @GeneratedValue
     private int id;
     private String nombre;
 
@@ -39,11 +38,11 @@ public class Evento {
     private String localizacion;
     private boolean cancelado;
 
-    @ManyToMany(mappedBy="eventos")
+    @ManyToMany(mappedBy="eventos", cascade = {CascadeType.ALL})
     @LazyCollection(LazyCollectionOption.FALSE)
-    private final Map<String, Usuario> asistentes;
+    private final Map<Calendar, Usuario> asistentes;
 
-    @ManyToMany(mappedBy="listaEspera")
+    @ManyToMany(mappedBy="listaEspera", cascade = {CascadeType.ALL})
     @LazyCollection(LazyCollectionOption.FALSE)
     private Map<Calendar, Usuario> inscritos;
 
@@ -57,8 +56,9 @@ public class Evento {
         this.organizador = new Usuario();
     }
 
-    public Evento(String nombre, Calendar fecha, String _tipo, String descripcion,
+    public Evento(int id, String nombre, Calendar fecha, String _tipo, String descripcion,
             Integer capacidad, String localizacion, Map<Calendar, Usuario> asistentes, Map<Calendar, Usuario> inscritos, Usuario organizador) {
+        this.id = id;
         this.nombre = nombre;
         this.fecha = fecha;
         this.tipo = Tipo.valueOf(_tipo);
@@ -69,7 +69,7 @@ public class Evento {
 
         this.asistentes = new HashMap();
         asistentes.forEach((fechaIns, usuario) -> {
-            this.asistentes.put(usuario.getUsername(), usuario);
+            this.asistentes.put(fechaIns, usuario);
         });
 
         this.inscritos = new HashMap();
@@ -81,8 +81,9 @@ public class Evento {
         this.organizador = organizador;
     }
 
-    public Evento(String nombre, Calendar fecha, String _tipo, String descripcion,
+    public Evento(int id, String nombre, Calendar fecha, String _tipo, String descripcion,
             Integer capacidad, String localizacion, Usuario organizador) {
+        this.id = id;
         this.nombre = nombre;
         this.fecha = fecha;
         this.tipo = Tipo.valueOf(_tipo);
@@ -205,7 +206,7 @@ public class Evento {
     /**
      * @return the asistentes
      */
-    public Map<String, Usuario> getAsistentes() {
+    public Map<Calendar, Usuario> getAsistentes() {
         return asistentes;
     }
 
@@ -223,10 +224,10 @@ public class Evento {
     /**
      * @param asistentes the asistentes to set
      */
-    public void setAsistentes(Map<String, Usuario> asistentes) {
+    public void setAsistentes(Map<Calendar, Usuario> asistentes) {
         this.asistentes.clear();
-        asistentes.forEach((clave, usuario) -> {
-            this.asistentes.put(clave, usuario);
+        asistentes.forEach((fechaIns, usuario) -> {
+            this.asistentes.put(fechaIns, usuario);
         });
     }
 
@@ -266,12 +267,22 @@ public class Evento {
      */
     public boolean inscribir(Usuario u) {
         boolean ret = false;
+        
         Calendar fechaIns = Calendar.getInstance();
-        if (this.asistentes.size() <= this.capacidad) {
-            this.asistentes.put(u.getUsername(), u);
-            ret = true;
-        } else {
+        // Si está lleno, añadimos el usuario a la lista de inscritos
+        if (this.asistentes.size() >= this.capacidad) {
+            System.out.println("[debug] Evento: El evento está lleno, añadiendo a la lista de espera");
             this.inscritos.put(fechaIns, u);
+        } else {
+            // Si no está lleno, añadimos el usuario a la lista de asistentes
+            this.asistentes.put(fechaIns, u);
+            System.out.println("[debug] Evento: Se ha añadido a la lista de asistentes");
+            // Si además es el organizador, añadimos el usuario como organizador
+            if (this.organizador.getUsername().equals(u.getUsername())) {
+                this.setOrganizador(u);
+                System.out.println("[debug] Evento: Se ha puesto a " + this.organizador.getUsername() + " como organizador");
+            }
+            ret = true;
         }
 
         return ret;

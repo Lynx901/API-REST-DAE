@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class Sistema extends SistemaInterface {
 
     private String nombre;
+    private int lastID;
     
     @Autowired
     private UsuarioDAO usuarios;
@@ -37,11 +38,13 @@ public class Sistema extends SistemaInterface {
 
     public Sistema() {
         this.tokenConectados = new ArrayList();
+        this.lastID = 0;
     }
 
     public Sistema(String nombre) {
         this.nombre = nombre;
         this.tokenConectados = new ArrayList();
+        this.lastID = 0;
     }
 
     /**
@@ -207,15 +210,13 @@ public class Sistema extends SistemaInterface {
         if (!this.isTokenValid(organizador.getToken())) {
             throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception()); 
         } else {
-            Evento e = new Evento(nombre, fecha, tipo, descripcion, capacidad, localizacion, u);
+            Evento e = new Evento(lastID++, nombre, fecha, tipo, descripcion, capacidad, localizacion, u);
             System.out.println("[debug] nombre: " + e.getNombre() + " tipo: " + e.getTipo() + " capacidad: " + e.getCapacidad() + " organizador: " + e.getOrganizador().getUsername());
-//            usuarios.inscribir(u, e);
-//            eventos.inscribir(u, e);
-            u.inscribirEnEvento(e);
             eventos.insertar(e);
             
             ret = e.getId();
         }
+        
         return ret;
     }
     
@@ -269,19 +270,23 @@ public class Sistema extends SistemaInterface {
 
     
     @Override
-    public boolean inscribirse(UsuarioDTO uDTO, EventoDTO eDTO) {
-        //TODO if(!this.isTokenValid(uDTO.getToken())) {throw new TokenNoValido() ;}
+    public boolean inscribirse(UsuarioDTO uDTO, EventoDTO eDTO) throws TokenInvalido {
+        if (!this.isTokenValid(uDTO.getToken())) {
+            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception()); 
+        }
         boolean ret = false;
 
         Usuario u = usuarios.buscar(uDTO.getUsername());
         Evento e = eventos.buscar(eDTO.getId());
+        
         if (!e.getAsistentes().containsValue(u)) { // Comprobamos que no esté el usuario ya inscrito previamente
-            ret = u.inscribirEnEvento(e);
-
-            usuarios.actualizar(u);
-            eventos.actualizar(e);
+//            ret = eventos.inscribir(u, e) && usuarios.inscribir(u, e);
+            ret = u.inscribirEnEvento(e) && e.inscribir(u);
         }
-
+        
+        usuarios.actualizar(u);
+        eventos.actualizar(e);
+        
         return ret;
         
     }
@@ -441,7 +446,8 @@ public class Sistema extends SistemaInterface {
                         System.out.println("\t|-----------------------------------------------------------------|");
                         System.out.println("\t[debug]- Nombre: \t\t" + evento.getNombre());
                         System.out.println("\t[debug]- Descripción: \t\t" + evento.getDescripcion());
-                        System.out.println("\t[debug]- Fecha: \t\t" + evento.getFecha().toString());
+                        System.out.println("|- Fecha: \t\t" + evento.getFecha().get(Calendar.HOUR) + ":" + evento.getFecha().get(Calendar.MINUTE)
+                        + " del " + evento.getFecha().get(Calendar.DATE) + "/" + evento.getFecha().get(Calendar.MONTH) + "/" + evento.getFecha().get(Calendar.YEAR));
                         System.out.println("\t[debug]- Tipo: \t\t\t" + evento.getTipo());
                         System.out.println("\t[debug]- Lugar: \t\t" + evento.getLocalizacion());
                         System.out.println("\t[debug]- Plazas máximas: \t" + evento.getCapacidad());

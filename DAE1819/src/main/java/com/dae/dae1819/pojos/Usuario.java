@@ -14,10 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.persistence.*;
-import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
-import org.springframework.stereotype.Repository;
 
 
 /**
@@ -250,14 +248,20 @@ public class Usuario {
      */
     public boolean inscribirEnEvento(Evento e) {
         boolean ret = false;
-
-        if (!e.inscribir(this)) {
-            this.listaEspera.put(e.getFecha(),e);
+        
+        Calendar fechaIns = Calendar.getInstance();
+        // Si está lleno, añadimos el evento a la lista de espera
+        if (e.getAsistentes().size() >= e.getCapacidad()) {
+            System.out.println("[debug] Usuario: El evento está lleno, añadiendo a la lista de espera");
+            this.listaEspera.put(fechaIns, e);
         } else {
-            this.eventos.put(e.getFecha(),e);
-            if (e.getOrganizador().username.equals(this.username)) {
+            // Si no está lleno, añadimos el evento a la lista de eventos
+            this.eventos.put(fechaIns, e);
+            System.out.println("[debug] Usuario: Se ha añadido a la lista de eventos");
+            // Si además es el organizador, añadimos el evento a la lista de organizados
+            if (e.getOrganizador().getUsername().equals(this.username)) {
                 this.organizados.add(e);
-                e.setOrganizador(this);
+                System.out.println("[debug] Usuario: Se ha añadido a la lista de organizados");
             }
             ret = true;
         }

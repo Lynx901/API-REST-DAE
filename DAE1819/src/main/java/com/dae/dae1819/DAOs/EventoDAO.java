@@ -25,32 +25,31 @@ public class EventoDAO {
     EntityManager em;
     
     public List<Evento> buscarPorNombre(String nombre) {
-        List<Evento> eventos = new ArrayList();
+        List<Evento> eventos = em.createQuery("select e from Evento e where e.nombre like '%" + nombre + "%'", Evento.class).getResultList();
         
         return eventos;
     }
     
-    public List<Evento> buscarPorTipo(String nombre) {
-        List<Evento> eventos = new ArrayList();
+    public List<Evento> buscarPorTipo(String tipo) {
+        List<Evento> eventos = em.createQuery("select e from Evento e where e.tipo like '%" + tipo + "%'", Evento.class).getResultList();
         
         return eventos;
     }
     
-    public List<Evento> buscarPorDescripcion(String nombre) {
-        List<Evento> eventos = new ArrayList();
+    public List<Evento> buscarPorDescripcion(String descripcion) {
+        List<Evento> eventos = em.createQuery("select e from Evento e where e.descripcion like '%" + descripcion + "%'", Evento.class).getResultList();
         
         return eventos;
     }
     
     public List<Evento> listar() {
-        List<Evento> eventos = new ArrayList();
+        List<Evento> eventos = em.createQuery("select e from Evento e", Evento.class).getResultList();
         
         return eventos;
     }
     
     public Evento buscar(int id) {
-        Evento result = em.find(Evento.class, id);
-        return result;
+        return em.find(Evento.class, id);
     }
     
     public boolean inscribir(Usuario u, Evento e) {
@@ -63,13 +62,18 @@ public class EventoDAO {
             e.getInscritos().put(fechaIns, u);
         } else {
             // Si no está lleno, añadimos el usuario a la lista de asistentes
-            e.getAsistentes().put(u.getUsername(), u);
+            e.getAsistentes().put(fechaIns, u);
+            System.out.println("[debug] EventoDAO: Se ha añadido a la lista de asistentes");
             // Si además es el organizador, añadimos el usuario como organizador
             if (e.getOrganizador().getUsername().equals(u.getUsername())) {
                 e.setOrganizador(u);
+                System.out.println("[debug] EventoDAO: Se ha puesto a " + e.getOrganizador().getUsername() + " como organizador");
             }
             ret = true;
         }
+        
+        Evento newE = this.actualizar(e);
+        System.out.println("[debug] newE = " + newE.getNombre() + " y sus asistentes son: " + newE.getAsistentes().toString());
 
         return ret;
     }
@@ -78,10 +82,11 @@ public class EventoDAO {
         System.out.println("[debug] ¡Estamos insertando un evento!");
         em.persist(e);
         System.out.println("[debug] ¿Se ha insertado el evento? " + this.buscar(e.getId()).getNombre());
+        em.flush();
     }
     
-    public void actualizar(Evento e) {
-        em.merge(e);
+    public Evento actualizar(Evento e) {
+        return em.merge(e);
     }
     
 }
