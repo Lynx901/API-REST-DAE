@@ -9,9 +9,12 @@ package com.dae.dae1819.pojos;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.persistence.*;
+import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.stereotype.Repository;
@@ -42,13 +45,13 @@ public class Usuario {
     @OneToMany(mappedBy = "organizador",
                cascade = {CascadeType.ALL})
     @LazyCollection(LazyCollectionOption.FALSE)
-    private final Map<Calendar, Evento> organizados;
+    private final Set<Evento> organizados;
 
     public Usuario() {
         eventos = new HashMap();
 
         listaEspera = new HashMap();
-        organizados = new HashMap();
+        organizados = new HashSet();
     }
 
     public Usuario(String username, String password, String email) {
@@ -57,11 +60,11 @@ public class Usuario {
         this.email = email;
 
         eventos = new HashMap();
-        organizados = new HashMap();
+        organizados = new HashSet();
         listaEspera = new HashMap();
     }
 
-    public Usuario(String username, String password, String email, Map<Calendar,Evento> eventos, Map<Calendar,Evento> organizados) {
+    public Usuario(String username, String password, String email, Map<Calendar,Evento> eventos, Set<Evento> organizados) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -71,9 +74,9 @@ public class Usuario {
             this.eventos.put(fecha,evento);
         });
 
-        this.organizados = new HashMap();
-        organizados.forEach((fecha,evento) -> {
-            this.organizados.put(fecha,evento);
+        this.organizados = new HashSet();
+        organizados.forEach((evento) -> {
+            this.organizados.add(evento);
         });
 
         this.listaEspera = new HashMap();
@@ -204,7 +207,7 @@ public class Usuario {
     /**
      * @return the organizados
      */
-    public Map<Calendar,Evento> getOrganizados() {
+    public Set<Evento> getOrganizados() {
         return organizados;
     }
     
@@ -213,7 +216,7 @@ public class Usuario {
      */
     public List<Evento> getOrganizadosLista() {
         List<Evento> Lista = new ArrayList();
-        this.organizados.forEach((fecha,evento) -> {
+        this.organizados.forEach((evento) -> {
             Lista.add(evento);
         });
         return Lista;
@@ -225,7 +228,7 @@ public class Usuario {
     public void setOrganizados(Map<Calendar,Evento> organizados) {
         this.organizados.clear();
         organizados.forEach((fecha,evento) -> {
-            this.organizados.put(fecha,evento);
+            this.organizados.add(evento);
         });
     }
     
@@ -235,7 +238,7 @@ public class Usuario {
     public void setOrganizados(List<Evento> organizados) {
         this.organizados.clear();
         organizados.forEach((evento) -> {
-            this.organizados.put(evento.getFecha(),evento);
+            this.organizados.add(evento);
         });
     }
 
@@ -253,7 +256,7 @@ public class Usuario {
         } else {
             this.eventos.put(e.getFecha(),e);
             if (e.getOrganizador().username.equals(this.username)) {
-                this.organizados.put(e.getFecha(),e);
+                this.organizados.add(e);
                 e.setOrganizador(this);
             }
             ret = true;

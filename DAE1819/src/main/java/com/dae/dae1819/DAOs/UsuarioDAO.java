@@ -51,7 +51,7 @@ public class UsuarioDAO {
             u.getEventos().put(fechaIns, e);
             // Si además es el organizador, añadimos el evento a la lista de organizados
             if (e.getOrganizador().getUsername().equals(u.getUsername())) {
-                u.getOrganizados().put(fechaIns, e);
+                u.getOrganizados().add(e);
             }
             ret = true;
         }

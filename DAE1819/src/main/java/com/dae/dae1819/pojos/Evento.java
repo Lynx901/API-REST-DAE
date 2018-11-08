@@ -40,13 +40,14 @@ public class Evento {
     private boolean cancelado;
 
     @ManyToMany(mappedBy="eventos")
+    @LazyCollection(LazyCollectionOption.FALSE)
     private final Map<String, Usuario> asistentes;
 
     @ManyToMany(mappedBy="listaEspera")
+    @LazyCollection(LazyCollectionOption.FALSE)
     private Map<Calendar, Usuario> inscritos;
 
     @ManyToOne
-    @JoinColumn(name = "organizador")
     private Usuario organizador;
 
     public Evento() {
