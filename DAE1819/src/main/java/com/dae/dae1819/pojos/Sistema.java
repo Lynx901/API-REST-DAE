@@ -15,7 +15,10 @@ import com.dae.dae1819.DTOs.UsuarioDTO;
 import com.dae.dae1819.Excepciones.ListaEventosVacia;
 import com.dae.dae1819.Excepciones.TokenInvalido;
 import com.dae.dae1819.Excepciones.UsuarioExistente;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -279,13 +282,15 @@ public class Sistema extends SistemaInterface {
         Usuario u = usuarios.buscar(uDTO.getUsername());
         Evento e = eventos.buscar(eDTO.getId());
         
+//        usuarios.actualizar(u);
+//        eventos.actualizar(e);
+        
         if (!e.getAsistentes().containsValue(u)) { // Comprobamos que no esté el usuario ya inscrito previamente
-//            ret = eventos.inscribir(u, e) && usuarios.inscribir(u, e);
-            ret = u.inscribirEnEvento(e) && e.inscribir(u);
+            ret = eventos.inscribir(u, e) && usuarios.inscribir(u, e);
+//            ret = u.inscribirEnEvento(e) && e.inscribir(u);
         }
         
-        usuarios.actualizar(u);
-        eventos.actualizar(e);
+        
         
         return ret;
         

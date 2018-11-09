@@ -34,7 +34,7 @@ public class Usuario {
 
     @ManyToMany(cascade={CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
-    private final Map<Calendar, Evento> eventos;
+    private final Map<Integer, Evento> eventos;
     
     @ManyToMany(cascade={CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
@@ -62,7 +62,7 @@ public class Usuario {
         listaEspera = new HashMap();
     }
 
-    public Usuario(String username, String password, String email, Map<Calendar,Evento> eventos, Set<Evento> organizados) {
+    public Usuario(String username, String password, String email, Map<Integer,Evento> eventos, Set<Evento> organizados) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -128,7 +128,7 @@ public class Usuario {
     /**
      * @return the eventos
      */
-    public Map<Calendar,Evento> getEventos() {
+    public Map<Integer,Evento> getEventos() {
         return eventos;
     }
     
@@ -146,7 +146,7 @@ public class Usuario {
     /**
      * @param eventos the eventos to set
      */
-    public void setEventos(Map<Calendar,Evento> eventos) {
+    public void setEventos(Map<Integer,Evento> eventos) {
         this.eventos.clear();
         eventos.forEach((fecha,evento) -> {
             this.eventos.put(fecha,evento);
@@ -160,7 +160,7 @@ public class Usuario {
     public void setEventosLista(List<Evento> eventos) {
         this.eventos.clear();
         eventos.forEach((evento) -> {
-            this.eventos.put(evento.getFecha(),evento);
+            this.eventos.put(evento.getId(),evento);
         });
     }
 
@@ -256,7 +256,7 @@ public class Usuario {
             this.listaEspera.put(fechaIns, e);
         } else {
             // Si no está lleno, añadimos el evento a la lista de eventos
-            this.eventos.put(fechaIns, e);
+            this.eventos.put(e.getId(), e);
             System.out.println("[debug] Usuario: Se ha añadido a la lista de eventos");
             // Si además es el organizador, añadimos el evento a la lista de organizados
             if (e.getOrganizador().getUsername().equals(this.username)) {

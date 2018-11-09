@@ -7,9 +7,12 @@ package com.dae.dae1819.DAOs;
 
 import com.dae.dae1819.pojos.Evento;
 import com.dae.dae1819.pojos.Usuario;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
@@ -73,7 +76,12 @@ public class EventoDAO {
         }
         
         Evento newE = this.actualizar(e);
-        System.out.println("[debug] newE = " + newE.getNombre() + " y sus asistentes son: " + newE.getAsistentes().entrySet().toString());
+        System.out.println("[debug] newE = " + newE.getNombre() + " y sus asistentes son: ");
+        
+        for (Map.Entry<Calendar, Usuario> entry : newE.getAsistentes().entrySet()) {
+            DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            System.out.println(sdf.format(entry.getKey().getTime()) + " - " + entry.getValue().getUsername());
+        }
 
         return ret;
     }
@@ -82,7 +90,6 @@ public class EventoDAO {
         System.out.println("[debug] ¡Estamos insertando un evento!");
         em.persist(e);
         System.out.println("[debug] ¿Se ha insertado el evento? " + this.buscar(e.getId()).getNombre());
-        em.flush();
     }
     
     public Evento actualizar(Evento e) {

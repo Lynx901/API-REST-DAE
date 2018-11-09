@@ -7,8 +7,11 @@ package com.dae.dae1819.DAOs;
 
 import com.dae.dae1819.pojos.Evento;
 import com.dae.dae1819.pojos.Usuario;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
@@ -45,7 +48,7 @@ public class UsuarioDAO {
             u.getListaEspera().put(fechaIns, e);
         } else {
             // Si no está lleno, añadimos el evento a la lista de eventos
-            u.getEventos().put(fechaIns, e);
+            u.getEventos().put(e.getId(), e);
             System.out.println("[debug] UsuarioDAO: Se ha añadido a la lista de eventos");
             // Si además es el organizador, añadimos el evento a la lista de organizados
             if (e.getOrganizador().getUsername().equals(u.getUsername())) {
@@ -56,7 +59,11 @@ public class UsuarioDAO {
         }
         
         Usuario newU = this.actualizar(u);
-        System.out.println("[debug] newU = " + newU.getUsername() + " y sus evntos son: " + newU.getEventos().toString());
+        System.out.println("[debug] newU = " + newU.getUsername() + " y sus eventos son: ");
+        
+        for (Map.Entry<Integer, Evento> entry : newU.getEventos().entrySet()) {
+            System.out.println(entry.getKey() + " - " + entry.getValue().getNombre());
+        }
 
         return ret;
     }
@@ -65,7 +72,6 @@ public class UsuarioDAO {
         System.out.println("[debug] ¡Estamos insertando un usuario!");
         em.persist(u);
         System.out.println("[debug] ¿Se ha insertado el usuario? " + this.buscar(u.getUsername()).getUsername());
-        em.flush();
     }
     
     public Usuario actualizar(Usuario u) {
