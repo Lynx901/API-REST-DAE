@@ -32,16 +32,16 @@ public class Usuario {
     
     private String email;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(cascade={CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
     private final Map<Calendar, Evento> eventos;
     
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(cascade={CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
     private final Map<Calendar, Evento> listaEspera;
     
     @OneToMany(mappedBy = "organizador",
-               cascade = {CascadeType.ALL})
+               cascade={CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
     private final Set<Evento> organizados;
 

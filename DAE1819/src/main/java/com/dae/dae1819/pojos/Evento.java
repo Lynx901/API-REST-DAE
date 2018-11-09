@@ -38,15 +38,16 @@ public class Evento {
     private String localizacion;
     private boolean cancelado;
 
-    @ManyToMany(mappedBy="eventos", cascade = {CascadeType.ALL})
+    @ManyToMany(mappedBy="eventos", cascade={CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
     private final Map<Calendar, Usuario> asistentes;
 
-    @ManyToMany(mappedBy="listaEspera", cascade = {CascadeType.ALL})
+    @ManyToMany(mappedBy="listaEspera", cascade={CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
     private Map<Calendar, Usuario> inscritos;
 
     @ManyToOne
+    @JoinColumn
     private Usuario organizador;
 
     public Evento() {

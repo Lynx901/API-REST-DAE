@@ -73,7 +73,7 @@ public class EventoDAO {
         }
         
         Evento newE = this.actualizar(e);
-        System.out.println("[debug] newE = " + newE.getNombre() + " y sus asistentes son: " + newE.getAsistentes().toString());
+        System.out.println("[debug] newE = " + newE.getNombre() + " y sus asistentes son: " + newE.getAsistentes().entrySet().toString());
 
         return ret;
     }
