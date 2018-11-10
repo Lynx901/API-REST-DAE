@@ -40,10 +40,12 @@ public class Evento {
 
     @ManyToMany(mappedBy="eventos", cascade={CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
+    @MapKey(name = "fechainscripcion")
     private final Map<Calendar, Usuario> asistentes;
 
     @ManyToMany(mappedBy="listaEspera", cascade={CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
+    @MapKey(name = "fechainscripcion")
     private Map<Calendar, Usuario> inscritos;
 
     @ManyToOne

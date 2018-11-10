@@ -31,6 +31,9 @@ public class Usuario {
     private String password;
     
     private String email;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    private Calendar fechainscripcion;
 
     @ManyToMany(cascade={CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
@@ -50,12 +53,14 @@ public class Usuario {
 
         listaEspera = new HashMap();
         organizados = new HashSet();
+        fechainscripcion = Calendar.getInstance();
     }
 
     public Usuario(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
+        fechainscripcion = Calendar.getInstance();
 
         eventos = new HashMap();
         organizados = new HashSet();
@@ -66,6 +71,7 @@ public class Usuario {
         this.username = username;
         this.password = password;
         this.email = email;
+        fechainscripcion = Calendar.getInstance();
 
         this.eventos = new HashMap();
         eventos.forEach((fecha,evento) -> {
@@ -219,7 +225,21 @@ public class Usuario {
         });
         return Lista;
     }
-
+    
+    /*
+    * @return testdate
+    */
+    public Calendar getFechaInscripcion() {
+        return this.fechainscripcion;
+    }
+    
+    /*
+    * @param fecha testdate
+    */
+    public void setFechaInscripcion(Calendar fecha) {
+        this.fechainscripcion = fecha;
+    }
+    
     /**
      * @param organizados the organizados to set
      */
