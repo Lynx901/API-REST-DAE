@@ -10,7 +10,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import javax.persistence.*;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -38,14 +37,14 @@ public class Evento {
     private String localizacion;
     private boolean cancelado;
 
-    @ManyToMany(mappedBy="eventos", cascade={CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToMany(cascade={CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
-    @MapKey(name = "fechainscripcion")
+    @MapKeyTemporal(TemporalType.TIMESTAMP)
     private final Map<Calendar, Usuario> asistentes;
 
-    @ManyToMany(mappedBy="listaEspera", cascade={CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToMany(cascade={CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
-    @MapKey(name = "fechainscripcion")
+    @MapKeyTemporal(TemporalType.TIMESTAMP)
     private Map<Calendar, Usuario> inscritos;
 
     @ManyToOne
@@ -260,67 +259,6 @@ public class Evento {
      */
     public void setInscritos(Map<Calendar, Usuario> inscritos) {
         this.inscritos = inscritos;
-    }
-
-    /**
-     * Inscribe a un usuario en el evento
-     *
-     * @param u usuario a inscribir
-     * @return true si se ha inscrito, false si entra en la lista de espera
-     */
-    public boolean inscribir(Usuario u) {
-        boolean ret = false;
-        
-        Calendar fechaIns = Calendar.getInstance();
-        // Si está lleno, añadimos el usuario a la lista de inscritos
-        if (this.asistentes.size() >= this.capacidad) {
-            System.out.println("[debug] Evento: El evento está lleno, añadiendo a la lista de espera");
-            this.inscritos.put(fechaIns, u);
-        } else {
-            // Si no está lleno, añadimos el usuario a la lista de asistentes
-            this.asistentes.put(fechaIns, u);
-            System.out.println("[debug] Evento: Se ha añadido a la lista de asistentes");
-            // Si además es el organizador, añadimos el usuario como organizador
-            if (this.organizador.getUsername().equals(u.getUsername())) {
-                this.setOrganizador(u);
-                System.out.println("[debug] Evento: Se ha puesto a " + this.organizador.getUsername() + " como organizador");
-            }
-            ret = true;
-        }
-
-        return ret;
-    }
-
-    /**
-     * Desinscribe a un usuario del evento
-     *
-     * @param u usuario a desinscribir
-     * @return
-     */
-    public boolean desinscribir(Usuario u) {
-        boolean ret = false;
-
-        if (this.asistentes.containsValue(u)) {
-            this.asistentes.remove(u.getUsername());
-            //TODO notificacion de desinscripcion
-            if (!this.inscritos.isEmpty()) {
-                Entry<Calendar, Usuario> entrada = this.inscritos.entrySet().stream().sorted(Map.Entry.<Calendar, Usuario>comparingByKey()).findFirst().get();
-                u = this.inscritos.get(entrada.getKey());
-                this.inscribir(u);
-                //TODO notificacion de inscripcion
-                this.inscritos.remove(entrada.getKey());
-            }
-            ret = true;
-        } else if (this.inscritos.containsValue(u)) {
-            List<Calendar> fechas = new ArrayList<>(this.inscritos.keySet());
-            for (int i = 0; i < this.inscritos.size(); i++) {
-                if (this.inscritos.get(fechas.get(i)).getUsername().equals(u.getUsername())) {
-                    this.inscritos.remove(fechas.get(i));
-                    return true;
-                }
-            }
-        }
-        return ret;
     }
 
 }

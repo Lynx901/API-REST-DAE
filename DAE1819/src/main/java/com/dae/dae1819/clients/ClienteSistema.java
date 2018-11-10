@@ -13,7 +13,6 @@ import com.dae.dae1819.Excepciones.UsuarioExistente;
 import com.dae.dae1819.interfaces.SistemaInterface;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -428,7 +427,8 @@ public class ClienteSistema {
                 if (e.isCancelado()) {
                     System.out.println("|-\t|- Este evento está cancelado.                           -|");
                 } else {
-                    System.out.println("|-\t|- Fecha: \t\t" + e.getFecha().toString());
+                    System.out.println("|-\t|- Fecha: \t\t" + e.getFecha().get(Calendar.HOUR) + ":" + e.getFecha().get(Calendar.MINUTE)
+                        + " del " + e.getFecha().get(Calendar.DATE) + "/" + e.getFecha().get(Calendar.MONTH) + "/" + e.getFecha().get(Calendar.YEAR));
                     if (!usuario.getListaEspera().contains(e.getNombre())) {
                         System.out.println("|-\t|- ¡Estás inscrito!");
                     } else {
@@ -448,7 +448,8 @@ public class ClienteSistema {
             for (Integer eventoID : eventosOrganizados) {
                 EventoDTO e = sistema.buscarEventoPorId(eventoID);
                 System.out.println("|-\t|- Nombre: \t\t" + e.getNombre());
-                System.out.println("|-\t|- Fecha: \t\t" + e.getFecha().toString());
+                System.out.println("|-\t|- Fecha: \t\t" + + e.getFecha().get(Calendar.HOUR) + ":" + e.getFecha().get(Calendar.MINUTE)
+                        + " del " + e.getFecha().get(Calendar.DATE) + "/" + e.getFecha().get(Calendar.MONTH) + "/" + e.getFecha().get(Calendar.YEAR));
                 System.out.println("|-\t|- Asistentes: \t\t" + e.getAsistentes());
                 System.out.println("|-\t|-------------------------------------------------------------|");
             }
@@ -757,116 +758,116 @@ public class ClienteSistema {
                         String nombre, descripcion, localizacion, tipo;
                         Integer capacidad, dia, mes, anio, hora, minutos;
                         capacidad = dia = mes = anio = hora = minutos = 0;
-//
-//                        System.out.print("|- Introduzca el nombre del evento: ");
-//                        nombre = capt.nextLine();
-//
-//                        System.out.print("|- Introduzca una descripción: ");
-//                        descripcion = capt.nextLine();
-//
-//                        System.out.print("|- Introduzca el lugar donde se realizará: ");
-//                        localizacion = capt.nextLine();
-//
-//                        boolean correcto = true;
-//                        do {
-//                            if (!correcto) {
-//                                System.out.println("|- No es un día válido, elija un número entre 1 y 30.                  -|");
-//                            }
-//                            try {
-//                                System.out.print("|- Introduzca el día del evento: ");
-//                                dia = capt.nextInt();
-//                                correcto = (dia >= 0 && dia <= 31);
-//                            } catch (InputMismatchException e) {
-//                                System.out.println("|- No es un día válido, elija un número entre 1 y 30.                  -|");
-//                                correcto = false;
-//                            }
-//                        } while (!correcto);
-//
-//                        correcto = true;
-//                        do {
-//                            if (!correcto) {
-//                                System.out.println("|- No es un mes válido, elija un número entre 1 y 12.                  -|");
-//                            }
-//                            try {
-//                                System.out.print("|- Introduzca el mes del evento (en número): ");
-//                                mes = capt.nextInt();
-//                                correcto = (mes <= 0 && mes >= 13);
-//                            } catch (InputMismatchException e) {
-//                                System.out.println("|- No es un mes válido, elija un número entre 1 y 12.                  -|");
-//                                correcto = false;
-//                            }
-//                        } while (correcto);
-//
-//                        correcto = true;
-//                        do {
-//                            if (!correcto) {
-//                                System.out.println("|- No es un año válido, elija un número después de 2017                -|");
-//                            }
-//                            try {
-//                                System.out.print("|- Introduzca el año del evento: ");
-//                                anio = capt.nextInt();
-//                                correcto = (anio <= 2017);
-//                            } catch (InputMismatchException e) {
-//                                System.out.println("|- No es un año válido, elija un número después de 2017                -|");
-//                                correcto = false;
-//                            }
-//                        } while (correcto);
-//
-//                        correcto = true;
-//                        do {
-//                            if (!correcto) {
-//                                System.out.println("|- No es una hora válida, elija un número entre 0 y 23               -|");
-//                            }
-//                            try {
-//                                System.out.print("|- Introduzca la hora del evento (formato 24h): ");
-//                                hora = capt.nextInt();
-//                                correcto = (hora <= -1 && hora >= 24);
-//                            } catch (InputMismatchException e) {
-//                                System.out.println("|- No es una hora válida, elija un número entre 0 y 23               -|");
-//                                correcto = false;
-//                            }
-//                        } while (correcto);
-//
-//                        correcto = true;
-//                        do {
-//                            if (!correcto) {
-//                                System.out.println("|- No es una cantidad válida, elija una cantidad entre 0 y 59        -|");
-//                            }
-//                            try {
-//                                System.out.print("|- Introduzca los minutos del evento: ");
-//                                minutos = capt.nextInt();
-//                                correcto = (minutos <= -1 && minutos >= 60);
-//                            } catch (InputMismatchException e) {
-//                                System.out.println("|- No es una cantidad válida, elija una cantidad entre 0 y 59        -|");
-//                                correcto = false;
-//                            }
-//                        } while (correcto);
-//
-//                        correcto = true;
-//                        do {
-//                            if (!correcto) {
-//                                System.out.println("|- No es un número válido, elija un número entero mayor de 0.        -|");
-//                            }
-//                            try {
-//                                System.out.print("|- ¿Qué capacidad máxima tendrá?: ");
-//                                capacidad = capt.nextInt();
-//                                correcto = (capacidad <= -1);
-//                            } catch (InputMismatchException e) {
-//                                System.out.println("|- No es un número válido, elija un número entero mayor de 0.        -|");
-//                                correcto = false;
-//                            }
-//                        } while (correcto);
-//
-//                        tipo = this.menuTipoEvento();
-//                        Calendar fecha = Calendar.getInstance();
-//                        fecha.set(anio, mes-1, dia, hora, minutos);
+
+                        System.out.print("|- Introduzca el nombre del evento: ");
+                        nombre = capt.nextLine();
+
+                        System.out.print("|- Introduzca una descripción: ");
+                        descripcion = capt.nextLine();
+
+                        System.out.print("|- Introduzca el lugar donde se realizará: ");
+                        localizacion = capt.nextLine();
+
+                        boolean correcto = true;
+                        do {
+                            if (!correcto) {
+                                System.out.println("|- No es un día válido, elija un número entre 1 y 30.                  -|");
+                            }
+                            try {
+                                System.out.print("|- Introduzca el día del evento: ");
+                                dia = capt.nextInt();
+                                correcto = (dia >= 0 && dia <= 31);
+                            } catch (InputMismatchException e) {
+                                System.out.println("|- No es un día válido, elija un número entre 1 y 30.                  -|");
+                                correcto = false;
+                            }
+                        } while (!correcto);
+
+                        correcto = true;
+                        do {
+                            if (!correcto) {
+                                System.out.println("|- No es un mes válido, elija un número entre 1 y 12.                  -|");
+                            }
+                            try {
+                                System.out.print("|- Introduzca el mes del evento (en número): ");
+                                mes = capt.nextInt();
+                                correcto = (mes <= 0 && mes >= 13);
+                            } catch (InputMismatchException e) {
+                                System.out.println("|- No es un mes válido, elija un número entre 1 y 12.                  -|");
+                                correcto = false;
+                            }
+                        } while (correcto);
+
+                        correcto = true;
+                        do {
+                            if (!correcto) {
+                                System.out.println("|- No es un año válido, elija un número después de 2017                -|");
+                            }
+                            try {
+                                System.out.print("|- Introduzca el año del evento: ");
+                                anio = capt.nextInt();
+                                correcto = (anio <= 2017);
+                            } catch (InputMismatchException e) {
+                                System.out.println("|- No es un año válido, elija un número después de 2017                -|");
+                                correcto = false;
+                            }
+                        } while (correcto);
+
+                        correcto = true;
+                        do {
+                            if (!correcto) {
+                                System.out.println("|- No es una hora válida, elija un número entre 0 y 23               -|");
+                            }
+                            try {
+                                System.out.print("|- Introduzca la hora del evento (formato 24h): ");
+                                hora = capt.nextInt();
+                                correcto = (hora <= -1 && hora >= 24);
+                            } catch (InputMismatchException e) {
+                                System.out.println("|- No es una hora válida, elija un número entre 0 y 23               -|");
+                                correcto = false;
+                            }
+                        } while (correcto);
+
+                        correcto = true;
+                        do {
+                            if (!correcto) {
+                                System.out.println("|- No es una cantidad válida, elija una cantidad entre 0 y 59        -|");
+                            }
+                            try {
+                                System.out.print("|- Introduzca los minutos del evento: ");
+                                minutos = capt.nextInt();
+                                correcto = (minutos <= -1 && minutos >= 60);
+                            } catch (InputMismatchException e) {
+                                System.out.println("|- No es una cantidad válida, elija una cantidad entre 0 y 59        -|");
+                                correcto = false;
+                            }
+                        } while (correcto);
+
+                        correcto = true;
+                        do {
+                            if (!correcto) {
+                                System.out.println("|- No es un número válido, elija un número entero mayor de 0.        -|");
+                            }
+                            try {
+                                System.out.print("|- ¿Qué capacidad máxima tendrá?: ");
+                                capacidad = capt.nextInt();
+                                correcto = (capacidad <= -1);
+                            } catch (InputMismatchException e) {
+                                System.out.println("|- No es un número válido, elija un número entero mayor de 0.        -|");
+                                correcto = false;
+                            }
+                        } while (correcto);
+
+                        tipo = this.menuTipoEvento();
+                        Calendar fecha = Calendar.getInstance();
+                        fecha.set(anio, mes-1, dia, hora, minutos);
 
                         //[debug]
-                        Calendar fecha = Calendar.getInstance();
-                        fecha.set(2018, 2, 1, 20, 30);
-                        nombre = descripcion = localizacion = "a";
-                        capacidad= 2;
-                        tipo = "CHARLA";
+//                        Calendar fecha = Calendar.getInstance();
+//                        fecha.set(2018, 2, 1, 20, 30);
+//                        nombre = descripcion = localizacion = "a";
+//                        capacidad= 2;
+//                        tipo = "CHARLA";
 
                         EventoDTO newEvento = null;
                         try {
@@ -875,7 +876,6 @@ public class ClienteSistema {
 
                             newEvento = sistema.buscarEventoPorId(id);
                             sistema.inscribirse(user, newEvento);
-                            this.menuEvento(sistema, newEvento, "crear");
                         } catch (Exception e) {//TODO
                             System.err.print(e.getMessage());
                         }

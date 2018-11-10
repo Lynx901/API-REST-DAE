@@ -9,7 +9,6 @@ import com.dae.dae1819.pojos.Evento;
 import com.dae.dae1819.pojos.Usuario;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +82,37 @@ public class EventoDAO {
             System.out.println(sdf.format(entry.getKey().getTime()) + " - " + entry.getValue().getUsername());
         }
 
+        return ret;
+    }
+    
+    public boolean desinscribir(Usuario u, Evento e) {
+        boolean ret = true;
+        
+        e.getAsistentes().forEach((fechaIns, usuario) -> {
+            if(usuario == u) {
+                e.getAsistentes().remove(fechaIns);
+            }
+        });
+        
+        if (!e.getInscritos().isEmpty()) {
+            Calendar first = null;
+            for(Calendar d : e.getInscritos().keySet()) {
+                if(first == null || d.before(first)){
+                    first = d;
+                }
+            }
+            Usuario newU = e.getInscritos().get(first);
+            e.getInscritos().remove(first);
+            e.getAsistentes().put(first, newU);
+            //TODO notificar
+        }
+        
+        Evento newE = this.actualizar(e);
+        for (Map.Entry<Calendar, Usuario> entry : newE.getAsistentes().entrySet()) {
+            DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            System.out.println(sdf.format(entry.getKey().getTime()) + " - " + entry.getValue().getUsername());
+        }
+        
         return ret;
     }
     

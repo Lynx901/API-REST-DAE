@@ -40,15 +40,14 @@ public class UsuarioDAO {
     
     public boolean inscribir(Usuario u, Evento e) {
         boolean ret = false;
-        
-        Calendar fechaIns = Calendar.getInstance();
+                
         // Si está lleno, añadimos el evento a la lista de espera
         if (e.getAsistentes().size() >= e.getCapacidad()) {
             System.out.println("[debug] UsuarioDAO: El evento está lleno, añadiendo a la lista de espera");
-            u.getListaEspera().put(fechaIns, e);
+            u.getListaEspera().add(e);
         } else {
             // Si no está lleno, añadimos el evento a la lista de eventos
-            u.getEventos().put(e.getId(), e);
+            u.getEventos().add(e);
             System.out.println("[debug] UsuarioDAO: Se ha añadido a la lista de eventos");
             // Si además es el organizador, añadimos el evento a la lista de organizados
             if (e.getOrganizador().getUsername().equals(u.getUsername())) {
@@ -59,12 +58,32 @@ public class UsuarioDAO {
         }
         
         Usuario newU = this.actualizar(u);
+        
         System.out.println("[debug] newU = " + newU.getUsername() + " y sus eventos son: ");
         
-        for (Map.Entry<Integer, Evento> entry : newU.getEventos().entrySet()) {
-            System.out.println(entry.getKey() + " - " + entry.getValue().getNombre());
+        for (Evento entry : newU.getEventos()) {
+            DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            System.out.println(entry.getNombre());
         }
 
+        return ret;
+    }
+    
+    public boolean desinscribir(Usuario u, Evento e) {
+        boolean ret = true;
+        
+        if(u.getEventos().remove(e)) {
+            ret = true;
+        }
+        
+        Usuario newU = this.actualizar(u);
+        
+        System.out.println("[debug] newU = " + newU.getUsername() + " y sus eventos son: ");
+        
+        newU.getEventos().forEach((evento) -> {
+            System.out.println(evento.getNombre());
+        });
+        
         return ret;
     }
     

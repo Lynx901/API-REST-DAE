@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.persistence.*;
+import static javax.persistence.TemporalType.TIMESTAMP;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -33,15 +34,16 @@ public class Usuario {
     private String email;
     
     @Temporal(TemporalType.TIMESTAMP)
-    private Calendar fechainscripcion;
+    private Calendar fechaInscripcion;
 
-    @ManyToMany(cascade={CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToMany(mappedBy="asistentes", cascade={CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
-    private final Map<Integer, Evento> eventos;
+    private final Set<Evento> eventos;
     
-    @ManyToMany(cascade={CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToMany(mappedBy="inscritos", cascade={CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
-    private final Map<Calendar, Evento> listaEspera;
+    @MapKeyTemporal(TIMESTAMP)
+    private final Set<Evento> listaEspera;
     
     @OneToMany(mappedBy = "organizador",
                cascade={CascadeType.PERSIST, CascadeType.REMOVE})
@@ -49,44 +51,22 @@ public class Usuario {
     private final Set<Evento> organizados;
 
     public Usuario() {
-        eventos = new HashMap();
+        eventos = new HashSet();
 
-        listaEspera = new HashMap();
+        listaEspera = new HashSet();
         organizados = new HashSet();
-        fechainscripcion = Calendar.getInstance();
+        fechaInscripcion = Calendar.getInstance();
     }
 
     public Usuario(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
-        fechainscripcion = Calendar.getInstance();
+        fechaInscripcion = Calendar.getInstance();
 
-        eventos = new HashMap();
+        eventos = new HashSet();
         organizados = new HashSet();
-        listaEspera = new HashMap();
-    }
-
-    public Usuario(String username, String password, String email, Map<Integer,Evento> eventos, Set<Evento> organizados) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        fechainscripcion = Calendar.getInstance();
-
-        this.eventos = new HashMap();
-        eventos.forEach((fecha,evento) -> {
-            this.eventos.put(fecha,evento);
-        });
-
-        this.organizados = new HashSet();
-        organizados.forEach((evento) -> {
-            this.organizados.add(evento);
-        });
-
-        this.listaEspera = new HashMap();
-        listaEspera.forEach((fecha,evento) -> {
-            this.listaEspera.put(fecha,evento);
-        });
+        listaEspera = new HashSet();
     }
 
     /**
@@ -134,67 +114,36 @@ public class Usuario {
     /**
      * @return the eventos
      */
-    public Map<Integer,Evento> getEventos() {
+    public Set<Evento> getEventos() {
         return eventos;
     }
     
-    /**
-     * @return the eventos
-     */
-    public List<Evento> getEventosLista() {
-        List<Evento> lista = new ArrayList();
-        this.eventos.forEach((fecha,evento) -> {
-            lista.add(evento);
-        });
-        return lista;
-    }
 
     /**
      * @param eventos the eventos to set
      */
-    public void setEventos(Map<Integer,Evento> eventos) {
-        this.eventos.clear();
-        eventos.forEach((fecha,evento) -> {
-            this.eventos.put(fecha,evento);
-        });
-    }
-    
-    
-    /**
-     * @param eventos the eventos to set
-     */
-    public void setEventosLista(List<Evento> eventos) {
+    public void setEventos(Set<Evento> eventos) {
         this.eventos.clear();
         eventos.forEach((evento) -> {
-            this.eventos.put(evento.getId(),evento);
+            this.eventos.add(evento);
         });
     }
+    
 
     /**
      * @return the eventos
      */
-    public Map<Calendar,Evento> getListaEspera() {
+    public Set<Evento> getListaEspera() {
         return listaEspera;
-    }
-    
-     /**
-     * @return the eventos
-     */
-    public List<Evento> getListaEsperaLista() {
-        List<Evento> Lista = new ArrayList();
-        this.listaEspera.forEach((fecha,evento) -> {
-            Lista.add(evento);
-        });
-        return Lista;
     }
 
     /**
      * @param listaEspera the eventos in the lista de espera to set
      */
-    public void setListaEspera(Map<Calendar,Evento> listaEspera) {
+    public void setListaEspera(Set<Evento> listaEspera) {
         this.listaEspera.clear();
-        listaEspera.forEach((fecha,evento) -> {
-            this.listaEspera.put(fecha,evento);
+        listaEspera.forEach((evento) -> {
+            this.listaEspera.add(evento);
         });
     }
     
@@ -204,7 +153,7 @@ public class Usuario {
     public void setListaEspera(List<Evento> listaEspera) {
         this.listaEspera.clear();
         listaEspera.forEach((evento) -> {
-            this.listaEspera.put(evento.getFecha(),evento);
+            this.listaEspera.add(evento);
         });
     }
 
@@ -226,20 +175,6 @@ public class Usuario {
         return Lista;
     }
     
-    /*
-    * @return testdate
-    */
-    public Calendar getFechaInscripcion() {
-        return this.fechainscripcion;
-    }
-    
-    /*
-    * @param fecha testdate
-    */
-    public void setFechaInscripcion(Calendar fecha) {
-        this.fechainscripcion = fecha;
-    }
-    
     /**
      * @param organizados the organizados to set
      */
@@ -258,55 +193,5 @@ public class Usuario {
         organizados.forEach((evento) -> {
             this.organizados.add(evento);
         });
-    }
-
-    /**
-     * Inscribe al usuario en un evento y maneja si es el organizador del evento
-     *
-     * @param e evento en el que se va a inscribir al usuario
-     * @return true si se inscribe, false si entra en la lista de espera
-     */
-    public boolean inscribirEnEvento(Evento e) {
-        boolean ret = false;
-        
-        Calendar fechaIns = Calendar.getInstance();
-        // Si está lleno, añadimos el evento a la lista de espera
-        if (e.getAsistentes().size() >= e.getCapacidad()) {
-            System.out.println("[debug] Usuario: El evento está lleno, añadiendo a la lista de espera");
-            this.listaEspera.put(fechaIns, e);
-        } else {
-            // Si no está lleno, añadimos el evento a la lista de eventos
-            this.eventos.put(e.getId(), e);
-            System.out.println("[debug] Usuario: Se ha añadido a la lista de eventos");
-            // Si además es el organizador, añadimos el evento a la lista de organizados
-            if (e.getOrganizador().getUsername().equals(this.username)) {
-                this.organizados.add(e);
-                System.out.println("[debug] Usuario: Se ha añadido a la lista de organizados");
-            }
-            ret = true;
-        }
-
-        return ret;
-    }
-
-    /**
-     * Desinscribe al usuario de un evento. Si es el organizador, no se elimina
-     * de su listado, ya que el evento no se cancela si el organizador no asiste
-     *
-     * @param e evento del que se va a desinscribir al usuario
-     * @return true si se desinscribe bien, false si no
-     */
-    public boolean desinscribir(Evento e) {
-        boolean ret = false;
-
-        if (this.eventos.containsValue(e)) { // Comprobamos que el usuario asista al evento
-            this.eventos.remove(e.getFecha());
-            ret = true;
-        } else if (this.listaEspera.containsValue(e)) {
-            this.listaEspera.remove(e.getFecha());
-            ret = true;
-        }
-
-        return ret;
     }
 }
