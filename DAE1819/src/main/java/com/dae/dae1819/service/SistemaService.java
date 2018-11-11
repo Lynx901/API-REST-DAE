@@ -13,12 +13,14 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  *
  * @author dml y jfaf
  */
 @SpringBootApplication
+@EnableTransactionManagement
 @EntityScan(basePackages = "com.dae.dae1819.pojos")
 @ComponentScan({"com.dae.dae1819.DAOs"})
 public class SistemaService {

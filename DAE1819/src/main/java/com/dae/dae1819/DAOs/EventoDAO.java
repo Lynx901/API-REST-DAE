@@ -58,12 +58,11 @@ public class EventoDAO {
         return em.find(Evento.class, id);
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public boolean inscribir(Usuario u, Evento e) {
         boolean ret = false;
         Calendar fechaIns = Calendar.getInstance();
         
-        em.getTransaction().begin();
-
         // Si está lleno, añadimos el usuario a la lista de inscritos
         if (e.getAsistentes().size() >= e.getCapacidad()) {
             System.out.println("[debug] EventoDAO: El evento está lleno, añadiendo a la lista de espera");
@@ -110,14 +109,14 @@ public class EventoDAO {
             DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             System.out.println(sdf.format(entry.getKey().getTime()) + " - " + entry.getValue().getUsername());
         }
-        em.getTransaction().commit();
+        
         return ret;
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public boolean desinscribir(Usuario u, Evento e) {
         boolean ret = true;
         boolean continuar = true;
-        em.getTransaction().begin();
 
         for (Map.Entry<Calendar, Usuario> entry : e.getAsistentes().entrySet()) {
             if (entry.getValue().getUsername().equals(u.getUsername())) {
@@ -148,24 +147,21 @@ public class EventoDAO {
             System.out.println(sdf.format(entry.getKey().getTime()) + " - " + entry.getValue().getUsername());
         }
         
-        em.getTransaction().commit();
         return ret;
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public void insertar(Evento e) {
-        em.getTransaction().begin();
         System.out.println("[debug] ¡Estamos insertando un evento!");
         em.lock(e, LockModeType.OPTIMISTIC);
         em.persist(e);
         System.out.println("[debug] ¿Se ha insertado el evento? " + this.buscar(e.getId()).getNombre());
-        em.getTransaction().commit();
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public Evento actualizar(Evento e) {
-        em.getTransaction().begin();
         em.lock(e, LockModeType.OPTIMISTIC);
         Evento event = em.merge(e);
-        em.getTransaction().commit();
         return event;
     }
 

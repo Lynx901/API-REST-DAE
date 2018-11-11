@@ -39,10 +39,9 @@ public class UsuarioDAO {
         return result;
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public boolean inscribir(Usuario u, Evento e) {
         boolean ret = false;
-
-        em.getTransaction().begin();
 
         // Si está lleno, añadimos el evento a la lista de espera
         if (e.getAsistentes().size() >= e.getCapacidad()) {
@@ -77,13 +76,13 @@ public class UsuarioDAO {
             DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             System.out.println(entry.getNombre());
         }
-        em.getTransaction().commit();
+
         return ret;
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public boolean desinscribir(Usuario u, Evento e) {
         boolean ret = true;
-        em.getTransaction().begin();
 
         em.lock(u, LockModeType.OPTIMISTIC);
         if (u.getEventos().remove(e)) {
@@ -98,24 +97,21 @@ public class UsuarioDAO {
             System.out.println(evento.getNombre());
         });
 
-        em.getTransaction().commit();
         return ret;
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public void insertar(Usuario u) {
-        em.getTransaction().begin();
         System.out.println("[debug] ¡Estamos insertando un usuario!");
         em.lock(u, LockModeType.OPTIMISTIC);
         em.persist(u);
         System.out.println("[debug] ¿Se ha insertado el usuario? " + this.buscar(u.getUsername()).getUsername());
-        em.getTransaction().commit();
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public Usuario actualizar(Usuario u) {
-        em.getTransaction().begin();
         em.lock(u, LockModeType.OPTIMISTIC);
         Usuario usu = em.merge(u);
-        em.getTransaction().commit();
         return usu;
     }
 
