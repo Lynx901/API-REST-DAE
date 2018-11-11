@@ -162,10 +162,11 @@ public abstract class SistemaInterface {
      *
      * @param uDTO usuario del que se comprobará el listado de eventos
      * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
+     * @throws com.dae.dae1819.Excepciones.TokenInvalido
      * @return una lista de EventoDTO con los eventos inscritos, o una vacía si
      * no encuentra ninguno
      */
-    public abstract List<EventoDTO> buscarEventosInscritos(UsuarioDTO uDTO) throws ListaEventosVacia;
+    public abstract List<EventoDTO> buscarEventosInscritos(UsuarioDTO uDTO) throws ListaEventosVacia, TokenInvalido;
 
     /**
      * Busca los eventos organizados por el usuario
@@ -175,8 +176,9 @@ public abstract class SistemaInterface {
      *  @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
      * @return una lista de EventoDTO con los eventos organizados, o una vacía
      * si no encuentra ninguno
+     * @throws com.dae.dae1819.Excepciones.TokenInvalido
      */
-    public abstract List<EventoDTO> buscarEventosOrganizados(UsuarioDTO uDTO) throws ListaEventosVacia;
+    public abstract List<EventoDTO> buscarEventosOrganizados(UsuarioDTO uDTO) throws ListaEventosVacia, TokenInvalido;
 
     /**
      * Inscribe a un usuario en un evento

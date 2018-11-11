@@ -293,45 +293,46 @@ public class Sistema extends SistemaInterface {
     @Override
     public boolean desinscribirse(UsuarioDTO uDTO, EventoDTO eDTO) throws TokenInvalido {
         if (!this.isTokenValid(uDTO.getToken())) {
-            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception()); 
+            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception());
         }
-        
+
         boolean ret = false;
         boolean exist = false;
         Usuario u = usuarios.buscar(uDTO.getUsername());
-        Evento e = eventos.buscar(eDTO.getId());    
-        
-        for (Map.Entry<Calendar,Usuario> entry : e.getAsistentes().entrySet()){
-            if (entry.getValue().getUsername().equals(u.getUsername())){
+        Evento e = eventos.buscar(eDTO.getId());
+
+        for (Map.Entry<Calendar, Usuario> entry : e.getAsistentes().entrySet()) {
+            if (entry.getValue().getUsername().equals(u.getUsername())) {
                 exist = true;
                 break;
             }
         }
-        
-       if (exist) {
-           ret = eventos.desinscribir(u, e) && usuarios.desinscribir(u, e);
-           System.out.println(ret);
-        } 
-        
+
+        if (exist) {
+            ret = eventos.desinscribir(u, e) && usuarios.desinscribir(u, e);
+        }
+
         if (ret && e.getInscritos().size() > 0) {
             Calendar fecha = Calendar.getInstance();
-            for(Map.Entry<Calendar, Usuario> entry : e.getInscritos().entrySet()) {
-                if (entry.getKey().compareTo(fecha) < 0){
+            for (Map.Entry<Calendar, Usuario> entry : e.getInscritos().entrySet()) {
+                if (entry.getKey().compareTo(fecha) < 0) {
                     fecha = entry.getKey();
                 }
             }
             u = e.getInscritos().get(fecha);
-            System.out.println("El usuario " + u.getUsername() + " se va a desinscribir de " + e.getNombre());
             ret = eventos.inscribir(u, e) && usuarios.inscribir(u, e);
         }
-        
+
         return ret;
     }
 
     
     @Override
-    public List<EventoDTO> buscarEventosInscritos(UsuarioDTO uDTO) throws ListaEventosVacia {
-        //TODO if(!this.isTokenValid(uDTO.getToken())) {throw new TokenNoValido() ;}
+    public List<EventoDTO> buscarEventosInscritos(UsuarioDTO uDTO) throws ListaEventosVacia, TokenInvalido {
+        if (!this.isTokenValid(uDTO.getToken())) {
+            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception()); 
+        }
+        
         Set<Evento> eventosBuscados = usuarios.buscar(uDTO.getUsername()).getEventos();
         if(eventosBuscados.isEmpty()) { throw new ListaEventosVacia("La lista de eventos está vacía", new Exception()); }
         
@@ -345,8 +346,11 @@ public class Sistema extends SistemaInterface {
 
     
     @Override
-    public List<EventoDTO> buscarEventosOrganizados(UsuarioDTO uDTO) throws ListaEventosVacia {
-        //TODO if(!this.isTokenValid(uDTO.getToken())) {throw new TokenNoValido() ;}
+    public List<EventoDTO> buscarEventosOrganizados(UsuarioDTO uDTO) throws ListaEventosVacia, TokenInvalido {
+        if (!this.isTokenValid(uDTO.getToken())) {
+            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception()); 
+        }
+        
         List<Evento> eventosBuscados = usuarios.buscar(uDTO.getUsername()).getOrganizadosLista();
         if(eventosBuscados.isEmpty()) { throw new ListaEventosVacia("La lista de eventos está vacía", new Exception()); }
         
