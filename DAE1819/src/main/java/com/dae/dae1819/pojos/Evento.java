@@ -25,6 +25,10 @@ public class Evento {
     private int id;
     private String nombre;
 
+    @Version
+    @Column(nullable = false)        
+    private Long version;
+    
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar fecha;
 
@@ -270,6 +274,20 @@ public class Evento {
      */
     public void setInscritos(Map<Calendar, Usuario> inscritos) {
         this.inscritos = inscritos;
+    }
+    
+    /*
+    * @return the version of control for Transactional
+    */
+    public Long getVersion(){
+        return this.version;
+    }
+    
+    /*
+    * @param version the new version to control transactional
+    */
+    public void setVersion(Long version){
+        this.version = version;
     }
 
 }

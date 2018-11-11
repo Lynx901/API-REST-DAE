@@ -15,8 +15,6 @@ import com.dae.dae1819.DTOs.UsuarioDTO;
 import com.dae.dae1819.Excepciones.ListaEventosVacia;
 import com.dae.dae1819.Excepciones.TokenInvalido;
 import com.dae.dae1819.Excepciones.UsuarioExistente;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.Set;

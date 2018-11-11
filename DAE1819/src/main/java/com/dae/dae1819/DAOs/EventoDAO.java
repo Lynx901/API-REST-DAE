@@ -13,6 +13,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,14 +57,17 @@ public class EventoDAO {
     
     public boolean inscribir(Usuario u, Evento e) {
         boolean ret = false;
-        
         Calendar fechaIns = Calendar.getInstance();
+        em.getTransaction().begin();
+       
         // Si está lleno, añadimos el usuario a la lista de inscritos
         if (e.getAsistentes().size() >= e.getCapacidad()) {
             System.out.println("[debug] EventoDAO: El evento está lleno, añadiendo a la lista de espera");
+             em.lock(e, LockModeType.OPTIMISTIC);
             e.getInscritos().put(fechaIns, u);
         } else {
             // Si no está lleno, añadimos el usuario a la lista de asistentes
+            em.lock(e, LockModeType.OPTIMISTIC);
             e.getAsistentes().put(fechaIns, u);
             System.out.println("[debug] EventoDAO: Se ha añadido a la lista de asistentes");
             // Si además es el organizador, añadimos el usuario como organizador
@@ -90,16 +94,18 @@ public class EventoDAO {
             DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             System.out.println(sdf.format(entry.getKey().getTime()) + " - " + entry.getValue().getUsername());
         }
-
+        em.getTransaction().commit();
         return ret;
     }
     
     public boolean desinscribir(Usuario u, Evento e) {
         boolean ret = true;
         boolean continuar = true;
+        em.getTransaction().begin();
         
         for (Map.Entry<Calendar, Usuario> entry : e.getAsistentes().entrySet()) {
             if (entry.getValue().getUsername().equals(u.getUsername())){
+                em.lock(e, LockModeType.OPTIMISTIC);
                 ret = e.getAsistentes().remove(entry.getKey(),entry.getValue());
                 continuar = false;
                 break;
@@ -109,6 +115,7 @@ public class EventoDAO {
         if (continuar){
             for (Map.Entry<Calendar, Usuario> entry : e.getInscritos().entrySet()) {
                 if (entry.getValue().getUsername().equals(u.getUsername())){
+                    em.lock(e, LockModeType.OPTIMISTIC);
                     ret = e.getInscritos().remove(entry.getKey(), entry.getValue());
                     break;
                 }
@@ -120,18 +127,25 @@ public class EventoDAO {
             DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             System.out.println(sdf.format(entry.getKey().getTime()) + " - " + entry.getValue().getUsername());
         }
-        
+        em.getTransaction().commit();
         return ret;
     }
     
     public void insertar(Evento e) {
+        em.getTransaction().begin();
         System.out.println("[debug] ¡Estamos insertando un evento!");
+        em.lock(e, LockModeType.OPTIMISTIC);
         em.persist(e);
         System.out.println("[debug] ¿Se ha insertado el evento? " + this.buscar(e.getId()).getNombre());
+        em.getTransaction().commit();
     }
     
     public Evento actualizar(Evento e) {
-        return em.merge(e);
+        em.getTransaction().begin();
+        em.lock(e, LockModeType.OPTIMISTIC);
+        Evento event = em.merge(e);
+        em.getTransaction().commit();
+        return event;
     }
     
 }

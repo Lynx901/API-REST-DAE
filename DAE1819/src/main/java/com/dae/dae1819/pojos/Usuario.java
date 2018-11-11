@@ -8,7 +8,6 @@ package com.dae.dae1819.pojos;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +31,10 @@ public class Usuario {
     private String password;
     
     private String email;
+    
+    @Version
+    @Column(nullable = false)   
+    private Long version;
     
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar fechaInscripcion;
@@ -193,5 +196,19 @@ public class Usuario {
         organizados.forEach((evento) -> {
             this.organizados.add(evento);
         });
+    }
+    
+    /*
+    * @return the version of control for Transactional
+    */
+    public Long getVersion(){
+        return this.version;
+    }
+    
+    /*
+    * @param version the new version to control transactional
+    */
+    public void setVersion(Long version){
+        this.version = version;
     }
 }
