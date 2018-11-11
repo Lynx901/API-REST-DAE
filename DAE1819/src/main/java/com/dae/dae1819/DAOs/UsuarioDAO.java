@@ -23,20 +23,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public class UsuarioDAO {
+
     @PersistenceContext
     EntityManager em;
-    
+
     public List<Usuario> listar() {
         List<Usuario> usuarios = em.createQuery("select u from Usuario u", Usuario.class).getResultList();
-        
+
         return usuarios;
     }
-   
+
     public Usuario buscar(String username) {
         Usuario result = em.find(Usuario.class, username);
         return result;
     }
-    
+
     public boolean inscribir(Usuario u, Evento e) {
         boolean ret = false;
         em.getTransaction().begin();
@@ -57,11 +58,11 @@ public class UsuarioDAO {
             }
             ret = true;
         }
-        
+
         Usuario newU = this.actualizar(u);
-        
+
         System.out.println("[debug] newU = " + newU.getUsername() + " y sus eventos son: ");
-        
+
         for (Evento entry : newU.getEventos()) {
             DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             System.out.println(entry.getNombre());
@@ -69,28 +70,28 @@ public class UsuarioDAO {
         em.getTransaction().commit();
         return ret;
     }
-    
+
     public boolean desinscribir(Usuario u, Evento e) {
         boolean ret = true;
         em.getTransaction().begin();
-        
+
         em.lock(u, LockModeType.OPTIMISTIC);
-        if(u.getEventos().remove(e)) {
+        if (u.getEventos().remove(e)) {
             ret = true;
         }
-        
+
         Usuario newU = this.actualizar(u);
-        
+
         System.out.println("[debug] newU = " + newU.getUsername() + " y sus eventos son: ");
-        
+
         newU.getEventos().forEach((evento) -> {
             System.out.println(evento.getNombre());
         });
-        
+
         em.getTransaction().commit();
         return ret;
     }
-    
+
     public void insertar(Usuario u) {
         em.getTransaction().begin();
         System.out.println("[debug] ¡Estamos insertando un usuario!");
@@ -99,13 +100,13 @@ public class UsuarioDAO {
         System.out.println("[debug] ¿Se ha insertado el usuario? " + this.buscar(u.getUsername()).getUsername());
         em.getTransaction().commit();
     }
-    
+
     public Usuario actualizar(Usuario u) {
         em.getTransaction().begin();
         em.lock(u, LockModeType.OPTIMISTIC);
-        Usuario usu = em.merge(u); 
+        Usuario usu = em.merge(u);
         em.getTransaction().commit();
         return usu;
     }
-    
+
 }

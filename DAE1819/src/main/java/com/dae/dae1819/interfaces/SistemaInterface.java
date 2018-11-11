@@ -18,7 +18,7 @@ import java.util.List;
  * @author dml y jfaf
  */
 public abstract class SistemaInterface {
-    
+
     /**
      * Comprueba si el token de sesión es válido
      *
@@ -54,7 +54,7 @@ public abstract class SistemaInterface {
      * @return un UsuarioDTO válido si se ha iniciado sesión correctamente
      */
     public abstract UsuarioDTO login(String username, String password);
-    
+
     /**
      * Finaliza la sesión de un usuario registrado en el sistema
      *
@@ -62,9 +62,9 @@ public abstract class SistemaInterface {
      * @return null si se ha salido de la sesión correctamente
      */
     public abstract UsuarioDTO logout(UsuarioDTO uDTO);
-    
+
     /**
-     * 
+     *
      * @param id el id del evento a buscar
      * @return Un eventoDTO del evento encontrado
      */
@@ -74,7 +74,8 @@ public abstract class SistemaInterface {
      * Busca un evento por el nombre del mismo
      *
      * @param nombre el nombre del evento a buscar
-     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
+     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos
+     * esta vacia
      * @return un EventoDTO del evento encontrado, o null si no lo encuentra
      */
     public abstract List<EventoDTO> buscarEventoPorNombre(String nombre) throws ListaEventosVacia;
@@ -83,7 +84,8 @@ public abstract class SistemaInterface {
      * Busca un evento por el tipo del mismo
      *
      * @param tipo el tipo del evento a buscar
-     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
+     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos
+     * esta vacia
      * @return una lista de EventoDTO encontrados, o una lista vacía si no
      * encuentra ninguno
      */
@@ -93,7 +95,8 @@ public abstract class SistemaInterface {
      * Busca un evento por la descripción del mismo
      *
      * @param descripcion la descripción del evento a buscar
-     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
+     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos
+     * esta vacia
      * @return una lista de EventoDTO encontrados, o una lista vacía si no
      * encuentra ninguno
      */
@@ -101,7 +104,9 @@ public abstract class SistemaInterface {
 
     /**
      * Lista todos los eventos del sistema
-     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
+     *
+     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos
+     * esta vacia
      * @return una lista con todos los eventos creados en forma DTO (vacía si no
      * encuentra ninguno)
      */
@@ -124,12 +129,13 @@ public abstract class SistemaInterface {
      * @param capacidad la capacidad de asistentes al evento
      * @param localizacion el lugar donde se realiza el evento
      * @param organizador el usuario que ha creado el evento
-     * @throws TokenInvalido si el usuario no ha iniciado sesión o tiene un token caducado
+     * @throws TokenInvalido si el usuario no ha iniciado sesión o tiene un
+     * token caducado
      * @return el id del evento creado, -1 si no se ha creado
      */
     public abstract int nuevoEvento(String nombre, Calendar fecha, String tipo,
             String descripcion, Integer capacidad, String localizacion,
-            UsuarioDTO organizador) throws TokenInvalido ;
+            UsuarioDTO organizador) throws TokenInvalido;
 
     /**
      * Cancela un evento, borrando en cascada
@@ -161,7 +167,8 @@ public abstract class SistemaInterface {
      * Busca los eventos en los que se ha inscrito el usuario
      *
      * @param uDTO usuario del que se comprobará el listado de eventos
-     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
+     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos
+     * esta vacia
      * @throws com.dae.dae1819.Excepciones.TokenInvalido
      * @return una lista de EventoDTO con los eventos inscritos, o una vacía si
      * no encuentra ninguno
@@ -173,10 +180,12 @@ public abstract class SistemaInterface {
      *
      * @param uDTO usuario del que se comprobará el listado de eventos
      * organizados
-     *  @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos esta vacia
+     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos
+     * esta vacia
+     * @throws com.dae.dae1819.Excepciones.TokenInvalido
      * @return una lista de EventoDTO con los eventos organizados, o una vacía
      * si no encuentra ninguno
-     * @throws com.dae.dae1819.Excepciones.TokenInvalido
+     
      */
     public abstract List<EventoDTO> buscarEventosOrganizados(UsuarioDTO uDTO) throws ListaEventosVacia, TokenInvalido;
 
@@ -185,7 +194,8 @@ public abstract class SistemaInterface {
      *
      * @param uDTO el usuario al que se inscribirá en el evento
      * @param eDTO el evento en el que se inscribirá el usuario
-     * @throws TokenInvalido si el usuario no ha iniciado sesión o tiene un token caducado
+     * @throws TokenInvalido si el usuario no ha iniciado sesión o tiene un
+     * token caducado
      * @return true si se inscribe al usuario, false si entra en la lista de
      * espera
      */
@@ -196,10 +206,11 @@ public abstract class SistemaInterface {
      *
      * @param uDTO el usuario al que se desinscribirá del evento
      * @param eDTO el evento del que se desinscribirá el usuario
-     * @throws TokenInvalido si el usuario no ha iniciado sesión o tiene un token caducado
+     * @throws TokenInvalido si el usuario no ha iniciado sesión o tiene un
+     * token caducado
      * @return true si se ha desinscrito correctamente, false si no
      */
-    public abstract boolean desinscribirse(UsuarioDTO uDTO, EventoDTO eDTO) throws TokenInvalido ;
+    public abstract boolean desinscribirse(UsuarioDTO uDTO, EventoDTO eDTO) throws TokenInvalido;
 
     /*
      ***************************************************************************

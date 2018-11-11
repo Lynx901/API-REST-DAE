@@ -422,13 +422,13 @@ public class ClienteSistema {
         for (Integer eventoID : eventos) {
             try {
                 EventoDTO e = sistema.buscarEventoPorId(eventoID);
-            
+
                 System.out.println("|-\t|- Nombre: \t\t" + e.getNombre());
                 if (e.isCancelado()) {
                     System.out.println("|-\t|- Este evento está cancelado.                           -|");
                 } else {
                     System.out.println("|-\t|- Fecha: \t\t" + e.getFecha().get(Calendar.HOUR) + ":" + e.getFecha().get(Calendar.MINUTE)
-                        + " del " + e.getFecha().get(Calendar.DATE) + "/" + e.getFecha().get(Calendar.MONTH) + "/" + e.getFecha().get(Calendar.YEAR));
+                            + " del " + e.getFecha().get(Calendar.DATE) + "/" + e.getFecha().get(Calendar.MONTH) + "/" + e.getFecha().get(Calendar.YEAR));
                     if (!usuario.getListaEspera().contains(e.getNombre())) {
                         System.out.println("|-\t|- ¡Estás inscrito!");
                     } else {
@@ -436,7 +436,7 @@ public class ClienteSistema {
                     }
                 }
             } catch (Exception e) {//TODO
-                    System.err.print(e.getMessage());
+                System.err.print(e.getMessage());
             }
             System.out.println("|-\t|-------------------------------------------------------------|");
         }
@@ -448,7 +448,7 @@ public class ClienteSistema {
             for (Integer eventoID : eventosOrganizados) {
                 EventoDTO e = sistema.buscarEventoPorId(eventoID);
                 System.out.println("|-\t|- Nombre: \t\t" + e.getNombre());
-                System.out.println("|-\t|- Fecha: \t\t" + + e.getFecha().get(Calendar.HOUR) + ":" + e.getFecha().get(Calendar.MINUTE)
+                System.out.println("|-\t|- Fecha: \t\t" + +e.getFecha().get(Calendar.HOUR) + ":" + e.getFecha().get(Calendar.MINUTE)
                         + " del " + e.getFecha().get(Calendar.DATE) + "/" + e.getFecha().get(Calendar.MONTH) + "/" + e.getFecha().get(Calendar.YEAR));
                 System.out.println("|-\t|- Asistentes: \t\t" + e.getAsistentes());
                 System.out.println("|-\t|-------------------------------------------------------------|");
@@ -483,8 +483,7 @@ public class ClienteSistema {
             } catch (Exception e) {
                 System.err.print(e);
             }
-        
-        
+
 //        if (this.seleccionarSN("Desea comenzar la ejecución con algunos datos de prueba")) {
 //            List<UsuarioDTO> uTest = new ArrayList();
 //            try {
@@ -583,7 +582,7 @@ public class ClienteSistema {
                         } catch (UsuarioExistente e) {
                             System.err.print(e);
                         }
-                        
+
                         user = sistema.login(nombreUsuario, pass);
 
                         if (sistema.isTokenValid(user.getToken())) {
@@ -612,7 +611,7 @@ public class ClienteSistema {
 
                         System.out.print("|- Contraseña: ");
                         pass = capt.nextLine();
-                        
+
                         user = sistema.login(nombreUsuario, pass);
 
                         if (sistema.isTokenValid(user.getToken())) {
@@ -666,7 +665,7 @@ public class ClienteSistema {
                                 } else {
                                     System.out.println("|- El evento no es válido.                                            -|");
                                 }
-                            } catch(ListaEventosVacia e) {
+                            } catch (ListaEventosVacia e) {
                                 System.err.print(e.getMessage());
                             }
                             break;
@@ -708,7 +707,7 @@ public class ClienteSistema {
                                     } else {
                                         System.out.println("|- El evento no es válido.                                            -|");
                                     }
-                                } catch(ListaEventosVacia e) {
+                                } catch (ListaEventosVacia e) {
                                     System.err.print(e.getMessage());
                                 }
                             }
@@ -745,7 +744,7 @@ public class ClienteSistema {
                         } else {
                             System.out.println("|- El evento no es válido.                                            -|");
                         }
-                    } catch(ListaEventosVacia e) {
+                    } catch (ListaEventosVacia e) {
                         System.err.print(e.getMessage());
                     }
                     break;
@@ -860,7 +859,7 @@ public class ClienteSistema {
 
                         tipo = this.menuTipoEvento();
                         Calendar fecha = Calendar.getInstance();
-                        fecha.set(anio, mes-1, dia, hora, minutos);
+                        fecha.set(anio, mes - 1, dia, hora, minutos);
 
                         //[debug]
 //                        Calendar fecha = Calendar.getInstance();
@@ -868,7 +867,6 @@ public class ClienteSistema {
 //                        nombre = descripcion = localizacion = "a";
 //                        capacidad= 2;
 //                        tipo = "CHARLA";
-
                         EventoDTO newEvento = null;
                         try {
                             int id = sistema.nuevoEvento(nombre, fecha, tipo, descripcion, capacidad, localizacion, user);
@@ -879,7 +877,7 @@ public class ClienteSistema {
                         } catch (Exception e) {//TODO
                             System.err.print(e.getMessage());
                         }
-                        
+
                     }
                     break;
 
@@ -911,7 +909,7 @@ public class ClienteSistema {
                             } else {
                                 System.out.println("|- El evento no es válido.                                            -|");
                             }
-                        } catch(ListaEventosVacia e) {
+                        } catch (ListaEventosVacia e) {
                             System.err.print(e.getMessage());
                         }
                     }
@@ -947,8 +945,8 @@ public class ClienteSistema {
                             } else {
                                 System.out.println("|- El evento no es válido.                                            -|");
                             }
-                        } catch(ListaEventosVacia e) {
-                                System.err.print(e.getMessage());
+                        } catch (ListaEventosVacia e) {
+                            System.err.print(e.getMessage());
                         }
 
                     }

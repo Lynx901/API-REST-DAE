@@ -26,9 +26,9 @@ public class Evento {
     private String nombre;
 
     @Version
-    @Column(nullable = false)        
+    @Column(nullable = false)
     private Long version;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar fecha;
 
@@ -41,12 +41,12 @@ public class Evento {
     private String localizacion;
     private boolean cancelado;
 
-    @ManyToMany(cascade={CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
     @MapKeyTemporal(TemporalType.TIMESTAMP)
     private final Map<Calendar, Usuario> asistentes;
 
-    @ManyToMany(cascade={CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
     @MapKeyTemporal(TemporalType.TIMESTAMP)
     private Map<Calendar, Usuario> inscritos;
@@ -257,7 +257,7 @@ public class Evento {
     public Map<Calendar, Usuario> getInscritos() {
         return inscritos;
     }
-    
+
     /**
      * @return the asistentes
      */
@@ -275,18 +275,18 @@ public class Evento {
     public void setInscritos(Map<Calendar, Usuario> inscritos) {
         this.inscritos = inscritos;
     }
-    
+
     /*
     * @return the version of control for Transactional
-    */
-    public Long getVersion(){
+     */
+    public Long getVersion() {
         return this.version;
     }
-    
+
     /*
     * @param version the new version to control transactional
-    */
-    public void setVersion(Long version){
+     */
+    public void setVersion(Long version) {
         this.version = version;
     }
 

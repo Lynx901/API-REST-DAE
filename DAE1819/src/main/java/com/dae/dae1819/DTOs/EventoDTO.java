@@ -50,7 +50,7 @@ public class EventoDTO {
         asistentes.forEach((usuario) -> {
             this.asistentes.add(usuario);
         });
-        
+
         this.inscritos = new ArrayList();
         inscritos.forEach((usuario) -> {
             this.inscritos.add(usuario);
@@ -58,14 +58,14 @@ public class EventoDTO {
 
         this.organizador = organizador;
     }
-    
+
     /**
      * @return the id
      */
     public int getId() {
         return id;
     }
-    
+
     /**
      * @param id the id
      */

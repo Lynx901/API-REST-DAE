@@ -5,7 +5,6 @@
  */
 package com.dae.dae1819.pojos;
 
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
@@ -17,7 +16,6 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
-
 /**
  *
  * @author dml y jfaf
@@ -27,29 +25,29 @@ public class Usuario {
 
     @Id
     private String username;
-    
+
     private String password;
-    
+
     private String email;
-    
+
     @Version
-    @Column(nullable = false)   
+    @Column(nullable = false)
     private Long version;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar fechaInscripcion;
 
-    @ManyToMany(mappedBy="asistentes", cascade={CascadeType.PERSIST, CascadeType.REMOVE})
+    @ManyToMany(mappedBy = "asistentes", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
     private final Set<Evento> eventos;
-    
-    @ManyToMany(mappedBy="inscritos", cascade={CascadeType.PERSIST, CascadeType.REMOVE})
+
+    @ManyToMany(mappedBy = "inscritos", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
     @MapKeyTemporal(TIMESTAMP)
     private final Set<Evento> listaEspera;
-    
+
     @OneToMany(mappedBy = "organizador",
-               cascade={CascadeType.PERSIST, CascadeType.REMOVE})
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
     private final Set<Evento> organizados;
 
@@ -120,7 +118,6 @@ public class Usuario {
     public Set<Evento> getEventos() {
         return eventos;
     }
-    
 
     /**
      * @param eventos the eventos to set
@@ -131,7 +128,6 @@ public class Usuario {
             this.eventos.add(evento);
         });
     }
-    
 
     /**
      * @return the eventos
@@ -149,8 +145,8 @@ public class Usuario {
             this.listaEspera.add(evento);
         });
     }
-    
-       /**
+
+    /**
      * @param listaEspera the eventos in the lista de espera to set
      */
     public void setListaEspera(List<Evento> listaEspera) {
@@ -166,7 +162,7 @@ public class Usuario {
     public Set<Evento> getOrganizados() {
         return organizados;
     }
-    
+
     /**
      * @return the organizados
      */
@@ -177,17 +173,17 @@ public class Usuario {
         });
         return Lista;
     }
-    
+
     /**
      * @param organizados the organizados to set
      */
-    public void setOrganizados(Map<Calendar,Evento> organizados) {
+    public void setOrganizados(Map<Calendar, Evento> organizados) {
         this.organizados.clear();
-        organizados.forEach((fecha,evento) -> {
+        organizados.forEach((fecha, evento) -> {
             this.organizados.add(evento);
         });
     }
-    
+
     /**
      * @param organizados the organizados to set
      */
@@ -197,18 +193,18 @@ public class Usuario {
             this.organizados.add(evento);
         });
     }
-    
+
     /*
     * @return the version of control for Transactional
-    */
-    public Long getVersion(){
+     */
+    public Long getVersion() {
         return this.version;
     }
-    
+
     /*
     * @param version the new version to control transactional
-    */
-    public void setVersion(Long version){
+     */
+    public void setVersion(Long version) {
         this.version = version;
     }
 }

@@ -29,13 +29,13 @@ public class Sistema extends SistemaInterface {
 
     private String nombre;
     private int lastID;
-    
+
     @Autowired
     private UsuarioDAO usuarios;
-    
+
     @Autowired
     private EventoDAO eventos;
-    
+
     private List<Integer> tokenConectados;
 
     public Sistema() {
@@ -63,7 +63,6 @@ public class Sistema extends SistemaInterface {
         this.nombre = nombre;
     }
 
-   
     @Override
     public boolean isTokenValid(Integer token) {
         boolean ret = false;
@@ -82,16 +81,14 @@ public class Sistema extends SistemaInterface {
      ***************************************************************************
      ***************************************************************************
      */
-    
-    
     @Override
     public boolean nuevoUsuario(String username, String password, String password2, String email) throws UsuarioExistente {
         boolean ret = false;
 
         if (password.equals(password2)) {
             Usuario usuario = new Usuario(username, password, email);
-                usuarios.insertar(usuario);
-                //TODO Controlar excepción
+            usuarios.insertar(usuario);
+            //TODO Controlar excepción
 
             ret = true;
         }
@@ -99,11 +96,10 @@ public class Sistema extends SistemaInterface {
         return ret;
     }
 
-    
     @Override
     public UsuarioDTO login(String username, String password) {
         UsuarioDTO ret = new UsuarioDTO();
-        
+
         Usuario user = usuarios.buscar(username);
         if (user != null) {
             if (user.getPassword().equals(password)) {
@@ -116,78 +112,83 @@ public class Sistema extends SistemaInterface {
         }
         return ret;
     }
-    
-   
+
     @Override
     public UsuarioDTO logout(UsuarioDTO uDTO) {
         UsuarioDTO ret;
-        
-        if(this.isTokenValid(uDTO.getToken())) {
+
+        if (this.isTokenValid(uDTO.getToken())) {
             tokenConectados.remove(uDTO.getToken());
             ret = new UsuarioDTO();
         } else {
             ret = uDTO;
         }
-        
+
         return ret;
     }
-    
+
     @Override
     public EventoDTO buscarEventoPorId(int id) {
         return this.eventoToDTO(eventos.buscar(id));
     }
 
-    
     @Override
     public List<EventoDTO> buscarEventoPorNombre(String nombre) throws ListaEventosVacia {
         List<Evento> eventosBuscados = eventos.buscarPorNombre(nombre);
-        if(eventosBuscados.isEmpty()) { throw new ListaEventosVacia("La lista de eventos está vacía\n", new Exception()); }
-        
+        if (eventosBuscados.isEmpty()) {
+            throw new ListaEventosVacia("La lista de eventos está vacía\n", new Exception());
+        }
+
         List<EventoDTO> eventosBuscadosDTO = new ArrayList();
         eventosBuscados.forEach((evento) -> {
             eventosBuscadosDTO.add(this.eventoToDTO(evento));
-        }); 
-        
+        });
+
         return eventosBuscadosDTO;
     }
-    
+
     @Override
     public List<EventoDTO> buscarEventosPorTipo(String tipo) throws ListaEventosVacia {
         List<Evento> eventosBuscados = eventos.buscarPorTipo(tipo);
-        if(eventosBuscados.isEmpty()) { throw new ListaEventosVacia("La lista de eventos está vacía\n", new Exception()); }
+        if (eventosBuscados.isEmpty()) {
+            throw new ListaEventosVacia("La lista de eventos está vacía\n", new Exception());
+        }
 
         List<EventoDTO> eventosBuscadosDTO = new ArrayList();
         eventosBuscados.forEach((evento) -> {
             eventosBuscadosDTO.add(this.eventoToDTO(evento));
-        }); 
-        
+        });
+
         return eventosBuscadosDTO;
     }
-    
+
     @Override
     public List<EventoDTO> buscarEventosPorDescripcion(String descripcion) throws ListaEventosVacia {
         List<Evento> eventosBuscados = eventos.buscarPorDescripcion(descripcion);
-        if(eventosBuscados.isEmpty()) { throw new ListaEventosVacia("La lista de eventos está vacía\n", new Exception()); }
-        
+        if (eventosBuscados.isEmpty()) {
+            throw new ListaEventosVacia("La lista de eventos está vacía\n", new Exception());
+        }
+
         List<EventoDTO> eventosBuscadosDTO = new ArrayList();
         eventosBuscados.forEach((evento) -> {
             eventosBuscadosDTO.add(this.eventoToDTO(evento));
-        }); 
-        
+        });
+
         return eventosBuscadosDTO;
     }
 
-    
     @Override
     public List<EventoDTO> buscarEventos() throws ListaEventosVacia {
         List<Evento> eventosBuscados = eventos.listar();
-        if(eventosBuscados.isEmpty()) { throw new ListaEventosVacia("La lista de eventos está vacía\n", new Exception()); }
-        
+        if (eventosBuscados.isEmpty()) {
+            throw new ListaEventosVacia("La lista de eventos está vacía\n", new Exception());
+        }
+
         List<EventoDTO> eventosBuscadosDTO = new ArrayList();
         eventosBuscados.forEach((evento) -> {
             eventosBuscadosDTO.add(this.eventoToDTO(evento));
-        }); 
-        
+        });
+
         return eventosBuscadosDTO;
     }
 
@@ -198,60 +199,56 @@ public class Sistema extends SistemaInterface {
      ***************************************************************************
      ***************************************************************************
      */
-    
     @Override
     public int nuevoEvento(String nombre, Calendar fecha, String tipo,
             String descripcion, Integer capacidad, String localizacion,
-            UsuarioDTO organizador)  throws TokenInvalido {
+            UsuarioDTO organizador) throws TokenInvalido {
         int ret = -1;
-        
+
         System.out.println("[debug] Evento: " + organizador.getUsername());
         System.out.println("[debug] El organizadorDTO es: " + organizador.getUsername());
         Usuario u = usuarios.buscar(organizador.getUsername());
         System.out.println("[debug] El organizador es: " + u.getUsername());
         if (!this.isTokenValid(organizador.getToken())) {
-            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception()); 
+            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception());
         } else {
             Evento e = new Evento(lastID++, nombre, fecha, tipo, descripcion, capacidad, localizacion, u);
             System.out.println("[debug] nombre: " + e.getNombre() + " tipo: " + e.getTipo() + " capacidad: " + e.getCapacidad() + " organizador: " + e.getOrganizador().getUsername());
             eventos.insertar(e);
-            
+
             ret = e.getId();
         }
-        
+
         return ret;
     }
-    
 
-    
     @Override
     public boolean cancelarEvento(EventoDTO eDTO, UsuarioDTO uDTO) {
         boolean ret;
         //TODO notificacion
         if (!this.isTokenValid(uDTO.getToken())) {
             ret = false;
-        } else if(!eDTO.getOrganizador().equals(uDTO.getUsername())){
+        } else if (!eDTO.getOrganizador().equals(uDTO.getUsername())) {
             ret = false;
         } else {
             Evento e = eventos.buscar(eDTO.getId());
             e.setCancelado(true);
             eDTO.setCancelado(true);
-            
+
             eventos.actualizar(e);
             ret = true;
         }
-        
+
         return ret;
     }
 
-    
     @Override
     public boolean reactivarEvento(EventoDTO eDTO, UsuarioDTO uDTO) {
         boolean ret;
         //TODO notificacion
         if (!this.isTokenValid(uDTO.getToken())) {
             ret = false;
-        } else if(!eDTO.getOrganizador().equals(uDTO.getUsername())){
+        } else if (!eDTO.getOrganizador().equals(uDTO.getUsername())) {
             ret = false;
         } else {
             Evento e = eventos.buscar(eDTO.getId());
@@ -264,32 +261,29 @@ public class Sistema extends SistemaInterface {
         return ret;
     }
 
-    
     @Override
     public UsuarioDTO buscarUsuario(String username) {
         return usuarioToDTO(usuarios.buscar(username));
     }
 
-    
     @Override
     public boolean inscribirse(UsuarioDTO uDTO, EventoDTO eDTO) throws TokenInvalido {
         if (!this.isTokenValid(uDTO.getToken())) {
-            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception()); 
+            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception());
         }
         boolean ret = false;
 
         Usuario u = usuarios.buscar(uDTO.getUsername());
         Evento e = eventos.buscar(eDTO.getId());
-        
+
         if (!e.getAsistentes().containsValue(u)) { // Comprobamos que no esté el usuario ya inscrito previamente
             ret = eventos.inscribir(u, e) && usuarios.inscribir(u, e);
         }
-        
+
         return ret;
-        
+
     }
 
-    
     @Override
     public boolean desinscribirse(UsuarioDTO uDTO, EventoDTO eDTO) throws TokenInvalido {
         if (!this.isTokenValid(uDTO.getToken())) {
@@ -326,43 +320,44 @@ public class Sistema extends SistemaInterface {
         return ret;
     }
 
-    
     @Override
     public List<EventoDTO> buscarEventosInscritos(UsuarioDTO uDTO) throws ListaEventosVacia, TokenInvalido {
         if (!this.isTokenValid(uDTO.getToken())) {
-            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception()); 
+            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception());
         }
-        
+
         Set<Evento> eventosBuscados = usuarios.buscar(uDTO.getUsername()).getEventos();
-        if(eventosBuscados.isEmpty()) { throw new ListaEventosVacia("La lista de eventos está vacía", new Exception()); }
-        
+        if (eventosBuscados.isEmpty()) {
+            throw new ListaEventosVacia("La lista de eventos está vacía", new Exception());
+        }
+
         List<EventoDTO> eventosBuscadosDTO = new ArrayList();
         eventosBuscados.forEach((evento) -> {
             eventosBuscadosDTO.add(this.eventoToDTO(evento));
-        }); 
-        
+        });
+
         return eventosBuscadosDTO;
     }
 
-    
     @Override
     public List<EventoDTO> buscarEventosOrganizados(UsuarioDTO uDTO) throws ListaEventosVacia, TokenInvalido {
         if (!this.isTokenValid(uDTO.getToken())) {
-            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception()); 
+            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception());
         }
-        
+
         List<Evento> eventosBuscados = usuarios.buscar(uDTO.getUsername()).getOrganizadosLista();
-        if(eventosBuscados.isEmpty()) { throw new ListaEventosVacia("La lista de eventos está vacía", new Exception()); }
-        
+        if (eventosBuscados.isEmpty()) {
+            throw new ListaEventosVacia("La lista de eventos está vacía", new Exception());
+        }
+
         List<EventoDTO> eventosBuscadosDTO = new ArrayList();
         eventosBuscados.forEach((evento) -> {
             eventosBuscadosDTO.add(this.eventoToDTO(evento));
-        }); 
-        
+        });
+
         return eventosBuscadosDTO;
     }
 
-    
     public UsuarioDTO usuarioToDTO(Usuario u) {
         UsuarioDTO uDTO = new UsuarioDTO();
         uDTO.setUsername(u.getUsername());
@@ -395,7 +390,6 @@ public class Sistema extends SistemaInterface {
         return uDTO;
     }
 
-    
     public EventoDTO eventoToDTO(Evento e) {
         EventoDTO eDTO = new EventoDTO();
         eDTO.setId(e.getId());
@@ -429,8 +423,6 @@ public class Sistema extends SistemaInterface {
      ***************************************************************************
      ***************************************************************************
      */
-    
-    
     @Override
     public boolean godMode(String pass) {
         boolean ret = true;
@@ -473,7 +465,7 @@ public class Sistema extends SistemaInterface {
                         System.out.println("\t[debug]- Nombre: \t\t" + evento.getNombre());
                         System.out.println("\t[debug]- Descripción: \t\t" + evento.getDescripcion());
                         System.out.println("|- Fecha: \t\t" + evento.getFecha().get(Calendar.HOUR) + ":" + evento.getFecha().get(Calendar.MINUTE)
-                        + " del " + evento.getFecha().get(Calendar.DATE) + "/" + evento.getFecha().get(Calendar.MONTH) + "/" + evento.getFecha().get(Calendar.YEAR));
+                                + " del " + evento.getFecha().get(Calendar.DATE) + "/" + evento.getFecha().get(Calendar.MONTH) + "/" + evento.getFecha().get(Calendar.YEAR));
                         System.out.println("\t[debug]- Tipo: \t\t\t" + evento.getTipo());
                         System.out.println("\t[debug]- Lugar: \t\t" + evento.getLocalizacion());
                         System.out.println("\t[debug]- Plazas máximas: \t" + evento.getCapacidad());
