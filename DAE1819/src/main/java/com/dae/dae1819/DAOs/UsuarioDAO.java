@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -21,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author dml y jfaf
  */
 @Repository
-@Transactional
+@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 public class UsuarioDAO {
 
     @PersistenceContext
@@ -40,19 +41,28 @@ public class UsuarioDAO {
 
     public boolean inscribir(Usuario u, Evento e) {
         boolean ret = false;
+
         em.getTransaction().begin();
+
         // Si está lleno, añadimos el evento a la lista de espera
         if (e.getAsistentes().size() >= e.getCapacidad()) {
             System.out.println("[debug] UsuarioDAO: El evento está lleno, añadiendo a la lista de espera");
+
             em.lock(u, LockModeType.OPTIMISTIC);
+
             u.getListaEspera().add(e);
         } else {
             // Si no está lleno, añadimos el evento a la lista de eventos
+
             em.lock(u, LockModeType.OPTIMISTIC);
+
             u.getEventos().add(e);
             System.out.println("[debug] UsuarioDAO: Se ha añadido a la lista de eventos");
             // Si además es el organizador, añadimos el evento a la lista de organizados
             if (e.getOrganizador().getUsername().equals(u.getUsername())) {
+
+                em.lock(u, LockModeType.OPTIMISTIC);
+
                 u.getOrganizados().add(e);
                 System.out.println("[debug] UsuarioDAO: Se ha añadido a la lista de organizados");
             }

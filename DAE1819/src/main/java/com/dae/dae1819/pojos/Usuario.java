@@ -31,8 +31,7 @@ public class Usuario {
     private String email;
 
     @Version
-    @Column(nullable = false)
-    private Long version;
+    private int version;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar fechaInscripcion;
@@ -197,14 +196,14 @@ public class Usuario {
     /*
     * @return the version of control for Transactional
      */
-    public Long getVersion() {
+    public int getVersion() {
         return this.version;
     }
 
     /*
     * @param version the new version to control transactional
      */
-    public void setVersion(Long version) {
+    public void setVersion(int version) {
         this.version = version;
     }
 }
