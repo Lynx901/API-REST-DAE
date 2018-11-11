@@ -124,6 +124,7 @@ public abstract class SistemaInterface {
      * @param capacidad la capacidad de asistentes al evento
      * @param localizacion el lugar donde se realiza el evento
      * @param organizador el usuario que ha creado el evento
+     * @throws TokenInvalido si el usuario no ha iniciado sesión o tiene un token caducado
      * @return el id del evento creado, -1 si no se ha creado
      */
     public abstract int nuevoEvento(String nombre, Calendar fecha, String tipo,
@@ -182,6 +183,7 @@ public abstract class SistemaInterface {
      *
      * @param uDTO el usuario al que se inscribirá en el evento
      * @param eDTO el evento en el que se inscribirá el usuario
+     * @throws TokenInvalido si el usuario no ha iniciado sesión o tiene un token caducado
      * @return true si se inscribe al usuario, false si entra en la lista de
      * espera
      */
@@ -192,9 +194,10 @@ public abstract class SistemaInterface {
      *
      * @param uDTO el usuario al que se desinscribirá del evento
      * @param eDTO el evento del que se desinscribirá el usuario
+     * @throws TokenInvalido si el usuario no ha iniciado sesión o tiene un token caducado
      * @return true si se ha desinscrito correctamente, false si no
      */
-    public abstract boolean desinscribirse(UsuarioDTO uDTO, EventoDTO eDTO);
+    public abstract boolean desinscribirse(UsuarioDTO uDTO, EventoDTO eDTO) throws TokenInvalido ;
 
     /*
      ***************************************************************************

@@ -72,6 +72,15 @@ public class EventoDAO {
                 System.out.println("[debug] EventoDAO: Se ha puesto a " + e.getOrganizador().getUsername() + " como organizador");
             }
             ret = true;
+            //Comprobamos si el usuario pertenece a la lista de asistentes, de ser asi lo quitamos
+            if (e.getInscritos().containsValue(u)){
+                for(Map.Entry<Calendar, Usuario> entry : e.getInscritos().entrySet()) {
+                    if (entry.getValue().getUsername().equals(u.getUsername())){
+                        fechaIns = entry.getKey();
+                    }
+                }
+                ret = e.getInscritos().remove(fechaIns, u);
+            }
         }
         
         Evento newE = this.actualizar(e);
@@ -87,26 +96,25 @@ public class EventoDAO {
     
     public boolean desinscribir(Usuario u, Evento e) {
         boolean ret = true;
+        boolean continuar = true;
         
-        e.getAsistentes().forEach((fechaIns, usuario) -> {
-            if(usuario == u) {
-                e.getAsistentes().remove(fechaIns);
+        for (Map.Entry<Calendar, Usuario> entry : e.getAsistentes().entrySet()) {
+            if (entry.getValue().getUsername().equals(u.getUsername())){
+                ret = e.getAsistentes().remove(entry.getKey(),entry.getValue());
+                continuar = false;
+                break;
             }
-        });
-        
-        if (!e.getInscritos().isEmpty()) {
-            Calendar first = null;
-            for(Calendar d : e.getInscritos().keySet()) {
-                if(first == null || d.before(first)){
-                    first = d;
-                }
-            }
-            Usuario newU = e.getInscritos().get(first);
-            e.getInscritos().remove(first);
-            e.getAsistentes().put(first, newU);
-            //TODO notificar
         }
         
+        if (continuar){
+            for (Map.Entry<Calendar, Usuario> entry : e.getInscritos().entrySet()) {
+                if (entry.getValue().getUsername().equals(u.getUsername())){
+                    ret = e.getInscritos().remove(entry.getKey(), entry.getValue());
+                    break;
+                }
+            }
+        }
+               
         Evento newE = this.actualizar(e);
         for (Map.Entry<Calendar, Usuario> entry : newE.getAsistentes().entrySet()) {
             DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");

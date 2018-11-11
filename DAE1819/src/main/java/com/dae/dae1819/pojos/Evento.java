@@ -217,7 +217,7 @@ public class Evento {
      */
     public List<Usuario> getAsistentesLista() {
         List<Usuario> Lista = new ArrayList();
-        this.asistentes.forEach((username, usuario) -> {
+        this.asistentes.forEach((Calendar, usuario) -> {
             Lista.add(usuario);
         });
         return Lista;
@@ -252,6 +252,17 @@ public class Evento {
      */
     public Map<Calendar, Usuario> getInscritos() {
         return inscritos;
+    }
+    
+    /**
+     * @return the asistentes
+     */
+    public List<Usuario> getInscritosLista() {
+        List<Usuario> Lista = new ArrayList();
+        this.inscritos.forEach((Calendar, usuario) -> {
+            Lista.add(usuario);
+        });
+        return Lista;
     }
 
     /**

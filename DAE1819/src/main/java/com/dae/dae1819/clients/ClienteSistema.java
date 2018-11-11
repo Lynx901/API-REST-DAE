@@ -287,7 +287,7 @@ public class ClienteSistema {
      * @param sistema el servidor con el que interactúa el cliente
      * @param evento el evento del que se muestra la información
      */
-    private void gestionarEvento(SistemaInterface sistema, EventoDTO evento) {
+    private void gestionarEvento(SistemaInterface sistema, EventoDTO evento) throws TokenInvalido {
         int eleccion;
 
         do {
@@ -460,7 +460,7 @@ public class ClienteSistema {
         return ret;
     }
 
-    public void run() {
+    public void run() throws TokenInvalido {
         SistemaInterface sistema = (SistemaInterface) context.getBean("sistema");
         user = new UsuarioDTO();
         Scanner capt = new Scanner(System.in);
