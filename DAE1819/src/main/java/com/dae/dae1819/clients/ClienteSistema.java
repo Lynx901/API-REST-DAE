@@ -420,23 +420,19 @@ public class ClienteSistema {
         List<Integer> eventos = usuario.getEventos();
         System.out.println("|-\t|-------------------------------------------------------------|");
         for (Integer eventoID : eventos) {
-            try {
-                EventoDTO e = sistema.buscarEventoPorId(eventoID);
+            EventoDTO e = sistema.buscarEventoPorId(eventoID);
 
-                System.out.println("|-\t|- Nombre: \t\t" + e.getNombre());
-                if (e.isCancelado()) {
-                    System.out.println("|-\t|- Este evento está cancelado.                           -|");
+            System.out.println("|-\t|- Nombre: \t\t" + e.getNombre());
+            if (e.isCancelado()) {
+                System.out.println("|-\t|- Este evento está cancelado.                           -|");
+            } else {
+                System.out.println("|-\t|- Fecha: \t\t" + e.getFecha().get(Calendar.HOUR) + ":" + e.getFecha().get(Calendar.MINUTE)
+                        + " del " + e.getFecha().get(Calendar.DATE) + "/" + e.getFecha().get(Calendar.MONTH) + "/" + e.getFecha().get(Calendar.YEAR));
+                if (!usuario.getListaEspera().contains(e.getNombre())) {
+                    System.out.println("|-\t|- ¡Estás inscrito!");
                 } else {
-                    System.out.println("|-\t|- Fecha: \t\t" + e.getFecha().get(Calendar.HOUR) + ":" + e.getFecha().get(Calendar.MINUTE)
-                            + " del " + e.getFecha().get(Calendar.DATE) + "/" + e.getFecha().get(Calendar.MONTH) + "/" + e.getFecha().get(Calendar.YEAR));
-                    if (!usuario.getListaEspera().contains(e.getNombre())) {
-                        System.out.println("|-\t|- ¡Estás inscrito!");
-                    } else {
-                        System.out.println("|-\t|- Estás en la lista de espera");
-                    }
+                    System.out.println("|-\t|- Estás en la lista de espera");
                 }
-            } catch (Exception e) {//TODO
-                System.err.print(e.getMessage());
             }
             System.out.println("|-\t|-------------------------------------------------------------|");
         }
@@ -444,7 +440,6 @@ public class ClienteSistema {
         System.out.println("|- Eventos que ha organizado:\t" + usuario.getOrganizados().size());
         List<Integer> eventosOrganizados = usuario.getOrganizados();
         System.out.println("|-\t|-------------------------------------------------------------|");
-        try {
             for (Integer eventoID : eventosOrganizados) {
                 EventoDTO e = sistema.buscarEventoPorId(eventoID);
                 System.out.println("|-\t|- Nombre: \t\t" + e.getNombre());
@@ -453,9 +448,6 @@ public class ClienteSistema {
                 System.out.println("|-\t|- Asistentes: \t\t" + e.getAsistentes());
                 System.out.println("|-\t|-------------------------------------------------------------|");
             }
-        } catch (Exception e) {//TODO
-            System.err.print(e.getMessage());
-        }
         System.out.println("|---------------------------------------------------------------------|" + "\n");
         return ret;
     }
@@ -845,7 +837,7 @@ public class ClienteSistema {
 
                             newEvento = sistema.buscarEventoPorId(id);
                             sistema.inscribirse(user, newEvento);
-                        } catch (Exception e) {//TODO
+                        } catch (TokenInvalido e) {//TODO
                             System.err.print(e.getMessage());
                         }
 

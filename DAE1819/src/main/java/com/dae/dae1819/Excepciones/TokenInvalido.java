@@ -7,7 +7,7 @@ package com.dae.dae1819.Excepciones;
 
 /**
  *
- * @author juanf
+ * @author dml y jfaf
  */
 public class TokenInvalido extends Exception{
     public TokenInvalido(String message, Throwable cause) {

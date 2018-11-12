@@ -7,6 +7,7 @@ package com.dae.dae1819.DAOs;
 
 import com.dae.dae1819.pojos.Evento;
 import com.dae.dae1819.pojos.Usuario;
+import com.dae.dae1819.service.EmailService;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -108,6 +109,14 @@ public class EventoDAO {
             
             // Lo inscribimos en la lista de asistentes
             this.inscribir(first.getValue(), e);
+            EmailService email = new EmailService();
+            String cuerpoEmail = "¡Hola " + u.getUsername() + "! Un usuario se ha desinscrito del evento " + e.getNombre() 
+                        + " que se iba a celebrar el " + e.getFecha().get(Calendar.HOUR) + ":" + e.getFecha().get(Calendar.MINUTE)
+                        + " del " + e.getFecha().get(Calendar.DATE) + "/" + e.getFecha().get(Calendar.MONTH) + "/" + e.getFecha().get(Calendar.YEAR)
+                        + " en " + e.getLocalizacion() + " y tú eras el primero de la lista de espera, así que ¡estás dentro!.\n\n"
+                        + "Contacta con el organizador entrando en la aplicación y revisando la información del evento.\n\n"
+                        + "Un saludo de todo el equipo.";
+                    email.sendSimpleMessage(u.getEmail(), "Te has inscrito a " + e.getNombre(), cuerpoEmail);
         }
 
         Evento newE = this.actualizar(e);

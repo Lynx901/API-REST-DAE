@@ -15,6 +15,7 @@ import com.dae.dae1819.DTOs.UsuarioDTO;
 import com.dae.dae1819.Excepciones.ListaEventosVacia;
 import com.dae.dae1819.Excepciones.TokenInvalido;
 import com.dae.dae1819.Excepciones.UsuarioExistente;
+import com.dae.dae1819.service.EmailService;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.Set;
@@ -37,13 +38,17 @@ public class Sistema extends SistemaInterface {
     private EventoDAO eventos;
 
     private List<Integer> tokenConectados;
+    
+    private EmailService email;
 
     public Sistema() {
+        this.email = new EmailService();
         this.tokenConectados = new ArrayList();
         this.lastID = 0;
     }
 
     public Sistema(String nombre) {
+        this.email = new EmailService();
         this.nombre = nombre;
         this.tokenConectados = new ArrayList();
         this.lastID = 0;
@@ -85,12 +90,15 @@ public class Sistema extends SistemaInterface {
     public boolean nuevoUsuario(String username, String password, String password2, String email) throws UsuarioExistente {
         boolean ret = false;
 
-        if (password.equals(password2)) {
-            Usuario usuario = new Usuario(username, password, email);
-            usuarios.insertar(usuario);
-            //TODO Controlar excepción
+        try {
+            if (password.equals(password2)) {
+                Usuario usuario = new Usuario(username, password, email);
+                usuarios.insertar(usuario);
 
-            ret = true;
+                ret = true;
+            }
+        } catch (Exception e) {
+            throw new UsuarioExistente("El usuario ya existía en el sistema, pruebe con otro\n", new Exception());
         }
 
         return ret;
@@ -203,57 +211,107 @@ public class Sistema extends SistemaInterface {
     public int nuevoEvento(String nombre, Calendar fecha, String tipo,
             String descripcion, Integer capacidad, String localizacion,
             UsuarioDTO organizador) throws TokenInvalido {
+        if (!this.isTokenValid(organizador.getToken())) {
+            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception());
+        }
+        
         int ret = -1;
 
         Usuario u = usuarios.buscar(organizador.getUsername());
-        if (!this.isTokenValid(organizador.getToken())) {
-            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception());
-        } else {
-            Evento e = new Evento(lastID++, nombre, fecha, tipo, descripcion, capacidad, localizacion, u);
-            eventos.insertar(e);
+        Evento e = new Evento(lastID++, nombre, fecha, tipo, descripcion, capacidad, localizacion, u);
+        eventos.insertar(e);
 
-            ret = e.getId();
-        }
+        ret = e.getId();
 
         return ret;
     }
 
     @Override
-    public boolean cancelarEvento(EventoDTO eDTO, UsuarioDTO uDTO) {
-        boolean ret;
-        //TODO notificacion
+    public boolean cancelarEvento(EventoDTO eDTO, UsuarioDTO uDTO) throws TokenInvalido {
         if (!this.isTokenValid(uDTO.getToken())) {
-            ret = false;
-        } else if (!eDTO.getOrganizador().equals(uDTO.getUsername())) {
+            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception());
+        }
+        
+        boolean ret = false;
+        
+        if (!eDTO.getOrganizador().equals(uDTO.getUsername())) {
             ret = false;
         } else {
             Evento e = eventos.buscar(eDTO.getId());
             e.setCancelado(true);
             eDTO.setCancelado(true);
-
+            
+            for(Usuario u : e.getAsistentesLista()) {
+                String cuerpoEmail = "¡Hola " + u.getUsername() + "! Nentimos comunicarte que el evento " + e.getNombre() 
+                        + " que se iba a celebrar el " + e.getFecha().get(Calendar.HOUR) + ":" + e.getFecha().get(Calendar.MINUTE)
+                        + " del " + e.getFecha().get(Calendar.DATE) + "/" + e.getFecha().get(Calendar.MONTH) + "/" + e.getFecha().get(Calendar.YEAR)
+                        + " en " + e.getLocalizacion() + " al que ibas a asistir ha sido cancelado.\n\n"
+                        + "Contacta con el organizador entrando en la aplicación y revisando la información del evento.\n\n"
+                        + "Un saludo de todo el equipo.";
+                email.sendSimpleMessage(u.getEmail(), "El evento ha sido cancelado", cuerpoEmail);
+            }
+            if(!e.getInscritos().isEmpty()) {
+                for(Usuario u : e.getInscritosLista()) {
+                    String cuerpoEmail = "¡Hola " + u.getUsername() + "! Nentimos comunicarte que el evento " + e.getNombre() 
+                            + " que se iba a celebrar el " + e.getFecha().get(Calendar.HOUR) + ":" + e.getFecha().get(Calendar.MINUTE)
+                            + " del " + e.getFecha().get(Calendar.DATE) + "/" + e.getFecha().get(Calendar.MONTH) + "/" + e.getFecha().get(Calendar.YEAR)
+                            + " en " + e.getLocalizacion() + " para el que estabas en la lista de esperas ha sido cancelado.\n\n"
+                            + "Contacta con el organizador entrando en la aplicación y revisando la información del evento.\n\n"
+                            + "Un saludo de todo el equipo.";
+                    email.sendSimpleMessage(u.getEmail(), "El evento ha sido cancelado", cuerpoEmail);
+                }
+            }
+            
             eventos.actualizar(e);
             ret = true;
+            
         }
+        
+        
 
         return ret;
     }
 
     @Override
-    public boolean reactivarEvento(EventoDTO eDTO, UsuarioDTO uDTO) {
-        boolean ret;
-        //TODO notificacion
+    public boolean reactivarEvento(EventoDTO eDTO, UsuarioDTO uDTO) throws TokenInvalido {
         if (!this.isTokenValid(uDTO.getToken())) {
-            ret = false;
-        } else if (!eDTO.getOrganizador().equals(uDTO.getUsername())) {
+            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception());
+        }
+        
+        boolean ret = false;
+        
+        if (!eDTO.getOrganizador().equals(uDTO.getUsername())) {
             ret = false;
         } else {
             Evento e = eventos.buscar(eDTO.getId());
             e.setCancelado(false);
             eDTO.setCancelado(false);
+            
+            for(Usuario u : e.getAsistentesLista()) {
+                String cuerpoEmail = "¡Hola " + u.getUsername() + "! Nos gustaría comunicarte que el evento " + e.getNombre() 
+                        + " que se iba a celebrar el " + e.getFecha().get(Calendar.HOUR) + ":" + e.getFecha().get(Calendar.MINUTE)
+                        + " del " + e.getFecha().get(Calendar.DATE) + "/" + e.getFecha().get(Calendar.MONTH) + "/" + e.getFecha().get(Calendar.YEAR)
+                        + " en " + e.getLocalizacion() + " al que ibas a asistir ha reactivado y por tanto todos vuelven a estar manos a la obra.\n\n"
+                        + "Contacta con el organizador entrando en la aplicación y revisando la información del evento.\n\n"
+                        + "Un saludo de todo el equipo.";
+                email.sendSimpleMessage(u.getEmail(), "El evento ha sido reactivado", cuerpoEmail);
+            }
+            if(!e.getInscritos().isEmpty()) {
+                for(Usuario u : e.getInscritosLista()) {
+                    String cuerpoEmail = "¡Hola " + u.getUsername() + "! Nos gustaría comunicarte que el evento " + e.getNombre() 
+                        + " que se iba a celebrar el " + e.getFecha().get(Calendar.HOUR) + ":" + e.getFecha().get(Calendar.MINUTE)
+                        + " del " + e.getFecha().get(Calendar.DATE) + "/" + e.getFecha().get(Calendar.MONTH) + "/" + e.getFecha().get(Calendar.YEAR)
+                        + " en " + e.getLocalizacion() + " para el que estabas en la lista de espera ha reactivado y por tanto todos vuelven a estar manos a la obra.\n\n"
+                        + "Quizá haya usuarios que se hayan desinscrito y haya un hueco para ti. Contacta con el organizador entrando en la aplicación y revisando la información del evento.\n\n"
+                        + "Un saludo de todo el equipo.";
+                    email.sendSimpleMessage(u.getEmail(), "El evento ha sido reactivado", cuerpoEmail);
+                }
+            }
 
             eventos.actualizar(e);
             ret = true;
         }
+        
         return ret;
     }
 
@@ -274,7 +332,25 @@ public class Sistema extends SistemaInterface {
         Evento e = eventos.buscar(eDTO.getId());
 
         if (!e.getAsistentes().containsValue(u)) { // Comprobamos que no esté el usuario ya inscrito previamente
-            ret = eventos.inscribir(u, e);
+            if(eventos.inscribir(u, e)){
+                String cuerpoEmail = "¡Hola " + u.getUsername() + "! Te has inscrito correctamente al evento " + e.getNombre() 
+                    + " que se iba a celebrar el " + e.getFecha().get(Calendar.HOUR) + ":" + e.getFecha().get(Calendar.MINUTE)
+                    + " del " + e.getFecha().get(Calendar.DATE) + "/" + e.getFecha().get(Calendar.MONTH) + "/" + e.getFecha().get(Calendar.YEAR)
+                    + " en " + e.getLocalizacion() + ".\n\n"
+                    + "Contacta con el organizador entrando en la aplicación y revisando la información del evento.\n\n"
+                    + "Un saludo de todo el equipo.";
+                email.sendSimpleMessage(u.getEmail(), "Te has inscrito a " + e.getNombre(), cuerpoEmail);
+                ret = true;
+            } else {
+                String cuerpoEmail = "¡Hola " + u.getUsername() + "! Has entrado en la lista de espera del evento " + e.getNombre() 
+                    + " que se iba a celebrar el " + e.getFecha().get(Calendar.HOUR) + ":" + e.getFecha().get(Calendar.MINUTE)
+                    + " del " + e.getFecha().get(Calendar.DATE) + "/" + e.getFecha().get(Calendar.MONTH) + "/" + e.getFecha().get(Calendar.YEAR)
+                    + " en " + e.getLocalizacion() + ".\n\n"
+                    + "Contacta con el organizador entrando en la aplicación y revisando la información del evento.\n\n"
+                    + "Un saludo de todo el equipo.";
+                email.sendSimpleMessage(u.getEmail(), "Estás en la lista de espera de " + e.getNombre(), cuerpoEmail);
+                ret = false;
+            }
         }
 
         return ret;
@@ -294,7 +370,16 @@ public class Sistema extends SistemaInterface {
         
         for (Map.Entry<Calendar, Usuario> entry : e.getAsistentes().entrySet()) {
             if (entry.getValue().getUsername().equals(u.getUsername())) {
-                ret = eventos.desinscribir(u, e);
+                if(eventos.desinscribir(u, e)) {
+                    String cuerpoEmail = "¡Hola " + u.getUsername() + "! Te has desinscrito correctamente del evento " + e.getNombre() 
+                        + " que se iba a celebrar el " + e.getFecha().get(Calendar.HOUR) + ":" + e.getFecha().get(Calendar.MINUTE)
+                        + " del " + e.getFecha().get(Calendar.DATE) + "/" + e.getFecha().get(Calendar.MONTH) + "/" + e.getFecha().get(Calendar.YEAR)
+                        + " en " + e.getLocalizacion() + ".\n\n"
+                        + "Contacta con el organizador entrando en la aplicación y revisando la información del evento.\n\n"
+                        + "Un saludo de todo el equipo.";
+                    email.sendSimpleMessage(u.getEmail(), "Te has deinscrito de " + e.getNombre(), cuerpoEmail);
+                    ret = true;
+                }
                 break;
             }
         }
@@ -312,7 +397,7 @@ public class Sistema extends SistemaInterface {
         if (eventosBuscados.isEmpty()) {
             throw new ListaEventosVacia("La lista de eventos está vacía", new Exception());
         }
-
+        
         List<EventoDTO> eventosBuscadosDTO = new ArrayList();
         eventosBuscados.forEach((evento) -> {
             eventosBuscadosDTO.add(this.eventoToDTO(evento));

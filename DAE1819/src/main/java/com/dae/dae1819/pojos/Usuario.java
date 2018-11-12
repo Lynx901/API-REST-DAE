@@ -32,7 +32,6 @@ public class Usuario {
     private int version;
 
     @ManyToMany(mappedBy = "asistentes", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    //TODO hacer eager para que no cargue la base de datos entera en una llamada
     private final Set<Evento> eventos;
 
     @ManyToMany(mappedBy = "inscritos", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})

@@ -7,7 +7,7 @@ package com.dae.dae1819.Excepciones;
 
 /**
  *
- * @author juanf
+ * @author dml y jfaf
  */
 public class ListaEventosVacia extends Exception{
     public ListaEventosVacia(String message, Throwable cause) {

@@ -142,18 +142,20 @@ public abstract class SistemaInterface {
      *
      * @param eDTO el evento a cancelar
      * @param uDTO el usuario que cancela el evento
+     * @throws com.dae.dae1819.Excepciones.TokenInvalido
      * @return true si se cancela, false si no
      */
-    public abstract boolean cancelarEvento(EventoDTO eDTO, UsuarioDTO uDTO);
+    public abstract boolean cancelarEvento(EventoDTO eDTO, UsuarioDTO uDTO) throws TokenInvalido;
 
     /**
      * Reactiva un evento
      *
      * @param eDTO el evento a reactivar
      * @param uDTO el usuario que reactiva el evento
+     * @throws com.dae.dae1819.Excepciones.TokenInvalido
      * @return true si se cancela, false si no
      */
-    public abstract boolean reactivarEvento(EventoDTO eDTO, UsuarioDTO uDTO);
+    public abstract boolean reactivarEvento(EventoDTO eDTO, UsuarioDTO uDTO) throws TokenInvalido;
 
     /**
      * Busca un usuario por su nombre de usuario

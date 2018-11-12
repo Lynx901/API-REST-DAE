@@ -7,7 +7,7 @@ package com.dae.dae1819.Excepciones;
 
 /**
  *
- * @author juanf
+ * @author dml y jfaf
  */
 public class UsuarioExistente extends Exception{
     public UsuarioExistente(String message, Throwable cause) {

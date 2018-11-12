@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  *
- * @author juanf
+ * @author dml y jfaf
  */
 public class UsuarioDTO {
 
