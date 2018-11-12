@@ -13,8 +13,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -22,24 +22,25 @@ import org.springframework.transaction.annotation.Transactional;
  * @author dml y jfaf
  */
 @Repository
-@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+@Transactional
 public class UsuarioDAO {
 
     @PersistenceContext
     EntityManager em;
 
     public List<Usuario> listar() {
-        List<Usuario> usuarios = em.createQuery("select u from Usuario u", Usuario.class).getResultList();
+        TypedQuery<Usuario> query = em.createQuery("select u from Usuario u", Usuario.class);
+        query.setLockMode(LockModeType.OPTIMISTIC);
+        List<Usuario> usuarios = query.getResultList();
 
         return usuarios;
     }
 
     public Usuario buscar(String username) {
-        Usuario result = em.find(Usuario.class, username);
+        Usuario result = em.find(Usuario.class, username, LockModeType.OPTIMISTIC);
         return result;
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public boolean inscribir(Usuario u, Evento e) {
         boolean ret = false;
 
@@ -47,20 +48,14 @@ public class UsuarioDAO {
         if (e.getAsistentes().size() >= e.getCapacidad()) {
             System.out.println("[debug] UsuarioDAO: El evento está lleno, añadiendo a la lista de espera");
 
-            em.lock(u, LockModeType.OPTIMISTIC);
-
             u.getListaEspera().add(e);
         } else {
             // Si no está lleno, añadimos el evento a la lista de eventos
-
-            em.lock(u, LockModeType.OPTIMISTIC);
 
             u.getEventos().add(e);
             System.out.println("[debug] UsuarioDAO: Se ha añadido a la lista de eventos");
             // Si además es el organizador, añadimos el evento a la lista de organizados
             if (e.getOrganizador().getUsername().equals(u.getUsername())) {
-
-                em.lock(u, LockModeType.OPTIMISTIC);
 
                 u.getOrganizados().add(e);
                 System.out.println("[debug] UsuarioDAO: Se ha añadido a la lista de organizados");
@@ -80,11 +75,9 @@ public class UsuarioDAO {
         return ret;
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public boolean desinscribir(Usuario u, Evento e) {
         boolean ret = true;
 
-        em.lock(u, LockModeType.OPTIMISTIC);
         if (u.getEventos().remove(e)) {
             ret = true;
         }
@@ -100,18 +93,16 @@ public class UsuarioDAO {
         return ret;
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public void insertar(Usuario u) {
         System.out.println("[debug] ¡Estamos insertando un usuario!");
-        em.lock(u, LockModeType.OPTIMISTIC);
         em.persist(u);
+         em.lock(u, LockModeType.OPTIMISTIC);
         System.out.println("[debug] ¿Se ha insertado el usuario? " + this.buscar(u.getUsername()).getUsername());
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public Usuario actualizar(Usuario u) {
-        em.lock(u, LockModeType.OPTIMISTIC);
         Usuario usu = em.merge(u);
+        //em.lock(u, LockModeType.OPTIMISTIC);
         return usu;
     }
 
