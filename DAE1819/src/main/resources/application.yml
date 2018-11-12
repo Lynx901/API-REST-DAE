@@ -6,5 +6,5 @@ spring.datasource.username: dae
 spring.datasource.password: dae
 spring.datasource.tomcat.max-active: 50
 
-spring.jpa.hibernate.ddl-auto: create
+spring.jpa.hibernate.ddl-auto: validate
 spring.jpa.properties.hibernate.dialect: org.hibernate.dialect.DerbyTenSevenDialect
