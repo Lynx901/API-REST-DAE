@@ -234,7 +234,7 @@ public class ClienteSistema {
                     System.out.println("|- Plazas disponibles:\t" + (evento.getCapacidad() - evento.getAsistentes().size()) + "/" + evento.getCapacidad());
                 } else {
                     System.out.println("|- Plazas disponibles:\t" + 0 + "/" + evento.getCapacidad());
-                    System.out.println("|- En lista de espera:\t" + (evento.getAsistentes().size() - evento.getCapacidad()));
+                    System.out.println("|- En lista de espera:\t" + evento.getInscritos().size());
                 }
                 System.out.println("|---------------------------------------------------------------------|");
             }
@@ -246,7 +246,7 @@ public class ClienteSistema {
                 System.out.println("|- ¿Qué desea hacer?                                                 -|");
                 if (!evento.isCancelado()) {
 
-                    if (evento.getAsistentes().contains(user.getUsername())) {
+                    if (evento.getAsistentes().contains(user.getUsername()) || evento.getInscritos().contains(user.getUsername())) {
                         System.out.println("|- [1]. Desinscribirse                                               -|");
                     } else {
 
@@ -307,9 +307,10 @@ public class ClienteSistema {
 
                     } else {
                         //Inscribirse o desinscribirse en el evento
-                        if (evento.getAsistentes().contains(user.getUsername())) {
+                        if (evento.getAsistentes().contains(user.getUsername()) || evento.getInscritos().contains(user.getUsername())) {
                             if (this.seleccionarSN("Está seguro de que desea desinscribirse")) {
                                 if (sistema.desinscribirse(user, evento)) {
+                                    evento = sistema.buscarEventoPorId(evento.getId());
                                     System.out.println("|- Se ha desinscrito correctamente.                                  -|");
                                 } else {
                                     System.out.println("|- Ha habido un error al desinscribirse del evento.                  -|");
@@ -318,12 +319,11 @@ public class ClienteSistema {
                         } else {
                             try {
                                 if (sistema.inscribirse(user, evento)) {
-                                    //TODO revisar esta actualización de DTOs
                                     evento = sistema.buscarEventoPorId(evento.getId());
-                                    System.out.println("|- Se le ha inscrito en la posición: " + (evento.getAsistentes().size() + 1));
+                                    System.out.println("|- Se le ha inscrito en la posición: " + (evento.getAsistentes().size()));
                                 } else {
                                     evento = sistema.buscarEventoPorId(evento.getId());
-                                    System.out.println("|- Se le ha añadido a la lista de espera en la posición: " + (evento.getAsistentes().size() - evento.getCapacidad() + 1));
+                                    System.out.println("|- Se le ha añadido a la lista de espera en la posición: " + (evento.getInscritos().size()));
                                 }
                             } catch (TokenInvalido e) {
                                 System.out.println(e.getMessage());
@@ -478,8 +478,12 @@ public class ClienteSistema {
             UsuarioDTO uTest = new UsuarioDTO();
             try {
                 sistema.nuevoUsuario("admin", "admin", "admin", "admin@ujaen.es");
+                sistema.nuevoUsuario("user1", "asdf", "asdf", "user@uja.es");
+                sistema.nuevoUsuario("user2", "1234", "1234", "usuario@gmail.com");
+                sistema.nuevoUsuario("USER3", "1a2b", "1a2b", "el3@yo.com");
                 uTest = sistema.buscarUsuario("admin");
                 user = sistema.login("admin", "admin");
+                sistema.nuevoEvento("Clase1", Calendar.getInstance(), "CHARLA", "Clase de DAE", (Integer) 2, "Edificio A3", user);
             } catch (Exception e) {
                 System.err.print(e);
             }

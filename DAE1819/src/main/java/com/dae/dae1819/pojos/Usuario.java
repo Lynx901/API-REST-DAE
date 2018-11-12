@@ -33,9 +33,6 @@ public class Usuario {
     @Version
     private int version;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Calendar fechaInscripcion;
-
     @ManyToMany(mappedBy = "asistentes", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @LazyCollection(LazyCollectionOption.FALSE)
     private final Set<Evento> eventos;
@@ -55,14 +52,12 @@ public class Usuario {
 
         listaEspera = new HashSet();
         organizados = new HashSet();
-        fechaInscripcion = Calendar.getInstance();
     }
 
     public Usuario(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
-        fechaInscripcion = Calendar.getInstance();
 
         eventos = new HashSet();
         organizados = new HashSet();
@@ -176,9 +171,9 @@ public class Usuario {
     /**
      * @param organizados the organizados to set
      */
-    public void setOrganizados(Map<Calendar, Evento> organizados) {
+    public void setOrganizados(Set<Evento> organizados) {
         this.organizados.clear();
-        organizados.forEach((fecha, evento) -> {
+        organizados.forEach((evento) -> {
             this.organizados.add(evento);
         });
     }

@@ -92,22 +92,17 @@ public class EventoDAO {
             }
             
             ret = true;
-            //Comprobamos si el usuario pertenece a la lista de inscritos, de ser asi lo quitamos
-            if (e.getInscritos().containsValue(u)) {
-                for (Map.Entry<Calendar, Usuario> entry : e.getInscritos().entrySet()) {
-                    if (entry.getValue().getUsername().equals(u.getUsername())) {
-                        fechaIns = entry.getKey();
-                    }
-                }
-                
-                ret = e.getInscritos().remove(fechaIns, u);
-            }
         }
 
         Evento newE = this.actualizar(e);
-        System.out.println("[debug] newE = " + newE.getNombre() + " y sus asistentes son: ");
+        System.out.println("[debug] Inscribir: newE = " + newE.getNombre() + " y sus asistentes son: ");
 
         for (Map.Entry<Calendar, Usuario> entry : newE.getAsistentes().entrySet()) {
+            DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            System.out.println(sdf.format(entry.getKey().getTime()) + " - " + entry.getValue().getUsername());
+        }
+        System.out.println("[debug] Inscribir: y sus inscritos son: ");
+        for (Map.Entry<Calendar, Usuario> entry : newE.getInscritos().entrySet()) {
             DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             System.out.println(sdf.format(entry.getKey().getTime()) + " - " + entry.getValue().getUsername());
         }
@@ -116,30 +111,42 @@ public class EventoDAO {
     }
 
     public boolean desinscribir(Usuario u, Evento e) {
-        boolean ret = true;
-        boolean continuar = true;
+        boolean ret = false;
 
+        // Si está en la lista de asistentes, lo eliminamos
         for (Map.Entry<Calendar, Usuario> entry : e.getAsistentes().entrySet()) {
             if (entry.getValue().getUsername().equals(u.getUsername())) {
-                
                 ret = e.getAsistentes().remove(entry.getKey(), entry.getValue());
-                continuar = false;
                 break;
             }
         }
 
-        if (continuar) {
+        // Comprobamos si hay alguien en la lista de espera
+        if(e.getInscritos().size() > 0) {
+            Map.Entry<Calendar, Usuario> first = null;
+            // Cogemos el par <key, value> que primero se apuntó a la lista de espera
             for (Map.Entry<Calendar, Usuario> entry : e.getInscritos().entrySet()) {
-                if (entry.getValue().getUsername().equals(u.getUsername())) {
-                    
-                    ret = e.getInscritos().remove(entry.getKey(), entry.getValue());
-                    break;
+                if(first == null || first.getKey().before(entry.getKey())) {
+                    first = entry;
                 }
             }
+            
+            // Lo eliminamos de la lista de espera
+            e.getInscritos().remove(first.getKey(), first.getValue());
+            
+            // Lo inscribimos en la lista de asistentes
+            this.inscribir(first.getValue(), e);
         }
 
         Evento newE = this.actualizar(e);
+        System.out.println("[debug] Desinscribir: newE.asistentes = " + newE.getNombre() + " y sus asistentes son: ");
+
         for (Map.Entry<Calendar, Usuario> entry : newE.getAsistentes().entrySet()) {
+            DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            System.out.println(sdf.format(entry.getKey().getTime()) + " - " + entry.getValue().getUsername());
+        }
+        System.out.println("[debug] Desinscribir: y sus inscritos son: ");
+        for (Map.Entry<Calendar, Usuario> entry : newE.getInscritos().entrySet()) {
             DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             System.out.println(sdf.format(entry.getKey().getTime()) + " - " + entry.getValue().getUsername());
         }

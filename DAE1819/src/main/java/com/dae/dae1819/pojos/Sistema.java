@@ -271,13 +271,14 @@ public class Sistema extends SistemaInterface {
         if (!this.isTokenValid(uDTO.getToken())) {
             throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception());
         }
+        
         boolean ret = false;
 
         Usuario u = usuarios.buscar(uDTO.getUsername());
         Evento e = eventos.buscar(eDTO.getId());
 
         if (!e.getAsistentes().containsValue(u)) { // Comprobamos que no esté el usuario ya inscrito previamente
-            ret = eventos.inscribir(u, e) && usuarios.inscribir(u, e);
+            ret = eventos.inscribir(u, e);
         }
 
         return ret;
@@ -291,30 +292,16 @@ public class Sistema extends SistemaInterface {
         }
 
         boolean ret = false;
-        boolean exist = false;
+        
         Usuario u = usuarios.buscar(uDTO.getUsername());
         Evento e = eventos.buscar(eDTO.getId());
-
+        
         for (Map.Entry<Calendar, Usuario> entry : e.getAsistentes().entrySet()) {
             if (entry.getValue().getUsername().equals(u.getUsername())) {
-                exist = true;
+                ret = eventos.desinscribir(u, e);
+                System.out.println("[debug] ret = " + ret);
                 break;
             }
-        }
-
-        if (exist) {
-            ret = eventos.desinscribir(u, e) && usuarios.desinscribir(u, e);
-        }
-
-        if (ret && e.getInscritos().size() > 0) {
-            Calendar fecha = Calendar.getInstance();
-            for (Map.Entry<Calendar, Usuario> entry : e.getInscritos().entrySet()) {
-                if (entry.getKey().compareTo(fecha) < 0) {
-                    fecha = entry.getKey();
-                }
-            }
-            u = e.getInscritos().get(fecha);
-            ret = eventos.inscribir(u, e) && usuarios.inscribir(u, e);
         }
 
         return ret;
@@ -408,6 +395,16 @@ public class Sistema extends SistemaInterface {
             eDTO.setAsistentes(asistentes);
         } else {
             eDTO.setAsistentes(new ArrayList());
+        }
+        
+        if (!e.getInscritos().isEmpty()) {
+            List<String> inscritos = new ArrayList();
+            e.getInscritosLista().forEach((asistente) -> {
+                inscritos.add(asistente.getUsername());
+            });
+            eDTO.setInscritos(inscritos);
+        } else {
+            eDTO.setInscritos(new ArrayList());
         }
 
         eDTO.setTipo(e.getTipo());
