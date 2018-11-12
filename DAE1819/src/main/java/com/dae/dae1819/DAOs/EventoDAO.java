@@ -7,8 +7,6 @@ package com.dae.dae1819.DAOs;
 
 import com.dae.dae1819.pojos.Evento;
 import com.dae.dae1819.pojos.Usuario;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +15,6 @@ import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -33,34 +29,26 @@ public class EventoDAO {
     EntityManager em;
 
     public List<Evento> buscarPorNombre(String nombre) {
-        TypedQuery<Evento> query = em.createQuery("select e from Evento e where e.nombre like '%" + nombre + "%'", Evento.class);
-        query.setLockMode(LockModeType.OPTIMISTIC);
-        List<Evento> eventos = query.getResultList();
-        
+        List<Evento> eventos = em.createQuery("select e from Evento e where e.nombre like '%" + nombre + "%'", Evento.class).getResultList();
+
         return eventos;
     }
 
     public List<Evento> buscarPorTipo(String tipo) {
-        TypedQuery<Evento> query = em.createQuery("select e from Evento e where e.tipo like '%" + tipo + "%'", Evento.class);
-        query.setLockMode(LockModeType.OPTIMISTIC);
-        List<Evento> eventos = query.getResultList();
-       
+        List<Evento> eventos = em.createQuery("select e from Evento e where e.tipo like '%" + tipo + "%'", Evento.class).getResultList();
+
         return eventos;
     }
 
     public List<Evento> buscarPorDescripcion(String descripcion) {
-        TypedQuery<Evento> query = em.createQuery("select e from Evento e where e.descripcion like '%" + descripcion + "%'", Evento.class);
-        query.setLockMode(LockModeType.OPTIMISTIC);
-        List<Evento> eventos = query.getResultList();
+        List<Evento> eventos = em.createQuery("select e from Evento e where e.descripcion like '%" + descripcion + "%'", Evento.class).getResultList();
 
         return eventos;
     }
 
     public List<Evento> listar() {
-        TypedQuery<Evento> query = em.createQuery("select e from Evento e", Evento.class);
-        query.setLockMode(LockModeType.OPTIMISTIC);
-        List<Evento> eventos = query.getResultList();
-        
+        List<Evento> eventos = em.createQuery("select e from Evento e", Evento.class).getResultList();
+
         return eventos;
     }
 
@@ -74,38 +62,20 @@ public class EventoDAO {
         
         // Si está lleno, añadimos el usuario a la lista de inscritos
         if (e.getAsistentes().size() >= e.getCapacidad()) {
-            System.out.println("[debug] EventoDAO: El evento está lleno, añadiendo a la lista de espera");
-            
             e.getInscritos().put(fechaIns, u);
         } else {
             // Si no está lleno, añadimos el usuario a la lista de asistentes
-            
             e.getAsistentes().put(fechaIns, u);
-            System.out.println("[debug] EventoDAO: Se ha añadido a la lista de asistentes");
             
             // Si además es el organizador, añadimos el usuario como organizador
             if (e.getOrganizador().getUsername().equals(u.getUsername())) {
-                
                 e.setOrganizador(u);
-                
-                System.out.println("[debug] EventoDAO: Se ha puesto a " + e.getOrganizador().getUsername() + " como organizador");
             }
             
             ret = true;
         }
 
         Evento newE = this.actualizar(e);
-        System.out.println("[debug] Inscribir: newE = " + newE.getNombre() + " y sus asistentes son: ");
-
-        for (Map.Entry<Calendar, Usuario> entry : newE.getAsistentes().entrySet()) {
-            DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            System.out.println(sdf.format(entry.getKey().getTime()) + " - " + entry.getValue().getUsername());
-        }
-        System.out.println("[debug] Inscribir: y sus inscritos son: ");
-        for (Map.Entry<Calendar, Usuario> entry : newE.getInscritos().entrySet()) {
-            DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            System.out.println(sdf.format(entry.getKey().getTime()) + " - " + entry.getValue().getUsername());
-        }
         
         return ret;
     }
@@ -139,26 +109,13 @@ public class EventoDAO {
         }
 
         Evento newE = this.actualizar(e);
-        System.out.println("[debug] Desinscribir: newE.asistentes = " + newE.getNombre() + " y sus asistentes son: ");
-
-        for (Map.Entry<Calendar, Usuario> entry : newE.getAsistentes().entrySet()) {
-            DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            System.out.println(sdf.format(entry.getKey().getTime()) + " - " + entry.getValue().getUsername());
-        }
-        System.out.println("[debug] Desinscribir: y sus inscritos son: ");
-        for (Map.Entry<Calendar, Usuario> entry : newE.getInscritos().entrySet()) {
-            DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            System.out.println(sdf.format(entry.getKey().getTime()) + " - " + entry.getValue().getUsername());
-        }
         
         return ret;
     }
 
     public void insertar(Evento e) {
-        System.out.println("[debug] ¡Estamos insertando un evento!");
         em.persist(e);
         em.lock(e, LockModeType.OPTIMISTIC);
-        System.out.println("[debug] ¿Se ha insertado el evento? " + this.buscar(e.getId()).getNombre());
     }
 
     public Evento actualizar(Evento e) {

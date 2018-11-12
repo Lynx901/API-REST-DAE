@@ -6,10 +6,8 @@
 package com.dae.dae1819.pojos;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import javax.persistence.*;
 import static javax.persistence.TemporalType.TIMESTAMP;
@@ -34,17 +32,15 @@ public class Usuario {
     private int version;
 
     @ManyToMany(mappedBy = "asistentes", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @LazyCollection(LazyCollectionOption.FALSE)
+    //TODO hacer eager para que no cargue la base de datos entera en una llamada
     private final Set<Evento> eventos;
 
     @ManyToMany(mappedBy = "inscritos", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @LazyCollection(LazyCollectionOption.FALSE)
     @MapKeyTemporal(TIMESTAMP)
     private final Set<Evento> listaEspera;
 
     @OneToMany(mappedBy = "organizador",
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @LazyCollection(LazyCollectionOption.FALSE)
     private final Set<Evento> organizados;
 
     public Usuario() {

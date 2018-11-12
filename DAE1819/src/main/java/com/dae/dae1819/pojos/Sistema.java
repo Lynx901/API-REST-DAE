@@ -205,15 +205,11 @@ public class Sistema extends SistemaInterface {
             UsuarioDTO organizador) throws TokenInvalido {
         int ret = -1;
 
-        System.out.println("[debug] Evento: " + organizador.getUsername());
-        System.out.println("[debug] El organizadorDTO es: " + organizador.getUsername());
         Usuario u = usuarios.buscar(organizador.getUsername());
-        System.out.println("[debug] El organizador es: " + u.getUsername());
         if (!this.isTokenValid(organizador.getToken())) {
             throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception());
         } else {
             Evento e = new Evento(lastID++, nombre, fecha, tipo, descripcion, capacidad, localizacion, u);
-            System.out.println("[debug] nombre: " + e.getNombre() + " tipo: " + e.getTipo() + " capacidad: " + e.getCapacidad() + " organizador: " + e.getOrganizador().getUsername());
             eventos.insertar(e);
 
             ret = e.getId();
@@ -299,7 +295,6 @@ public class Sistema extends SistemaInterface {
         for (Map.Entry<Calendar, Usuario> entry : e.getAsistentes().entrySet()) {
             if (entry.getValue().getUsername().equals(u.getUsername())) {
                 ret = eventos.desinscribir(u, e);
-                System.out.println("[debug] ret = " + ret);
                 break;
             }
         }

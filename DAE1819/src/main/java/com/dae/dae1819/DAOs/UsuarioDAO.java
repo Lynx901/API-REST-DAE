@@ -5,10 +5,7 @@
  */
 package com.dae.dae1819.DAOs;
 
-import com.dae.dae1819.pojos.Evento;
 import com.dae.dae1819.pojos.Usuario;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
@@ -41,63 +38,9 @@ public class UsuarioDAO {
         return result;
     }
 
-    public boolean inscribir(Usuario u, Evento e) {
-        boolean ret = false;
-
-        // Si está lleno, añadimos el evento a la lista de espera
-        if (e.getAsistentes().size() >= e.getCapacidad()) {
-            System.out.println("[debug] UsuarioDAO: El evento está lleno, añadiendo a la lista de espera");
-
-            u.getListaEspera().add(e);
-        } else {
-            // Si no está lleno, añadimos el evento a la lista de eventos
-
-            u.getEventos().add(e);
-            System.out.println("[debug] UsuarioDAO: Se ha añadido a la lista de eventos");
-            // Si además es el organizador, añadimos el evento a la lista de organizados
-            if (e.getOrganizador().getUsername().equals(u.getUsername())) {
-
-                u.getOrganizados().add(e);
-                System.out.println("[debug] UsuarioDAO: Se ha añadido a la lista de organizados");
-            }
-            ret = true;
-        }
-
-        Usuario newU = this.actualizar(u);
-
-        System.out.println("[debug] newU = " + newU.getUsername() + " y sus eventos son: ");
-
-        for (Evento entry : newU.getEventos()) {
-            DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            System.out.println(entry.getNombre());
-        }
-
-        return ret;
-    }
-
-    public boolean desinscribir(Usuario u, Evento e) {
-        boolean ret = true;
-
-        if (u.getEventos().remove(e)) {
-            ret = true;
-        }
-
-        Usuario newU = this.actualizar(u);
-
-        System.out.println("[debug] newU = " + newU.getUsername() + " y sus eventos son: ");
-
-        newU.getEventos().forEach((evento) -> {
-            System.out.println(evento.getNombre());
-        });
-
-        return ret;
-    }
-
     public void insertar(Usuario u) {
-        System.out.println("[debug] ¡Estamos insertando un usuario!");
         em.persist(u);
-         em.lock(u, LockModeType.OPTIMISTIC);
-        System.out.println("[debug] ¿Se ha insertado el usuario? " + this.buscar(u.getUsername()).getUsername());
+        em.lock(u, LockModeType.OPTIMISTIC);
     }
 
     public Usuario actualizar(Usuario u) {
