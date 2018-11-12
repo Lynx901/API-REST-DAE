@@ -474,7 +474,7 @@ public class ClienteSistema {
         System.out.println("|-                                                                   -|");
         System.out.println("|---------------------------------------------------------------------|");
 
-        if (this.seleccionarSN("Desea comenzar la ejecución con una sesión iniciada")) {
+        if (this.seleccionarSN("Desea comenzar la ejecución con unos datos de ejemplo")) {
             UsuarioDTO uTest = new UsuarioDTO();
             try {
                 sistema.nuevoUsuario("admin", "admin", "admin", "admin@ujaen.es");
@@ -483,43 +483,10 @@ public class ClienteSistema {
                 sistema.nuevoUsuario("USER3", "1a2b", "1a2b", "el3@yo.com");
                 uTest = sistema.buscarUsuario("admin");
                 user = sistema.login("admin", "admin");
-                sistema.nuevoEvento("Clase1", Calendar.getInstance(), "CHARLA", "Clase de DAE", (Integer) 2, "Edificio A3", user);
-            } catch (Exception e) {
+                sistema.nuevoEvento("Clase de DAE", Calendar.getInstance(), "CHARLA", "Lección 17 de Desarrollo de Aplicaciones Web", (Integer) 2, "Edificio A3", user);
+            } catch (TokenInvalido | UsuarioExistente e) {
                 System.err.print(e);
             }
-
-//        if (this.seleccionarSN("Desea comenzar la ejecución con algunos datos de prueba")) {
-//            List<UsuarioDTO> uTest = new ArrayList();
-//            try {
-//                sistema.nuevoUsuario("admin", "admin", "admin", "admin@ujaen.es");
-//                uTest.add(sistema.buscarUsuario("admin"));
-//                sistema.nuevoEvento("Clase1", Calendar.getInstance(), "CHARLA", "Clase de DAE", (Integer) 15, "Edificio A3", uTest.get(0));
-//                
-//                sistema.nuevoUsuario("user1", "asdf", "asdf", "user@uja.es");
-//                uTest.add(sistema.buscarUsuario("user1"));
-//                sistema.nuevoUsuario("user2", "1234", "1234", "usuario@gmail.com");
-//                uTest.add(sistema.buscarUsuario("user2"));
-//                sistema.nuevoUsuario("USER3", "1a2b", "1a2b", "el3@yo.com");
-//                uTest.add(sistema.buscarUsuario("USER3"));
-//            } catch (Exception e){
-//                System.err.print(e);
-//            }
-//
-//            List<EventoDTO> eTest = new ArrayList();
-//            sistema.nuevoEvento("Clase1", new Date(), "CHARLA", "Clase de DAE", (Integer) 15, "Edificio A3", "admin");
-//            eTest.add(sistema.buscarEventoPorNombre("Clase1"));
-//            sistema.nuevoEvento("Partido1", new Date(), "ACTIVIDAD_DEPORTIVA", "Partido de 2ª división", (Integer) 2, "Pabellón", "user1");
-//            eTest.add(sistema.buscarEventoPorNombre("Partido1"));
-//            sistema.nuevoEvento("Partido2", new Date(), "ACTIVIDAD_DEPORTIVA", "Partido de 1ª división", (Integer) 5, "Campo de fútbol", "user1");
-//            eTest.add(sistema.buscarEventoPorNombre("Partido2"));
-//            sistema.nuevoEvento("Lista de Espera", new Date(), "CURSO", "Evento con lista de espera", (Integer) 2, "Ejemplo", "USER3");
-//            eTest.add(sistema.buscarEventoPorNombre("Lista de Espera"));
-//
-//            for (int i = 0; i < uTest.size(); i++) {
-//                sistema.inscribirse(uTest.get(i), sistema.buscarEventoPorNombre("Lista de Espera"));
-//            }
-//
-//            System.out.println("|- Creados 4 usuarios y " + sistema.buscarEventos().size() + " eventos                                    -|");
         }
 
         do {

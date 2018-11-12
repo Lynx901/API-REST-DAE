@@ -10,6 +10,7 @@ import com.dae.dae1819.pojos.Sistema;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @SpringBootApplication
 @EnableTransactionManagement
+@EnableCaching
 @EntityScan(basePackages = "com.dae.dae1819.pojos")
 @ComponentScan({"com.dae.dae1819.DAOs"})
 public class SistemaService {

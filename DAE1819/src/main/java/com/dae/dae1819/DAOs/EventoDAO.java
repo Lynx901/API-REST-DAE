@@ -13,7 +13,8 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,6 +53,7 @@ public class EventoDAO {
         return eventos;
     }
 
+    @Cacheable(value="eventos")
     public Evento buscar(int id) {
         return em.find(Evento.class, id, LockModeType.OPTIMISTIC);
     }
@@ -114,13 +116,13 @@ public class EventoDAO {
     }
 
     public void insertar(Evento e) {
-        em.persist(e);
         em.lock(e, LockModeType.OPTIMISTIC);
+        em.persist(e);
     }
 
+    @CacheEvict(value="eventos" , allEntries=true)
     public Evento actualizar(Evento e) {
         Evento event = em.merge(e);
-        //em.lock(e, LockModeType.OPTIMISTIC);
         return event;
     }
 
