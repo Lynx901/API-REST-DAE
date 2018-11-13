@@ -41,24 +41,6 @@ public class SistemaService {
         sistema.setNombre("sys");
         return sistema;
     }
-    
-    @Bean
-    public JavaMailSender javaMailSender() {
-        JavaMailSenderImpl emailSender = new JavaMailSenderImpl();
-        emailSender.setHost("smtp.gmail.com");
-        emailSender.setPort(587);
-
-        emailSender.setUsername("desarrolloaplicacionesweb181@gmail.com");
-        emailSender.setPassword("daedaedae");
-
-        Properties props = emailSender.getJavaMailProperties();
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true");
-
-        return emailSender;
-    }
 
     public static void main(String[] args) throws Exception {
         SpringApplication servidor = new SpringApplication(SistemaService.class);

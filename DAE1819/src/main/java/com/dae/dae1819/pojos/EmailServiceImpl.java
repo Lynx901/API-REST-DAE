@@ -6,9 +6,12 @@
 package com.dae.dae1819.pojos;
 
 import com.dae.dae1819.interfaces.EmailService;
+import java.util.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +25,22 @@ public class EmailServiceImpl implements EmailService {
     @Autowired
     public JavaMailSenderImpl emailSender;
     
-    public EmailServiceImpl() {
+    @Bean
+    public JavaMailSender javaMailSender() {
+        JavaMailSenderImpl emailSender = new JavaMailSenderImpl();
+        emailSender.setHost("smtp.gmail.com");
+        emailSender.setPort(587);
+
+        emailSender.setUsername("desarrolloaplicacionesweb181@gmail.com");
+        emailSender.setPassword("daedaedae");
+
+        Properties props = emailSender.getJavaMailProperties();
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.debug", "true");
+
+        return emailSender;
     }
 
     @Override
