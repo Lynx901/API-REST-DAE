@@ -20,6 +20,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
  *
@@ -38,16 +41,15 @@ public class Sistema extends SistemaInterface {
 
     private List<Integer> tokenConectados;
     
-    private EmailServiceImpl email;
+    @Autowired
+    public JavaMailSenderImpl emailSender;
 
     public Sistema() {
-        this.email = new EmailServiceImpl();
         this.tokenConectados = new ArrayList();
         this.lastID = 0;
     }
 
     public Sistema(String nombre) {
-        this.email = new EmailServiceImpl();
         this.nombre = nombre;
         this.tokenConectados = new ArrayList();
         this.lastID = 0;
@@ -249,7 +251,12 @@ public class Sistema extends SistemaInterface {
                         + " en " + e.getLocalizacion() + " al que ibas a asistir ha sido cancelado.\n\n"
                         + "Contacta con el organizador entrando en la aplicación y revisando la información del evento.\n\n"
                         + "Un saludo de todo el equipo.";
-                email.sendSimpleMessage(u.getEmail(), "El evento ha sido cancelado", cuerpoEmail);
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setTo(u.getEmail());
+                message.setSubject("El evento ha sido cancelado");
+                message.setText(cuerpoEmail);
+
+                emailSender.send(message);
             }
             if(!e.getInscritos().isEmpty()) {
                 for(Usuario u : e.getInscritosLista()) {
@@ -259,7 +266,12 @@ public class Sistema extends SistemaInterface {
                             + " en " + e.getLocalizacion() + " para el que estabas en la lista de esperas ha sido cancelado.\n\n"
                             + "Contacta con el organizador entrando en la aplicación y revisando la información del evento.\n\n"
                             + "Un saludo de todo el equipo.";
-                    email.sendSimpleMessage(u.getEmail(), "El evento ha sido cancelado", cuerpoEmail);
+                    SimpleMailMessage message = new SimpleMailMessage();
+                message.setTo(u.getEmail());
+                message.setSubject("El evento ha sido cancelado");
+                message.setText(cuerpoEmail);
+
+                emailSender.send(message);
                 }
             }
             
@@ -295,7 +307,12 @@ public class Sistema extends SistemaInterface {
                         + " en " + e.getLocalizacion() + " al que ibas a asistir ha reactivado y por tanto todos vuelven a estar manos a la obra.\n\n"
                         + "Contacta con el organizador entrando en la aplicación y revisando la información del evento.\n\n"
                         + "Un saludo de todo el equipo.";
-                email.sendSimpleMessage(u.getEmail(), "El evento ha sido reactivado", cuerpoEmail);
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setTo(u.getEmail());
+                message.setSubject("El evento ha sido reactivado");
+                message.setText(cuerpoEmail);
+
+                emailSender.send(message);
             }
             if(!e.getInscritos().isEmpty()) {
                 for(Usuario u : e.getInscritosLista()) {
@@ -305,7 +322,12 @@ public class Sistema extends SistemaInterface {
                         + " en " + e.getLocalizacion() + " para el que estabas en la lista de espera ha reactivado y por tanto todos vuelven a estar manos a la obra.\n\n"
                         + "Quizá haya usuarios que se hayan desinscrito y haya un hueco para ti. Contacta con el organizador entrando en la aplicación y revisando la información del evento.\n\n"
                         + "Un saludo de todo el equipo.";
-                    email.sendSimpleMessage(u.getEmail(), "El evento ha sido reactivado", cuerpoEmail);
+                    SimpleMailMessage message = new SimpleMailMessage();
+                message.setTo(u.getEmail());
+                message.setSubject("El evento ha sido reactivado");
+                message.setText(cuerpoEmail);
+
+                emailSender.send(message);
                 }
             }
 
@@ -340,7 +362,12 @@ public class Sistema extends SistemaInterface {
                     + " en " + e.getLocalizacion() + ".\n\n"
                     + "Contacta con el organizador entrando en la aplicación y revisando la información del evento.\n\n"
                     + "Un saludo de todo el equipo.";
-                email.sendSimpleMessage(u.getEmail(), "Te has inscrito a " + e.getNombre(), cuerpoEmail);
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setTo(u.getEmail());
+                message.setSubject("Te has inscrito a " + e.getNombre());
+                message.setText(cuerpoEmail);
+
+                emailSender.send(message);
                 ret = true;
             } else {
                 String cuerpoEmail = "¡Hola " + u.getUsername() + "! Has entrado en la lista de espera del evento " + e.getNombre() 
@@ -349,7 +376,12 @@ public class Sistema extends SistemaInterface {
                     + " en " + e.getLocalizacion() + ".\n\n"
                     + "Contacta con el organizador entrando en la aplicación y revisando la información del evento.\n\n"
                     + "Un saludo de todo el equipo.";
-                email.sendSimpleMessage(u.getEmail(), "Estás en la lista de espera de " + e.getNombre(), cuerpoEmail);
+                SimpleMailMessage message = new SimpleMailMessage();
+                message.setTo(u.getEmail());
+                message.setSubject("Estás en la lista de espera de " + e.getNombre());
+                message.setText(cuerpoEmail);
+
+                emailSender.send(message);
                 ret = false;
             }
         }
@@ -378,7 +410,12 @@ public class Sistema extends SistemaInterface {
                         + " en " + e.getLocalizacion() + ".\n\n"
                         + "Contacta con el organizador entrando en la aplicación y revisando la información del evento.\n\n"
                         + "Un saludo de todo el equipo.";
-                    email.sendSimpleMessage(u.getEmail(), "Te has deinscrito de " + e.getNombre(), cuerpoEmail);
+                    SimpleMailMessage message = new SimpleMailMessage();
+                message.setTo(u.getEmail());
+                message.setSubject("Te has deinscrito de " + e.getNombre());
+                message.setText(cuerpoEmail);
+
+                emailSender.send(message);
                     ret = true;
                 }
                 break;

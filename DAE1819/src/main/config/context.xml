@@ -5,6 +5,5 @@
                     http://www.springframework.org/schema/beans/spring-beans.xsd">
     
     <bean id="sistema" class="com.dae.dae1819.pojos.Sistema" />
-    <bean id="javaMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl" />
     
 </beans>

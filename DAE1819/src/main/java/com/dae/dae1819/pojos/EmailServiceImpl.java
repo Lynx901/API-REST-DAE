@@ -25,24 +25,6 @@ public class EmailServiceImpl implements EmailService {
     @Autowired
     public JavaMailSenderImpl emailSender;
     
-    @Bean
-    public JavaMailSender javaMailSender() {
-        JavaMailSenderImpl emailSender = new JavaMailSenderImpl();
-        emailSender.setHost("smtp.gmail.com");
-        emailSender.setPort(587);
-
-        emailSender.setUsername("desarrolloaplicacionesweb181@gmail.com");
-        emailSender.setPassword("daedaedae");
-
-        Properties props = emailSender.getJavaMailProperties();
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true");
-
-        return emailSender;
-    }
-
     @Override
     public void sendSimpleMessage(String to, String subject, String text) {
         try {
