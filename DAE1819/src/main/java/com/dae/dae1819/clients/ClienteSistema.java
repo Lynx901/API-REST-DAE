@@ -466,38 +466,26 @@ public class ClienteSistema {
         System.out.println("|-                                                                   -|");
         System.out.println("|---------------------------------------------------------------------|");
 
-//        if (this.seleccionarSN("Desea comenzar la ejecución con unos datos de ejemplo")) {
-//            UsuarioDTO uTest = new UsuarioDTO();
-//            try {
-//                sistema.nuevoUsuario("admin", "admin", "admin", "admin@ujaen.es");
-//            } catch (UsuarioExistente e) {
-//                System.err.print(e);
-//            }
-//            try {
-//                sistema.nuevoUsuario("dani", "dani", "dani", "mail.danielml@gmail.es");
-//            } catch (UsuarioExistente e) {
-//                System.err.print(e);
-//            }
-//            try {
-//                sistema.nuevoUsuario("dml", "dml", "dml", "dml00030@red.ujaen.es");
-//            } catch (UsuarioExistente e) {
-//                System.err.print(e);
-//            }
-//            try {
-//                sistema.nuevoUsuario("USER3", "1a2b", "1a2b", "el3@yo.com");
-//            } catch (UsuarioExistente e) {
-//                System.err.print(e);
-//            }
-//
-//            uTest = sistema.buscarUsuario("admin");
-//
-//            user = sistema.login("admin", "admin");
-//            try {
-//                sistema.nuevoEvento("Clase de DAE", Calendar.getInstance(), "CHARLA", "Lección 17 de Desarrollo de Aplicaciones Web", (Integer) 2, "Edificio A3", user);
-//            } catch (TokenInvalido e) {
-//                System.err.print(e);
-//            }
-//        }
+        if (this.seleccionarSN("Desea comenzar la ejecución con unos datos de ejemplo")) {
+            UsuarioDTO uTest = new UsuarioDTO();
+            try {
+                sistema.nuevoUsuario("admin", "admin", "admin", "admin@ujaen.es");
+
+                sistema.nuevoUsuario("dani", "dani", "dani", "mail.danielml@gmail.es");
+
+                sistema.nuevoUsuario("dml", "dml", "dml", "dml00030@red.ujaen.es");
+
+                sistema.nuevoUsuario("USER3", "1a2b", "1a2b", "el3@yo.com");
+
+                uTest = sistema.buscarUsuario("admin");
+
+                user = sistema.login("admin", "admin");
+
+                sistema.nuevoEvento("Clase de DAE", Calendar.getInstance(), "CHARLA", "Lección 17 de Desarrollo de Aplicaciones Web", (Integer) 2, "Edificio A3", user);
+            } catch (UsuarioExistente e) {
+
+            }
+        }
 
         do {
             System.out.println("|---------------------------------------------------------------------|");

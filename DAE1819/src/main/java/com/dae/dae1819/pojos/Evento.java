@@ -31,10 +31,7 @@ public class Evento {
     @Temporal(TemporalType.TIMESTAMP)
     private Calendar fecha;
 
-    private enum Tipo {
-        CHARLA, CURSO, ACTIVIDAD_DEPORTIVA, VISITA_CULTURAL
-    }
-    private Tipo tipo;
+    private String tipo;
     private String descripcion;
     private Integer capacidad;
     private String localizacion;
@@ -66,7 +63,7 @@ public class Evento {
         this.id = id;
         this.nombre = nombre;
         this.fecha = fecha;
-        this.tipo = Tipo.valueOf(_tipo);
+        this.tipo = _tipo;
         this.descripcion = descripcion;
         this.capacidad = capacidad;
         this.localizacion = localizacion;
@@ -91,7 +88,7 @@ public class Evento {
         this.id = id;
         this.nombre = nombre;
         this.fecha = fecha;
-        this.tipo = Tipo.valueOf(_tipo);
+        this.tipo = _tipo;
         this.descripcion = descripcion;
         this.capacidad = capacidad;
         this.localizacion = localizacion;
@@ -142,14 +139,14 @@ public class Evento {
      * @return the type
      */
     public String getTipo() {
-        return tipo.name();
+        return tipo;
     }
 
     /**
      * @param tipo the tipo to set
      */
     public void setTipo(String tipo) {
-        this.tipo = Tipo.valueOf(tipo);
+        this.tipo = tipo;
     }
 
     /**

@@ -10,8 +10,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,9 +24,8 @@ public class UsuarioDAO {
     @PersistenceContext
     EntityManager em;
 
-    
     public List<Usuario> listar() {
-        List<Usuario> usuarios = em.createQuery("select e from Usuario e", Usuario.class).getResultList();
+        List<Usuario> usuarios = em.createQuery("SELECT u FROM Usuario u", Usuario.class).getResultList();
 
         return usuarios;
     }
@@ -41,10 +38,8 @@ public class UsuarioDAO {
 
     public void insertar(Usuario u) {
         em.persist(u);
-        em.lock(u, LockModeType.OPTIMISTIC);
     }
 
-//    @CacheEvict(value="usuarios" , allEntries=true)
     public Usuario actualizar(Usuario u) {
         Usuario usu = em.merge(u);
         return usu;

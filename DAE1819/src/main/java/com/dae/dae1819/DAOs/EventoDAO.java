@@ -7,15 +7,12 @@ package com.dae.dae1819.DAOs;
 
 import com.dae.dae1819.pojos.Evento;
 import com.dae.dae1819.pojos.Usuario;
-import com.dae.dae1819.pojos.EmailServiceImpl;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,25 +28,43 @@ public class EventoDAO {
     EntityManager em;
 
     public List<Evento> buscarPorNombre(String nombre) {
-        List<Evento> eventos = em.createQuery("select e from Evento e where e.nombre like '%" + nombre + "%'", Evento.class).getResultList();
+        List<Evento> eventos = em.createQuery("SELECT e FROM Evento e WHERE e.nombre LIKE :nombre", Evento.class)
+                .setParameter("nombre", "%" + nombre + "%")
+                .getResultList();
 
         return eventos;
     }
 
     public List<Evento> buscarPorTipo(String tipo) {
-        List<Evento> eventos = em.createQuery("select e from Evento e where e.tipo like '%" + tipo + "%'", Evento.class).getResultList();
+        
+        List<Evento> eventos = em.createQuery("SELECT e FROM Evento e WHERE e.tipo = :tipo", Evento.class)
+                .setParameter("tipo", tipo)
+                .getResultList();
 
         return eventos;
     }
 
     public List<Evento> buscarPorDescripcion(String descripcion) {
-        List<Evento> eventos = em.createQuery("select e from Evento e where e.descripcion like '%" + descripcion + "%'", Evento.class).getResultList();
+        List<Evento> eventos = em.createQuery("SELECT e FROM Evento e WHERE e.descripcion LIKE :descripcion", Evento.class)
+                .setParameter("descripcion", "%" + descripcion + "%")
+                .getResultList();
 
         return eventos;
     }
+    
+    public Usuario buscarUltimoInscrito(Evento e) {
+        Map.Entry<Calendar, Usuario> last = null;
+        // Cogemos el par <key, value> que último se apuntó a la lista de espera
+        for (Map.Entry<Calendar, Usuario> entry : e.getInscritos().entrySet()) {
+            if (last == null || last.getKey().after(entry.getKey())) {
+                last = entry;
+            }
+        }
+        return last.getValue();
+    }
 
     public List<Evento> listar() {
-        List<Evento> eventos = em.createQuery("select e from Evento e", Evento.class).getResultList();
+        List<Evento> eventos = em.createQuery("SELECT e FROM Evento e", Evento.class).getResultList();
 
         return eventos;
     }
@@ -109,15 +124,6 @@ public class EventoDAO {
             
             // Lo inscribimos en la lista de asistentes
             this.inscribir(first.getValue(), e);
-//            EmailServiceImpl email = new EmailServiceImpl();
-//            String cuerpoEmail = "¡Hola " + first.getValue().getUsername() + "! Un usuario se ha desinscrito del evento " + e.getNombre()
-//                    + " que se iba a celebrar el " + e.getFecha().get(Calendar.HOUR) + ":" + e.getFecha().get(Calendar.MINUTE)
-//                    + " del " + e.getFecha().get(Calendar.DATE) + "/" + e.getFecha().get(Calendar.MONTH) + "/" + e.getFecha().get(Calendar.YEAR)
-//                    + " en " + e.getLocalizacion() + " y tú eras el primero de la lista de espera, así que ¡estás dentro!.\n\n"
-//                    + "Contacta con el organizador entrando en la aplicación y revisando la información del evento.\n\n"
-//                    + "Un saludo de todo el equipo.";
-//            System.out.println("[debug] " + cuerpoEmail);
-//            email.sendSimpleMessage(first.getValue().getEmail(), "Te has inscrito a " + e.getNombre(), cuerpoEmail);
         }
 
         Evento newE = this.actualizar(e);
@@ -127,7 +133,6 @@ public class EventoDAO {
 
     public void insertar(Evento e) {
         em.persist(e);
-        em.lock(e, LockModeType.OPTIMISTIC);
     }
 
 //    @CacheEvict(value="eventos" , allEntries=true)
