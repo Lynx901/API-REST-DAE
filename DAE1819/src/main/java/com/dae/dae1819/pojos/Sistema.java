@@ -15,7 +15,6 @@ import com.dae.dae1819.DTOs.UsuarioDTO;
 import com.dae.dae1819.Excepciones.ListaEventosVacia;
 import com.dae.dae1819.Excepciones.TokenInvalido;
 import com.dae.dae1819.Excepciones.UsuarioExistente;
-import com.dae.dae1819.service.EmailService;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.Set;
@@ -39,16 +38,16 @@ public class Sistema extends SistemaInterface {
 
     private List<Integer> tokenConectados;
     
-    private EmailService email;
+    private EmailServiceImpl email;
 
     public Sistema() {
-        this.email = new EmailService();
+        this.email = new EmailServiceImpl();
         this.tokenConectados = new ArrayList();
         this.lastID = 0;
     }
 
     public Sistema(String nombre) {
-        this.email = new EmailService();
+        this.email = new EmailServiceImpl();
         this.nombre = nombre;
         this.tokenConectados = new ArrayList();
         this.lastID = 0;
@@ -98,6 +97,7 @@ public class Sistema extends SistemaInterface {
                 ret = true;
             }
         } catch (Exception e) {
+            System.out.println("[debug] " + e.getMessage());
             throw new UsuarioExistente("El usuario ya existía en el sistema, pruebe con otro\n", new Exception());
         }
 
@@ -218,7 +218,8 @@ public class Sistema extends SistemaInterface {
         int ret = -1;
 
         Usuario u = usuarios.buscar(organizador.getUsername());
-        Evento e = new Evento(lastID++, nombre, fecha, tipo, descripcion, capacidad, localizacion, u);
+        lastID = eventos.listar().size();
+        Evento e = new Evento(lastID, nombre, fecha, tipo, descripcion, capacidad, localizacion, u);
         eventos.insertar(e);
 
         ret = e.getId();

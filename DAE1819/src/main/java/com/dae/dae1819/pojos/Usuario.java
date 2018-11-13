@@ -32,14 +32,17 @@ public class Usuario {
     private int version;
 
     @ManyToMany(mappedBy = "asistentes", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @LazyCollection(LazyCollectionOption.FALSE)
     private final Set<Evento> eventos;
 
     @ManyToMany(mappedBy = "inscritos", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @LazyCollection(LazyCollectionOption.FALSE)
     @MapKeyTemporal(TIMESTAMP)
     private final Set<Evento> listaEspera;
 
     @OneToMany(mappedBy = "organizador",
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @LazyCollection(LazyCollectionOption.FALSE)
     private final Set<Evento> organizados;
 
     public Usuario() {

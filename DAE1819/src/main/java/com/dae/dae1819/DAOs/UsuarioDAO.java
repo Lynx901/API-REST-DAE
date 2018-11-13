@@ -33,18 +33,18 @@ public class UsuarioDAO {
         return usuarios;
     }
 
-    @Cacheable(value="usuarios")
+//    @Cacheable(value="usuarios")
     public Usuario buscar(String username) {
         Usuario result = em.find(Usuario.class, username, LockModeType.OPTIMISTIC);
         return result;
     }
 
     public void insertar(Usuario u) {
-        em.lock(u, LockModeType.OPTIMISTIC);
         em.persist(u);
+        em.lock(u, LockModeType.OPTIMISTIC);
     }
 
-    @CacheEvict(value="usuarios" , allEntries=true)
+//    @CacheEvict(value="usuarios" , allEntries=true)
     public Usuario actualizar(Usuario u) {
         Usuario usu = em.merge(u);
         return usu;

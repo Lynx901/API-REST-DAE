@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @EnableCaching
 @EntityScan(basePackages = "com.dae.dae1819.pojos")
-@ComponentScan({"com.dae.dae1819.DAOs"})
+@ComponentScan({"com.dae.dae1819.DAOs", "org.springframework.mail.javamail.JavaMailSenderImpl"})
 public class SistemaService {
 
     @Bean
@@ -43,21 +43,21 @@ public class SistemaService {
     }
     
     @Bean
-    public JavaMailSender getJavaMailSender() {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(587);
+    public JavaMailSender javaMailSender() {
+        JavaMailSenderImpl emailSender = new JavaMailSenderImpl();
+        emailSender.setHost("smtp.gmail.com");
+        emailSender.setPort(587);
 
-        mailSender.setUsername("desarrolloaplicacionesweb181@gmail.com");
-        mailSender.setPassword("daedaedae");
+        emailSender.setUsername("desarrolloaplicacionesweb181@gmail.com");
+        emailSender.setPassword("daedaedae");
 
-        Properties props = mailSender.getJavaMailProperties();
+        Properties props = emailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.debug", "true");
 
-        return mailSender;
+        return emailSender;
     }
 
     public static void main(String[] args) throws Exception {
