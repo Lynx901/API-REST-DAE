@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.dae.dae1819.DTOs.EventoDTO;
 import com.dae.dae1819.DTOs.UsuarioDTO;
-import com.dae.dae1819.Excepciones.ListaAsistentesVacia;
+import com.dae.dae1819.Excepciones.ListaEventosVacia;
 import com.dae.dae1819.Excepciones.TokenInvalido;
 import com.dae.dae1819.Excepciones.UsuarioExistente;
 import java.util.Calendar;
@@ -141,10 +141,10 @@ public class Sistema extends SistemaInterface {
     }
 
     @Override
-    public List<EventoDTO> buscarEventoPorNombre(String nombre) throws ListaAsistentesVacia {
+    public List<EventoDTO> buscarEventoPorNombre(String nombre) throws ListaEventosVacia {
         List<Evento> eventosBuscados = eventos.buscarPorNombre(nombre);
         if (eventosBuscados.isEmpty()) {
-            throw new ListaAsistentesVacia("La lista de eventos está vacía\n", new Exception());
+            throw new ListaEventosVacia("La lista de eventos está vacía\n", new Exception());
         }
 
         List<EventoDTO> eventosBuscadosDTO = new ArrayList();
@@ -156,10 +156,10 @@ public class Sistema extends SistemaInterface {
     }
 
     @Override
-    public List<EventoDTO> buscarEventosPorTipo(String tipo) throws ListaAsistentesVacia {
+    public List<EventoDTO> buscarEventosPorTipo(String tipo) throws ListaEventosVacia {
         List<Evento> eventosBuscados = eventos.buscarPorTipo(tipo);
         if (eventosBuscados.isEmpty()) {
-            throw new ListaAsistentesVacia("La lista de eventos está vacía\n", new Exception());
+            throw new ListaEventosVacia("La lista de eventos está vacía\n", new Exception());
         }
 
         List<EventoDTO> eventosBuscadosDTO = new ArrayList();
@@ -171,10 +171,10 @@ public class Sistema extends SistemaInterface {
     }
 
     @Override
-    public List<EventoDTO> buscarEventosPorDescripcion(String descripcion) throws ListaAsistentesVacia {
+    public List<EventoDTO> buscarEventosPorDescripcion(String descripcion) throws ListaEventosVacia {
         List<Evento> eventosBuscados = eventos.buscarPorDescripcion(descripcion);
         if (eventosBuscados.isEmpty()) {
-            throw new ListaAsistentesVacia("La lista de eventos está vacía\n", new Exception());
+            throw new ListaEventosVacia("La lista de eventos está vacía\n", new Exception());
         }
 
         List<EventoDTO> eventosBuscadosDTO = new ArrayList();
@@ -186,10 +186,10 @@ public class Sistema extends SistemaInterface {
     }
 
     @Override
-    public List<EventoDTO> buscarEventos() throws ListaAsistentesVacia {
+    public List<EventoDTO> buscarEventos() throws ListaEventosVacia {
         List<Evento> eventosBuscados = eventos.listar();
         if (eventosBuscados.isEmpty()) {
-            throw new ListaAsistentesVacia("La lista de eventos está vacía\n", new Exception());
+            throw new ListaEventosVacia("La lista de eventos está vacía\n", new Exception());
         }
 
         List<EventoDTO> eventosBuscadosDTO = new ArrayList();
@@ -436,14 +436,14 @@ public class Sistema extends SistemaInterface {
     }
 
     @Override
-    public List<EventoDTO> buscarEventosInscritos(UsuarioDTO uDTO) throws ListaAsistentesVacia, TokenInvalido {
+    public List<EventoDTO> buscarEventosInscritos(UsuarioDTO uDTO) throws ListaEventosVacia, TokenInvalido {
         if (!this.isTokenValid(uDTO.getToken())) {
             throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception());
         }
 
         Set<Evento> eventosBuscados = usuarios.buscar(uDTO.getUsername()).getEventos();
         if (eventosBuscados.isEmpty()) {
-            throw new ListaAsistentesVacia("La lista de eventos está vacía", new Exception());
+            throw new ListaEventosVacia("La lista de eventos está vacía", new Exception());
         }
         
         List<EventoDTO> eventosBuscadosDTO = new ArrayList();
@@ -455,14 +455,14 @@ public class Sistema extends SistemaInterface {
     }
 
     @Override
-    public List<EventoDTO> buscarEventosOrganizados(UsuarioDTO uDTO) throws ListaAsistentesVacia, TokenInvalido {
+    public List<EventoDTO> buscarEventosOrganizados(UsuarioDTO uDTO) throws ListaEventosVacia, TokenInvalido {
         if (!this.isTokenValid(uDTO.getToken())) {
             throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.", new Exception());
         }
 
         List<Evento> eventosBuscados = usuarios.buscar(uDTO.getUsername()).getOrganizadosLista();
         if (eventosBuscados.isEmpty()) {
-            throw new ListaAsistentesVacia("La lista de eventos está vacía", new Exception());
+            throw new ListaEventosVacia("La lista de eventos está vacía", new Exception());
         }
 
         List<EventoDTO> eventosBuscadosDTO = new ArrayList();

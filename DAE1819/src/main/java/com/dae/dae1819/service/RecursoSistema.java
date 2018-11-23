@@ -7,8 +7,7 @@ package com.dae.dae1819.service;
 
 import com.dae.dae1819.DTOs.EventoDTO;
 import com.dae.dae1819.DTOs.UsuarioDTO;
-import com.dae.dae1819.Excepciones.ListaAsistentesVacia;
-import com.dae.dae1819.Excepciones.istaEventosVacia;
+import com.dae.dae1819.Excepciones.ListaEventosVacia;
 import com.dae.dae1819.pojos.Sistema;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,13 +32,35 @@ public class RecursoSistema {
         return sistema;
     }
     
-    @RequestMapping(value="/eventos", method=RequestMethod.GET, produces="application/json")
-    public List<EventoDTO> obtenerEvento(@RequestParam(defaultValue="") String nombre) throws ListaEventosVacia {
+    @RequestMapping(value="/eventos?Name={nombre}", method=RequestMethod.GET, produces="application/json")
+    public List<EventoDTO> obtenerEventosPorNombre(@RequestParam(defaultValue="") String nombre) throws ListaEventosVacia {
         List<EventoDTO> eventos = new ArrayList();
         try {
             eventos = sistema.buscarEventoPorNombre(nombre);
-        } catch (ListaAsistentesVacia e) {
-            throw new ListaAsistentesVacia(e.getMessage());
+        } catch (ListaEventosVacia e) {
+            throw new ListaEventosVacia(e.getMessage());
+        }
+        return eventos;
+    }
+    
+    @RequestMapping(value="/eventos?Desc={descripcion}", method=RequestMethod.GET, produces="application/json")
+    public List<EventoDTO> obtenerEventoDescripcion(@RequestParam(defaultValue="") String descripcion) throws ListaEventosVacia {
+        List<EventoDTO> eventos = new ArrayList();
+        try {
+            eventos = sistema.buscarEventosPorDescripcion(descripcion);
+        } catch (ListaEventosVacia e) {
+            throw new ListaEventosVacia(e.getMessage());
+        }
+        return eventos;
+    }
+    
+    @RequestMapping(value="/eventos?Type={tipo}", method=RequestMethod.GET, produces="application/json")
+    public List<EventoDTO> obtenerEventoTipo(@RequestParam(defaultValue="") String tipo) throws ListaEventosVacia {
+        List<EventoDTO> eventos = new ArrayList();
+        try {
+            eventos = sistema.buscarEventosPorTipo(tipo);
+        } catch (ListaEventosVacia e) {
+            throw new ListaEventosVacia(e.getMessage());
         }
         return eventos;
     }
@@ -51,7 +72,7 @@ public class RecursoSistema {
     }
     
     @RequestMapping(value="/eventos/{id}/asistentes", method=RequestMethod.GET, produces="application/json")
-    public List<UsuarioDTO> obtenerAsistentes(@PathVariable int id) {
+    public List<UsuarioDTO> obtenerAsistentes(@PathVariable int id) throws ListaEventosVacia {
         List<String> eventos = sistema.buscarEventoPorId(id).getAsistentes();
         List<UsuarioDTO> usuarios = new ArrayList();
         if (eventos.isEmpty()){
@@ -65,10 +86,12 @@ public class RecursoSistema {
     }
     
     @RequestMapping(value="/eventos/{id}/inscritos", method=RequestMethod.GET, produces="application/json")
-    public List<UsuarioDTO> obtenerInscritos(@PathVariable int id) {
+    public List<UsuarioDTO> obtenerInscritos(@PathVariable int id) throws ListaEventosVacia {
         List<String> eventos = sistema.buscarEventoPorId(id).getInscritos();
         List<UsuarioDTO> usuarios = new ArrayList();
-        
+        if (eventos.isEmpty()){
+            throw new ListaEventosVacia();
+        }
         eventos.forEach((u) -> {
             usuarios.add(sistema.buscarUsuario(u));
         });
@@ -83,7 +106,7 @@ public class RecursoSistema {
     }
     
     @RequestMapping(value="/usuario/{username}/eventos", method=RequestMethod.GET, produces="application/json")
-    public List<EventoDTO> obtenerEventos(@PathVariable String username) {
+    public List<EventoDTO> obtenerEventosUsuario(@PathVariable String username) {
         UsuarioDTO usuario = sistema.buscarUsuario(username);
         List<Integer> idEventos = usuario.getEventos();
         List<EventoDTO> eventos = new ArrayList();
@@ -96,9 +119,22 @@ public class RecursoSistema {
     }
     
     @RequestMapping(value="/usuario/{username}/listaEspera", method=RequestMethod.GET, produces="application/json")
-    public List<EventoDTO> obtenerListaEspera(@PathVariable String username) {
+    public List<EventoDTO> obtenerEventosListaEspera(@PathVariable String username) {
         UsuarioDTO usuario = sistema.buscarUsuario(username);
         List<Integer> idEventos = usuario.getListaEspera();
+        List<EventoDTO> eventos = new ArrayList();
+        
+        idEventos.forEach((u) -> {
+            eventos.add(sistema.buscarEventoPorId(u));
+        });
+        
+        return eventos;
+    }
+    
+    @RequestMapping(value="/usuario/{username}/organizados", method=RequestMethod.GET, produces="application/json")
+    public List<EventoDTO> obtenerEventosOrganizados(@PathVariable String username) {
+        UsuarioDTO usuario = sistema.buscarUsuario(username);
+        List<Integer> idEventos = usuario.getOrganizados();
         List<EventoDTO> eventos = new ArrayList();
         
         idEventos.forEach((u) -> {

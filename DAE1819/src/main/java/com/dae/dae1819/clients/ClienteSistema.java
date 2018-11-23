@@ -8,6 +8,7 @@ package com.dae.dae1819.clients;
 import com.dae.dae1819.DTOs.EventoDTO;
 import com.dae.dae1819.DTOs.UsuarioDTO;
 import com.dae.dae1819.Excepciones.ListaAsistentesVacia;
+import com.dae.dae1819.Excepciones.ListaEventosVacia;
 import com.dae.dae1819.Excepciones.TokenInvalido;
 import com.dae.dae1819.Excepciones.UsuarioExistente;
 import com.dae.dae1819.interfaces.SistemaInterface;
@@ -452,7 +453,7 @@ public class ClienteSistema {
         return ret;
     }
 
-    public void run() throws TokenInvalido {
+    public void run() throws TokenInvalido, ListaEventosVacia {
         SistemaInterface sistema = (SistemaInterface) context.getBean("sistema");
         user = new UsuarioDTO();
         Scanner capt = new Scanner(System.in);
@@ -634,7 +635,7 @@ public class ClienteSistema {
                                 } else {
                                     System.out.println("|- El evento no es válido.                                            -|");
                                 }
-                            } catch (ListaAsistentesVacia e) {
+                            } catch (ListaEventosVacia e) {
                                 System.err.print(e.getMessage());
                             }
                             break;
@@ -676,7 +677,7 @@ public class ClienteSistema {
                                     } else {
                                         System.out.println("|- El evento no es válido.                                            -|");
                                     }
-                                } catch (ListaAsistentesVacia e) {
+                                } catch (ListaEventosVacia e) {
                                     System.err.print(e.getMessage());
                                 }
                             }
@@ -713,7 +714,7 @@ public class ClienteSistema {
                         } else {
                             System.out.println("|- El evento no es válido.                                            -|");
                         }
-                    } catch (ListaAsistentesVacia e) {
+                    } catch (ListaEventosVacia e) {
                         System.err.print(e.getMessage());
                     }
                     break;
@@ -878,7 +879,7 @@ public class ClienteSistema {
                             } else {
                                 System.out.println("|- El evento no es válido.                                            -|");
                             }
-                        } catch (ListaAsistentesVacia e) {
+                        } catch (ListaEventosVacia e) {
                             System.err.print(e.getMessage());
                         }
                     }
@@ -914,7 +915,7 @@ public class ClienteSistema {
                             } else {
                                 System.out.println("|- El evento no es válido.                                            -|");
                             }
-                        } catch (ListaAsistentesVacia e) {
+                        } catch (ListaEventosVacia e) {
                             System.err.print(e.getMessage());
                         }
 
