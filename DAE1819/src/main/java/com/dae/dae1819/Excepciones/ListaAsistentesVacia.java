@@ -7,5 +7,8 @@ package com.dae.dae1819.Excepciones;
 
 /**
  *
- * @author dml y jfaf
+ * @author juanf
  */
+public class ListaAsistentesVacia {
+    
+}

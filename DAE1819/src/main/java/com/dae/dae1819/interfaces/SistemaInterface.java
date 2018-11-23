@@ -7,7 +7,7 @@ package com.dae.dae1819.interfaces;
 
 import com.dae.dae1819.DTOs.EventoDTO;
 import com.dae.dae1819.DTOs.UsuarioDTO;
-import com.dae.dae1819.Excepciones.ListaEventosVacia;
+import com.dae.dae1819.Excepciones.ListaAsistentesVacia;
 import com.dae.dae1819.Excepciones.TokenInvalido;
 import com.dae.dae1819.Excepciones.UsuarioExistente;
 import java.util.Calendar;
@@ -74,43 +74,43 @@ public abstract class SistemaInterface {
      * Busca un evento por el nombre del mismo
      *
      * @param nombre el nombre del evento a buscar
-     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos
+     * @throws ListaAsistentesVacia Excepcion que se lanza si la lista de eventos
      * esta vacia
      * @return un EventoDTO del evento encontrado, o null si no lo encuentra
      */
-    public abstract List<EventoDTO> buscarEventoPorNombre(String nombre) throws ListaEventosVacia;
+    public abstract List<EventoDTO> buscarEventoPorNombre(String nombre) throws ListaAsistentesVacia;
 
     /**
      * Busca un evento por el tipo del mismo
      *
      * @param tipo el tipo del evento a buscar
-     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos
+     * @throws ListaAsistentesVacia Excepcion que se lanza si la lista de eventos
      * esta vacia
      * @return una lista de EventoDTO encontrados, o una lista vacía si no
      * encuentra ninguno
      */
-    public abstract List<EventoDTO> buscarEventosPorTipo(String tipo) throws ListaEventosVacia;
+    public abstract List<EventoDTO> buscarEventosPorTipo(String tipo) throws ListaAsistentesVacia;
 
     /**
      * Busca un evento por la descripción del mismo
      *
      * @param descripcion la descripción del evento a buscar
-     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos
+     * @throws ListaAsistentesVacia Excepcion que se lanza si la lista de eventos
      * esta vacia
      * @return una lista de EventoDTO encontrados, o una lista vacía si no
      * encuentra ninguno
      */
-    public abstract List<EventoDTO> buscarEventosPorDescripcion(String descripcion) throws ListaEventosVacia;
+    public abstract List<EventoDTO> buscarEventosPorDescripcion(String descripcion) throws ListaAsistentesVacia;
 
     /**
      * Lista todos los eventos del sistema
      *
-     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos
+     * @throws ListaAsistentesVacia Excepcion que se lanza si la lista de eventos
      * esta vacia
      * @return una lista con todos los eventos creados en forma DTO (vacía si no
      * encuentra ninguno)
      */
-    public abstract List<EventoDTO> buscarEventos() throws ListaEventosVacia;
+    public abstract List<EventoDTO> buscarEventos() throws ListaAsistentesVacia;
 
     /*
      ***************************************************************************
@@ -169,27 +169,27 @@ public abstract class SistemaInterface {
      * Busca los eventos en los que se ha inscrito el usuario
      *
      * @param uDTO usuario del que se comprobará el listado de eventos
-     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos
+     * @throws ListaAsistentesVacia Excepcion que se lanza si la lista de eventos
      * esta vacia
      * @throws com.dae.dae1819.Excepciones.TokenInvalido
      * @return una lista de EventoDTO con los eventos inscritos, o una vacía si
      * no encuentra ninguno
      */
-    public abstract List<EventoDTO> buscarEventosInscritos(UsuarioDTO uDTO) throws ListaEventosVacia, TokenInvalido;
+    public abstract List<EventoDTO> buscarEventosInscritos(UsuarioDTO uDTO) throws ListaAsistentesVacia, TokenInvalido;
 
     /**
      * Busca los eventos organizados por el usuario
      *
      * @param uDTO usuario del que se comprobará el listado de eventos
      * organizados
-     * @throws ListaEventosVacia Excepcion que se lanza si la lista de eventos
+     * @throws ListaAsistentesVacia Excepcion que se lanza si la lista de eventos
      * esta vacia
      * @throws com.dae.dae1819.Excepciones.TokenInvalido
      * @return una lista de EventoDTO con los eventos organizados, o una vacía
      * si no encuentra ninguno
      
      */
-    public abstract List<EventoDTO> buscarEventosOrganizados(UsuarioDTO uDTO) throws ListaEventosVacia, TokenInvalido;
+    public abstract List<EventoDTO> buscarEventosOrganizados(UsuarioDTO uDTO) throws ListaAsistentesVacia, TokenInvalido;
 
     /**
      * Inscribe a un usuario en un evento
