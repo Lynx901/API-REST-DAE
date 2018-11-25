@@ -7,14 +7,22 @@ package com.dae.dae1819.service;
 
 import com.dae.dae1819.DTOs.EventoDTO;
 import com.dae.dae1819.DTOs.UsuarioDTO;
+import com.dae.dae1819.Excepciones.EventoExistente;
+import com.dae.dae1819.Excepciones.EventoIncorrecto;
 import com.dae.dae1819.Excepciones.ListaEventosVacia;
+import com.dae.dae1819.Excepciones.TokenInvalido;
+import com.dae.dae1819.Excepciones.UsuarioExistente;
+import com.dae.dae1819.Excepciones.UsuarioIncorrecto;
 import com.dae.dae1819.pojos.Sistema;
 import java.util.ArrayList;
 import java.util.List;
+import static org.springframework.http.HttpStatus.CREATED;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -143,4 +151,31 @@ public class RecursoSistema {
         
         return eventos;
     }
+    
+    @RequestMapping(value="/eventos/crear", method=RequestMethod.POST, produces="application/json")
+    @ResponseStatus(CREATED)
+    public void crearEvento(@PathVariable int idevento, @RequestBody EventoDTO evento) throws EventoIncorrecto, TokenInvalido, EventoExistente {
+        if (evento == null){
+            throw new EventoIncorrecto();
+        }
+        EventoDTO eventobuscado = (EventoDTO) sistema.buscarEventoPorId(idevento);
+        if (eventobuscado == evento){
+            throw new EventoExistente();
+        }
+        UsuarioDTO usuario = sistema.buscarUsuario(evento.getOrganizador());
+        sistema.nuevoEvento(evento.getNombre(), evento.getFecha(), evento.getTipo(), evento.getDescripcion(), idevento, evento.getLocalizacion(), usuario);
+    }
+    
+    @RequestMapping(value="/usuario/crear", method=RequestMethod.POST, produces="application/json")
+    @ResponseStatus(CREATED)
+     public void crearUsuario(@PathVariable String username, @RequestBody UsuarioDTO usuario) throws TokenInvalido, UsuarioIncorrecto, UsuarioExistente {
+         if (usuario == null){
+             throw new UsuarioIncorrecto();
+         }
+         UsuarioDTO usuariobuscado = sistema.buscarUsuario(username);
+         if (usuariobuscado == usuario){
+             throw new UsuarioExistente();
+         }
+         sistema.nuevoUsuario(username, usuario.getPassword(), usuario.getPassword(),usuario.getEmail());
+     }
 }

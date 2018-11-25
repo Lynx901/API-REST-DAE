@@ -7,14 +7,14 @@ package com.dae.dae1819.Excepciones;
 
 /**
  *
- * @author dml y jfaf
+ * @author juanf
  */
-public class UsuarioExistente extends Exception{
-    public UsuarioExistente(String message, Throwable cause) {
-        super(message, cause);
+public class EventoIncorrecto extends Exception {
+     public EventoIncorrecto(String message) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public UsuarioExistente() {
+    public EventoIncorrecto() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

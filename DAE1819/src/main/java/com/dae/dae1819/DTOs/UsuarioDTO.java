@@ -17,6 +17,7 @@ public class UsuarioDTO {
     private String username;
     private String email;
     private Integer token;
+    private String password;
 
     private List<Integer> eventos;
     private List<Integer> organizados;
@@ -147,5 +148,9 @@ public class UsuarioDTO {
      */
     public void setToken(Integer token) {
         this.token = token;
+    }
+    
+    public String getPassword() {
+        return password;
     }
 }
