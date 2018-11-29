@@ -40,7 +40,7 @@ public class RecursoSistema {
         return sistema;
     }
     
-    @RequestMapping(value="/eventos?Name={nombre}", method=RequestMethod.GET, produces="application/json")
+    @RequestMapping(value="/eventos?name={nombre}", method=RequestMethod.GET, produces="application/json")
     public List<EventoDTO> obtenerEventosPorNombre(@RequestParam(defaultValue="") String nombre) throws ListaEventosVacia {
         List<EventoDTO> eventos = new ArrayList();
         try {
@@ -51,7 +51,7 @@ public class RecursoSistema {
         return eventos;
     }
     
-    @RequestMapping(value="/eventos?Desc={descripcion}", method=RequestMethod.GET, produces="application/json")
+    @RequestMapping(value="/eventos?desc={descripcion}", method=RequestMethod.GET, produces="application/json")
     public List<EventoDTO> obtenerEventoDescripcion(@RequestParam(defaultValue="") String descripcion) throws ListaEventosVacia {
         List<EventoDTO> eventos = new ArrayList();
         try {
@@ -62,7 +62,7 @@ public class RecursoSistema {
         return eventos;
     }
     
-    @RequestMapping(value="/eventos?Type={tipo}", method=RequestMethod.GET, produces="application/json")
+    @RequestMapping(value="/eventos?type={tipo}", method=RequestMethod.GET, produces="application/json")
     public List<EventoDTO> obtenerEventoTipo(@RequestParam(defaultValue="") String tipo) throws ListaEventosVacia {
         List<EventoDTO> eventos = new ArrayList();
         try {
@@ -152,21 +152,21 @@ public class RecursoSistema {
         return eventos;
     }
     
-    @RequestMapping(value="/eventos/crear", method=RequestMethod.POST, produces="application/json")
+    @RequestMapping(value="/eventos/{id}", method=RequestMethod.POST, produces="application/json")
     @ResponseStatus(CREATED)
-    public void crearEvento(@PathVariable int idevento, @RequestBody EventoDTO evento) throws EventoIncorrecto, TokenInvalido, EventoExistente {
+    public void crearEvento(@PathVariable int id, @RequestBody EventoDTO evento) throws EventoIncorrecto, TokenInvalido, EventoExistente {
         if (evento == null){
             throw new EventoIncorrecto();
         }
-        EventoDTO eventobuscado = (EventoDTO) sistema.buscarEventoPorId(idevento);
+        EventoDTO eventobuscado = (EventoDTO) sistema.buscarEventoPorId(id);
         if (eventobuscado == evento){
             throw new EventoExistente();
         }
         UsuarioDTO usuario = sistema.buscarUsuario(evento.getOrganizador());
-        sistema.nuevoEvento(evento.getNombre(), evento.getFecha(), evento.getTipo(), evento.getDescripcion(), idevento, evento.getLocalizacion(), usuario);
+        sistema.nuevoEvento(evento.getNombre(), evento.getFecha(), evento.getTipo(), evento.getDescripcion(), id, evento.getLocalizacion(), usuario);
     }
     
-    @RequestMapping(value="/usuario/crear", method=RequestMethod.POST, produces="application/json")
+    @RequestMapping(value="/usuario/{username}", method=RequestMethod.POST, produces="application/json")
     @ResponseStatus(CREATED)
      public void crearUsuario(@PathVariable String username, @RequestBody UsuarioDTO usuario) throws TokenInvalido, UsuarioIncorrecto, UsuarioExistente {
          if (usuario == null){
