@@ -44,11 +44,8 @@ public class SistemaService {
 
     public static void main(String[] args) throws Exception {
         SpringApplication servidor = new SpringApplication(SistemaService.class);
-        ApplicationContext context = servidor.run(args);
+        servidor.run(args);
 
-        ClienteSistema cliente = new ClienteSistema(context);
-
-        cliente.run();
     }
 
 }

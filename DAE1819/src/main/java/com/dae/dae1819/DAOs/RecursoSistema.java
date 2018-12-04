@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.dae.dae1819.service;
+package com.dae.dae1819.DAOs;
 
 import com.dae.dae1819.DTOs.EventoDTO;
 import com.dae.dae1819.DTOs.UsuarioDTO;
@@ -14,8 +14,10 @@ import com.dae.dae1819.Excepciones.TokenInvalido;
 import com.dae.dae1819.Excepciones.UsuarioExistente;
 import com.dae.dae1819.Excepciones.UsuarioIncorrecto;
 import com.dae.dae1819.pojos.Sistema;
+import com.dae.dae1819.pojos.Sistema;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import static org.springframework.http.HttpStatus.CREATED;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/")
 public class RecursoSistema {
     
+    @Autowired
     Sistema sistema;
     
     @RequestMapping(method=RequestMethod.GET, produces="application/json")
@@ -168,8 +171,9 @@ public class RecursoSistema {
     
     @RequestMapping(value="/usuario/{username}", method=RequestMethod.POST, produces="application/json")
     @ResponseStatus(CREATED)
+    // TO-DO Crear DTO específico para el registro
      public void crearUsuario(@PathVariable String username, @RequestBody UsuarioDTO usuario) throws TokenInvalido, UsuarioIncorrecto, UsuarioExistente {
-         if (usuario == null){
+         if (usuario == null){ 
              throw new UsuarioIncorrecto();
          }
          UsuarioDTO usuariobuscado = sistema.buscarUsuario(username);
