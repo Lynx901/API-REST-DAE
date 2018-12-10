@@ -17,8 +17,11 @@ spring.mail.password: yovzlsjyobszenlf
 spring.mail.properties.mail.smtp.auth: true
 spring.mail.properties.mail.smtp.starttls.enable: true
 
-server:
-  port: 8080
+server.port: 8080
+server.ssl.key-store: classpath:dae1819.p12
+server.ssl.key-store-password: dae1819
+server.ssl.keyStoreType: PKCS12
+server.ssl.keyAlias: tomcat
 
 spring:
   cache:
