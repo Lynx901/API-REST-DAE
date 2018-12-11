@@ -10,11 +10,11 @@ package com.dae.dae1819.Excepciones;
  * @author macosx
  */
 public class AtributoVacio extends Exception{
-    public AtributoVacio(String message, Throwable cause) {
-        super(message, cause);
+    public AtributoVacio(String message) {
+        super(message);
     }
-    
+
     public AtributoVacio() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        super("Algún atributo está vacío. No hay más detalles.");
     }
 }

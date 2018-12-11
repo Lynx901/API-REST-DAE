@@ -12,6 +12,7 @@ import com.dae.dae1819.Excepciones.AtributoVacio;
 import com.dae.dae1819.Excepciones.EventoExistente;
 import com.dae.dae1819.Excepciones.EventoIncorrecto;
 import com.dae.dae1819.Excepciones.ListaEventosVacia;
+import com.dae.dae1819.Excepciones.ListaUsuariosVacia;
 import com.dae.dae1819.Excepciones.TokenInvalido;
 import com.dae.dae1819.Excepciones.UsuarioExistente;
 import com.dae.dae1819.Excepciones.UsuarioIncorrecto;
@@ -20,12 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import static org.springframework.http.HttpStatus.CREATED;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,77 +43,83 @@ public class RecursoSistema {
     public Sistema obtenerSistema() {
         return sistema;
     }
+    
+//    @RequestMapping(value = "/eventos?nombre={nombre}", method = RequestMethod.GET, produces = "application/json")
+//    public List<EventoDTO> obtenerEventosPorNombre(@RequestParam(defaultValue = "") String nombre) throws ListaEventosVacia {
+//        List<EventoDTO> eventos = new ArrayList();
+//        try {
+//            eventos = sistema.buscarEventoPorNombre(nombre);
+//        } catch (ListaEventosVacia e) {
+//            throw new ListaEventosVacia(e.getMessage());
+//        }
+//        return eventos;
+//    }
+//
+//    @RequestMapping(value = "/eventos?desc={descripcion}", method = RequestMethod.GET, produces = "application/json")
+//    public List<EventoDTO> obtenerEventoDescripcion(@RequestParam(defaultValue = "") String descripcion) throws ListaEventosVacia {
+//        List<EventoDTO> eventos = new ArrayList();
+//        try {
+//            eventos = sistema.buscarEventosPorDescripcion(descripcion);
+//        } catch (ListaEventosVacia e) {
+//            throw new ListaEventosVacia(e.getMessage());
+//        }
+//        return eventos;
+//    }
+//
+//    @RequestMapping(value = "/eventos?tipo={tipo}", method = RequestMethod.GET, produces = "application/json")
+//    public List<EventoDTO> obtenerEventoTipo(@RequestParam(defaultValue = "") String tipo) throws ListaEventosVacia {
+//        List<EventoDTO> eventos = new ArrayList();
+//        try {
+//            eventos = sistema.buscarEventosPorTipo(tipo);
+//        } catch (ListaEventosVacia e) {
+//            throw new ListaEventosVacia(e.getMessage());
+//        }
+//        return eventos;
+//    }
 
-    @RequestMapping(value = "/eventos?name={nombre}", method = RequestMethod.GET, produces = "application/json")
-    public List<EventoDTO> obtenerEventosPorNombre(@RequestParam(defaultValue = "") String nombre) throws ListaEventosVacia {
-        List<EventoDTO> eventos = new ArrayList();
-        try {
-            eventos = sistema.buscarEventoPorNombre(nombre);
-        } catch (ListaEventosVacia e) {
-            throw new ListaEventosVacia(e.getMessage());
-        }
-        return eventos;
-    }
-
-    @RequestMapping(value = "/eventos?desc={descripcion}", method = RequestMethod.GET, produces = "application/json")
-    public List<EventoDTO> obtenerEventoDescripcion(@RequestParam(defaultValue = "") String descripcion) throws ListaEventosVacia {
-        List<EventoDTO> eventos = new ArrayList();
-        try {
-            eventos = sistema.buscarEventosPorDescripcion(descripcion);
-        } catch (ListaEventosVacia e) {
-            throw new ListaEventosVacia(e.getMessage());
-        }
-        return eventos;
-    }
-
-    @RequestMapping(value = "/eventos?type={tipo}", method = RequestMethod.GET, produces = "application/json")
-    public List<EventoDTO> obtenerEventoTipo(@RequestParam(defaultValue = "") String tipo) throws ListaEventosVacia {
-        List<EventoDTO> eventos = new ArrayList();
-        try {
-            eventos = sistema.buscarEventosPorTipo(tipo);
-        } catch (ListaEventosVacia e) {
-            throw new ListaEventosVacia(e.getMessage());
-        }
-        return eventos;
-    }
-
-    @RequestMapping(value = "/eventos/{id}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/evento/{id}", method = RequestMethod.GET, produces = "application/json")
     public EventoDTO obtenerEvento(@PathVariable int id) {
         EventoDTO evento = sistema.buscarEventoPorId(id);
         return evento;
     }
 
-    @RequestMapping(value = "/eventos/{id}/asistentes", method = RequestMethod.GET, produces = "application/json")
-    public List<UsuarioDTO> obtenerAsistentes(@PathVariable int id) throws ListaEventosVacia {
-        List<String> eventos = sistema.buscarEventoPorId(id).getAsistentes();
-        List<UsuarioDTO> usuarios = new ArrayList();
-        if (eventos.isEmpty()) {
-            throw new ListaEventosVacia();
+    @RequestMapping(value = "/evento/{id}/asistentes", method = RequestMethod.GET, produces = "application/json")
+    public List<UsuarioDTO> obtenerAsistentes(@PathVariable int id) throws ListaUsuariosVacia {
+        List<String> asistentes = sistema.buscarEventoPorId(id).getAsistentes();
+        if (asistentes.isEmpty()) {
+            throw new ListaUsuariosVacia("No hay usuarios inscritos");
         }
-        eventos.forEach((u) -> {
+        
+        List<UsuarioDTO> usuarios = new ArrayList();
+        for(u : asistentes) {
             usuarios.add(sistema.buscarUsuario(u));
-        });
+        }
 
         return usuarios;
     }
 
-    @RequestMapping(value = "/eventos/{id}/inscritos", method = RequestMethod.GET, produces = "application/json")
-    public List<UsuarioDTO> obtenerInscritos(@PathVariable int id) throws ListaEventosVacia {
-        List<String> eventos = sistema.buscarEventoPorId(id).getInscritos();
-        List<UsuarioDTO> usuarios = new ArrayList();
-        if (eventos.isEmpty()) {
-            throw new ListaEventosVacia();
+    @RequestMapping(value = "/evento/{id}/inscritos", method = RequestMethod.GET, produces = "application/json")
+    public List<UsuarioDTO> obtenerInscritos(@PathVariable int id) throws ListaUsuariosVacia {
+        List<String> asistentes = sistema.buscarEventoPorId(id).getAsistentes();
+        if (asistentes.isEmpty()) {
+            throw new ListaUsuariosVacia("No hay usuarios en la lista de espera");
         }
-        eventos.forEach((u) -> {
+        
+        List<UsuarioDTO> usuarios = new ArrayList();
+        for(u : asistentes) {
             usuarios.add(sistema.buscarUsuario(u));
-        });
+        }
 
         return usuarios;
     }
 
     @RequestMapping(value = "/usuario/{username}", method = RequestMethod.GET, produces = "application/json")
-    public UsuarioDTO obtenerUsuario(@PathVariable String username) {
+    public UsuarioDTO obtenerUsuario(@PathVariable String username) throws UsuarioIncorrecto {
         UsuarioDTO usuario = sistema.buscarUsuario(username);
+        if (usuario == null) {
+            throw new UsuarioIncorrecto("No existe un usuario con ese username");
+        }
+        
         return usuario;
     }
 
@@ -157,14 +162,15 @@ public class RecursoSistema {
         return eventos;
     }
 
-    @RequestMapping(value = "/eventos/{id}", method = RequestMethod.POST, produces = "application/json")
-    @ResponseStatus(CREATED)
+    @RequestMapping(value = "/evento/{id}", method = RequestMethod.POST, produces = "application/json")
+    @ResponseStatus(code = HttpStatus.CREATED)
     public void crearEvento(@PathVariable int id, @RequestBody EventoDTO evento) throws EventoIncorrecto, TokenInvalido, EventoExistente {
         if (evento == null) {
             throw new EventoIncorrecto();
         }
+        
         EventoDTO eventobuscado = (EventoDTO) sistema.buscarEventoPorId(id);
-        if (eventobuscado == evento) {
+        if (sistema.buscarEventoPorId(id) != null ) {
             throw new EventoExistente();
         }
         UsuarioDTO usuario = sistema.buscarUsuario(evento.getOrganizador());

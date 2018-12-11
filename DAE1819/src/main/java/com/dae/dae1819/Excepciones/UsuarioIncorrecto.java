@@ -11,10 +11,10 @@ package com.dae.dae1819.Excepciones;
  */
 public class UsuarioIncorrecto extends Exception {
     public UsuarioIncorrecto(String message) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        super(message);
     }
 
     public UsuarioIncorrecto() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        super("Usuario incorrecto. No hay más detalles.");
     }
 }

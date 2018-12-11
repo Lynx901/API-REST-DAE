@@ -12,7 +12,11 @@ package com.dae.dae1819.Excepciones;
 public class ListaUsuariosVacia extends Exception {
 
     public ListaUsuariosVacia(String message) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        super(message);
+    }
+
+    public ListaUsuariosVacia() {
+        super("Lista de usuarios vacía. No hay más detalles.");
     }
     
 }

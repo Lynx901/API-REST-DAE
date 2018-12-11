@@ -10,11 +10,11 @@ package com.dae.dae1819.Excepciones;
  * @author dml y jfaf
  */
 public class UsuarioExistente extends Exception{
-    public UsuarioExistente(String message, Throwable cause) {
-        super(message, cause);
+    public UsuarioExistente(String message) {
+        super(message);
     }
 
     public UsuarioExistente() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        super("Usuario existente. No hay más detalles.");
     }
 }

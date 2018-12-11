@@ -10,11 +10,11 @@ package com.dae.dae1819.Excepciones;
  * @author dml y jfaf
  */
 public class EventoExistente extends Exception{
-    public EventoExistente(String message, Throwable cause) {
-        super(message, cause);
+    public EventoExistente(String message) {
+        super(message);
     }
 
     public EventoExistente() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        super("El evento ya existe. No hay más detalles.");
     }
 }

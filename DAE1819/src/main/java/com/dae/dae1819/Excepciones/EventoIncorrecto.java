@@ -11,10 +11,10 @@ package com.dae.dae1819.Excepciones;
  */
 public class EventoIncorrecto extends Exception {
      public EventoIncorrecto(String message) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        super(message);
     }
 
     public EventoIncorrecto() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        super("Evento incorrecto. No hay más detalles.");
     }
 }
