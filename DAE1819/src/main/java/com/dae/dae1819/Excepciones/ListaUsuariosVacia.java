@@ -9,9 +9,9 @@ package com.dae.dae1819.Excepciones;
  *
  * @author juanf
  */
-public class ListaAsistentesVacia extends Exception {
+public class ListaUsuariosVacia extends Exception {
 
-    public ListaAsistentesVacia(String message) {
+    public ListaUsuariosVacia(String message) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

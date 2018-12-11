@@ -7,7 +7,7 @@ package com.dae.dae1819.clients;
 
 import com.dae.dae1819.DTOs.EventoDTO;
 import com.dae.dae1819.DTOs.UsuarioDTO;
-import com.dae.dae1819.Excepciones.ListaAsistentesVacia;
+import com.dae.dae1819.Excepciones.ListaUsuariosVacia;
 import com.dae.dae1819.Excepciones.ListaEventosVacia;
 import com.dae.dae1819.Excepciones.TokenInvalido;
 import com.dae.dae1819.Excepciones.UsuarioExistente;

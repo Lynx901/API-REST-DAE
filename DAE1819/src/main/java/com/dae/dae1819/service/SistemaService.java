@@ -11,17 +11,14 @@
 package com.dae.dae1819.service;
 
 import com.dae.dae1819.pojos.Sistema;
-import javax.annotation.Resource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
@@ -32,21 +29,16 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @EnableCaching
 @EnableAutoConfiguration
-@EnableWebSecurity
+@EnableConfigurationProperties
 @EntityScan(basePackages = "com.dae.dae1819.pojos")
 @ComponentScan({"com.dae.dae1819.DAOs", "org.springframework.mail.javamail.JavaMailSenderImpl"})
-public class SistemaService extends WebSecurityConfigurerAdapter {
+public class SistemaService {
 
     @Bean
     Sistema sistema() {
         Sistema sistema = new Sistema();
         sistema.setNombre("sys");
         return sistema;
-    }
-    
-    @Resource
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("dae1819").password("dae1819").roles("USER");
     }
 
     public static void main(String[] args) throws Exception {
