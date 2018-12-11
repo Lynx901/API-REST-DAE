@@ -112,6 +112,12 @@ public class RecursoSistema {
 
         return usuarios;
     }
+    
+    @RequestMapping(value = "/evento/{id}/organizador", method = RequestMethod.GET, produces = "application/json")
+    public UsuarioDTO obtenerOrganizador(@PathVariable int id) {
+        UsuarioDTO usuario = sistema.buscarUsuario(sistema.buscarEventoPorId(id).getOrganizador());
+        return usuario;
+    }
 
     @RequestMapping(value = "/usuario/{username}", method = RequestMethod.GET, produces = "application/json")
     public UsuarioDTO obtenerUsuario(@PathVariable String username) throws UsuarioIncorrecto {
@@ -169,12 +175,17 @@ public class RecursoSistema {
             throw new EventoIncorrecto();
         }
         
-        EventoDTO eventobuscado = (EventoDTO) sistema.buscarEventoPorId(id);
         if (sistema.buscarEventoPorId(id) != null ) {
             throw new EventoExistente();
         }
-        UsuarioDTO usuario = sistema.buscarUsuario(evento.getOrganizador());
-        sistema.nuevoEvento(evento.getNombre(), evento.getFecha(), evento.getTipo(), evento.getDescripcion(), id, evento.getLocalizacion(), usuario);
+        
+        if(evento.getNombre() == null || evento.getFecha() == null || evento.getTipo() == null ||
+           evento.getDescripcion() == null || evento.getLocalizacion() == null || evento.getOrganizador() == null) {
+            throw new AtributoVacio();
+        }
+        
+        UsuarioDTO organizador = sistema.buscarUsuario(evento.getOrganizador());
+        sistema.nuevoEvento(evento.getNombre(), evento.getFecha(), evento.getTipo(), evento.getDescripcion(), id, evento.getLocalizacion(), organizador);
     }
 
    
@@ -195,6 +206,59 @@ public class RecursoSistema {
         }
         
         sistema.nuevoUsuario(username, usuario.getPassword(), usuario.getPassword(), usuario.getEmail());
+    }
+    
+    @RequestMapping(value = "/evento/{id}/asistentes/{username}", method=RequestMethod.PUT, produces="application/json")
+    @ResponseStatus(code = HttpStatus.ACCEPTED)
+    public void inscribirEnEvento(@PathVariable String id, @PathVariable String username) throws UsuarioIncorrecto, EventoIncorrecto {
+        UsuarioDTO uDTO = sistema.buscarUsuario(username);
+        if(uDTO == null) {
+            throw new UsuarioIncorrecto();
+        }
         
+        EventoDTO eDTO = sistema.buscarEventoPorId(id);
+        if(eDTO == null) {
+            throw new EventoIncorrecto();
+        }
+        
+        sistema.inscribirse(uDTO, eDTO);
+    }
+    
+    @RequestMapping(value = "/evento/{id}", method=RequestMethod.PUT, produces="application/json")
+    @ResponseStatus(code = HttpStatus.ACCEPTED)
+    public void inscribirEnEvento(@PathVariable String id) throws EventoIncorrecto {
+        EventoDTO eDTO = sistema.buscarEventoPorId(id);
+        if(eDTO == null) {
+            throw new EventoIncorrecto();
+        }
+        
+        sistema.reactivarEvento(eDTO, sistema.buscarUsuario(eDTO.getOrganizador()));
+    }
+    
+    @RequestMapping(value = "/evento/{id}/asistentes/{username}", method=RequestMethod.DELETE, produces="application/json")
+    @ResponseStatus(code = HttpStatus.ACCEPTED)
+    public void inscribirEnEvento(@PathVariable String id, @PathVariable String username) throws UsuarioIncorrecto, EventoIncorrecto {
+        UsuarioDTO uDTO = sistema.buscarUsuario(username);
+        if(uDTO == null) {
+            throw new UsuarioIncorrecto();
+        }
+        
+        EventoDTO eDTO = sistema.buscarEventoPorId(id);
+        if(eDTO == null) {
+            throw new EventoIncorrecto();
+        }
+        
+        sistema.desinscribirse(uDTO, eDTO);
+    }
+    
+    @RequestMapping(value = "/evento/{id}", method=RequestMethod.DELETE, produces="application/json")
+    @ResponseStatus(code = HttpStatus.ACCEPTED)
+    public void inscribirEnEvento(@PathVariable String id) throws EventoIncorrecto {
+        EventoDTO eDTO = sistema.buscarEventoPorId(id);
+        if(eDTO == null) {
+            throw new EventoIncorrecto();
+        }
+        
+        sistema.cancelarEvento(eDTO, sistema.buscarUsuario(eDTO.getOrganizador()));
     }
 }
