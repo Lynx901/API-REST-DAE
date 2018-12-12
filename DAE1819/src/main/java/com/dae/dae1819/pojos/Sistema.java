@@ -13,7 +13,7 @@ import java.util.List;
 import com.dae.dae1819.DTOs.EventoDTO;
 import com.dae.dae1819.DTOs.UsuarioDTO;
 import com.dae.dae1819.Excepciones.ListaEventosVacia;
-import com.dae.dae1819.Excepciones.TokenInvalido;
+//import com.dae.dae1819.Excepciones.TokenInvalido;
 import com.dae.dae1819.Excepciones.UsuarioExistente;
 import java.util.Calendar;
 import java.util.Map;
@@ -38,19 +38,19 @@ public class Sistema extends SistemaInterface {
     @Autowired
     private EventoDAO eventos;
 
-    private List<Integer> tokenConectados;
+//    private List<Integer> tokenConectados;
     
     @Autowired
     public JavaMailSenderImpl emailSender;
 
     public Sistema() {
-        this.tokenConectados = new ArrayList();
+//        this.tokenConectados = new ArrayList();
         this.lastID = 0;
     }
 
     public Sistema(String nombre) {
         this.nombre = nombre;
-        this.tokenConectados = new ArrayList();
+//        this.tokenConectados = new ArrayList();
         this.lastID = 0;
     }
 
@@ -71,10 +71,10 @@ public class Sistema extends SistemaInterface {
     @Override
     public boolean isTokenValid(Integer token) {
         boolean ret = false;
-
-        if (token != 0) {
-            ret = tokenConectados.contains(token);
-        }
+//
+//        if (token != 0) {
+//            ret = tokenConectados.contains(token);
+//        }
 
         return ret;
     }
@@ -111,10 +111,10 @@ public class Sistema extends SistemaInterface {
         Usuario user = usuarios.buscar(username);
         if (user != null) {
             if (user.getPassword().equals(password)) {
-                Integer token = ThreadLocalRandom.current().nextInt(10000000, 100000000);
-                tokenConectados.add(token);
+//                Integer token = ThreadLocalRandom.current().nextInt(10000000, 100000000);
+//                tokenConectados.add(token);
                 UsuarioDTO uDTO = this.usuarioToDTO(user);
-                uDTO.setToken(token);
+//                uDTO.setToken(token);
                 ret = uDTO;
             }
         }
@@ -125,12 +125,12 @@ public class Sistema extends SistemaInterface {
     public UsuarioDTO logout(UsuarioDTO uDTO) {
         UsuarioDTO ret;
 
-        if (this.isTokenValid(uDTO.getToken())) {
-            tokenConectados.remove(uDTO.getToken());
-            ret = new UsuarioDTO();
-        } else {
+//        if (this.isTokenValid(uDTO.getToken())) {
+//            tokenConectados.remove(uDTO.getToken());
+//            ret = new UsuarioDTO();
+//        } else {
             ret = uDTO;
-        }
+//        }
 
         return ret;
     }
@@ -210,10 +210,10 @@ public class Sistema extends SistemaInterface {
     @Override
     public int nuevoEvento(String nombre, Calendar fecha, String tipo,
             String descripcion, Integer capacidad, String localizacion,
-            UsuarioDTO organizador) throws TokenInvalido {
-        if (!this.isTokenValid(organizador.getToken())) {
-            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.");
-        }
+            UsuarioDTO organizador) {
+//        if (!this.isTokenValid(organizador.getToken())) {
+//            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.");
+//        }
         
         int ret = -1;
 
@@ -228,10 +228,10 @@ public class Sistema extends SistemaInterface {
     }
 
     @Override
-    public boolean cancelarEvento(EventoDTO eDTO, UsuarioDTO uDTO) throws TokenInvalido {
-        if (!this.isTokenValid(uDTO.getToken())) {
-            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.");
-        }
+    public boolean cancelarEvento(EventoDTO eDTO, UsuarioDTO uDTO){
+//        if (!this.isTokenValid(uDTO.getToken())) {
+//            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.");
+//        }
         
         boolean ret = false;
         
@@ -284,10 +284,10 @@ public class Sistema extends SistemaInterface {
     }
 
     @Override
-    public boolean reactivarEvento(EventoDTO eDTO, UsuarioDTO uDTO) throws TokenInvalido {
-        if (!this.isTokenValid(uDTO.getToken())) {
-            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.");
-        }
+    public boolean reactivarEvento(EventoDTO eDTO, UsuarioDTO uDTO) {
+//        if (!this.isTokenValid(uDTO.getToken())) {
+//            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.");
+//        }
         
         boolean ret = false;
         
@@ -342,10 +342,10 @@ public class Sistema extends SistemaInterface {
     }
 
     @Override
-    public boolean inscribirse(UsuarioDTO uDTO, EventoDTO eDTO) throws TokenInvalido {
-        if (!this.isTokenValid(uDTO.getToken())) {
-            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.");
-        }
+    public boolean inscribirse(UsuarioDTO uDTO, EventoDTO eDTO) {
+//        if (!this.isTokenValid(uDTO.getToken())) {
+//            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.");
+//        }
         
         boolean ret = false;
 
@@ -389,10 +389,10 @@ public class Sistema extends SistemaInterface {
     }
 
     @Override
-    public boolean desinscribirse(UsuarioDTO uDTO, EventoDTO eDTO) throws TokenInvalido {
-        if (!this.isTokenValid(uDTO.getToken())) {
-            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.");
-        }
+    public boolean desinscribirse(UsuarioDTO uDTO, EventoDTO eDTO) {
+//        if (!this.isTokenValid(uDTO.getToken())) {
+//            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.");
+//        }
 
         boolean ret = false;
         
@@ -436,10 +436,10 @@ public class Sistema extends SistemaInterface {
     }
 
     @Override
-    public List<EventoDTO> buscarEventosInscritos(UsuarioDTO uDTO) throws ListaEventosVacia, TokenInvalido {
-        if (!this.isTokenValid(uDTO.getToken())) {
-            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.");
-        }
+    public List<EventoDTO> buscarEventosInscritos(UsuarioDTO uDTO) throws ListaEventosVacia {
+//        if (!this.isTokenValid(uDTO.getToken())) {
+//            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.");
+//        }
 
         Set<Evento> eventosBuscados = usuarios.buscar(uDTO.getUsername()).getEventos();
         if (eventosBuscados.isEmpty()) {
@@ -455,10 +455,10 @@ public class Sistema extends SistemaInterface {
     }
 
     @Override
-    public List<EventoDTO> buscarEventosOrganizados(UsuarioDTO uDTO) throws ListaEventosVacia, TokenInvalido {
-        if (!this.isTokenValid(uDTO.getToken())) {
-            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.");
-        }
+    public List<EventoDTO> buscarEventosOrganizados(UsuarioDTO uDTO) throws ListaEventosVacia {
+//        if (!this.isTokenValid(uDTO.getToken())) {
+//            throw new TokenInvalido("El token no es válido, vuelva a iniciar sesión.");
+//        }
 
         List<Evento> eventosBuscados = usuarios.buscar(uDTO.getUsername()).getOrganizadosLista();
         if (eventosBuscados.isEmpty()) {
