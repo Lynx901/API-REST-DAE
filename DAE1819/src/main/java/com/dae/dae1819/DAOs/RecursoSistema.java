@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author dml y jfaf
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/")
 public class RecursoSistema {
@@ -178,8 +180,8 @@ public class RecursoSistema {
         return eventos;
     }
 
-    @RequestMapping(value = "/evento/{id}", method = RequestMethod.POST, produces = "application/json")
     @ResponseStatus(code = HttpStatus.CREATED)
+    @RequestMapping(value = "/evento/{id}", method = RequestMethod.POST, produces = "application/json")
     public void crearEvento(@PathVariable int id, @RequestBody EventoDTO evento) throws EventoIncorrecto, TokenInvalido, EventoExistente, AtributoVacio {
         if (evento == null) {
             throw new EventoIncorrecto();
@@ -198,10 +200,8 @@ public class RecursoSistema {
         sistema.nuevoEvento(evento.getNombre(), evento.getFecha(), evento.getTipo(), evento.getDescripcion(), id, evento.getLocalizacion(), organizador);
     }
 
-   
-
-    @RequestMapping(value = "/usuario/{username}", method = RequestMethod.POST, produces = "application/json")
     @ResponseStatus(code = HttpStatus.CREATED)
+    @RequestMapping(value = "/usuario/{username}", method = RequestMethod.POST, produces = "application/json")
     public void crearUsuario(@PathVariable String username, @RequestBody RegistroUsuarioDTO usuario) throws UsuarioIncorrecto, UsuarioExistente, AtributoVacio {
         if (usuario == null) {
             throw new UsuarioIncorrecto();
@@ -218,8 +218,8 @@ public class RecursoSistema {
         sistema.nuevoUsuario(username, usuario.getPassword(), usuario.getPassword(), usuario.getEmail());
     }
     
-    @RequestMapping(value = "/evento/{id}/asistentes/{username}", method=RequestMethod.PUT, produces="application/json")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
+    @RequestMapping(value = "/evento/{id}/asistentes/{username}", method=RequestMethod.PUT, produces="application/json")
     public void inscribirEnEvento(@PathVariable int id, @PathVariable String username) throws UsuarioIncorrecto, EventoIncorrecto {
         UsuarioDTO uDTO = sistema.buscarUsuario(username);
         if(uDTO == null) {
@@ -234,8 +234,8 @@ public class RecursoSistema {
         sistema.inscribirse(uDTO, eDTO);
     }
     
-    @RequestMapping(value = "/evento/{id}", method=RequestMethod.PUT, produces="application/json")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
+    @RequestMapping(value = "/evento/{id}", method=RequestMethod.PUT, produces="application/json")
     public void reactivarEvento(@PathVariable int id) throws EventoIncorrecto {
         EventoDTO eDTO = sistema.buscarEventoPorId(id);
         if(eDTO == null) {
@@ -245,8 +245,8 @@ public class RecursoSistema {
         sistema.reactivarEvento(eDTO, sistema.buscarUsuario(eDTO.getOrganizador()));
     }
     
-    @RequestMapping(value = "/evento/{id}/asistentes/{username}", method=RequestMethod.DELETE, produces="application/json")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
+    @RequestMapping(value = "/evento/{id}/asistentes/{username}", method=RequestMethod.DELETE, produces="application/json")
     public void desinscribirDeEvento(@PathVariable int id, @PathVariable String username) throws UsuarioIncorrecto, EventoIncorrecto {
         UsuarioDTO uDTO = sistema.buscarUsuario(username);
         if(uDTO == null) {
@@ -261,8 +261,8 @@ public class RecursoSistema {
         sistema.desinscribirse(uDTO, eDTO);
     }
     
-    @RequestMapping(value = "/evento/{id}", method=RequestMethod.DELETE, produces="application/json")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
+    @RequestMapping(value = "/evento/{id}", method=RequestMethod.DELETE, produces="application/json")
     public void cancelarEvento(@PathVariable int id) throws EventoIncorrecto {
         EventoDTO eDTO = sistema.buscarEventoPorId(id);
         if(eDTO == null) {
