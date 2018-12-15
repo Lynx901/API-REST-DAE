@@ -1,14 +1,17 @@
 ## YAML Template.
 ---
+## Configuración BBDD
 spring.datasource.driver-class-name: org.apache.derby.jdbc.ClientDriver
 spring.datasource.url: jdbc:derby://localhost:1527/DAE1819
 spring.datasource.username: dae
 spring.datasource.password: dae
 spring.datasource.tomcat.max-active: 50
 
+## Configuración Hibernate
 spring.jpa.hibernate.ddl-auto: update
 spring.jpa.properties.hibernate.dialect: org.hibernate.dialect.DerbyTenSevenDialect
 
+## Configuración envío de email
 spring.mail.host: smtp.gmail.com
 spring.mail.port: 587
 spring.mail.username: desarrolloaplicacionesweb1819@gmail.com
@@ -17,12 +20,16 @@ spring.mail.password: yovzlsjyobszenlf
 spring.mail.properties.mail.smtp.auth: true
 spring.mail.properties.mail.smtp.starttls.enable: true
 
+## Configuración del puerto en el que se ejecuta la aplicación
 server.port: 8080
 
+## Configuración HTTPS
+server.ssl.key-store: classpath:dae1819.p12
+server.ssl.key-store-password: dae1819
+server.ssl.keyStoreType: PKCS12
+server.ssl.keyAlias: tomcat
 
-spring:
-  cache:
-    ehcache:
-      config: classpath:ehcache.xml
+## Configuración caché
+spring.cache.ehcache.config: classpath:ehcache.xml
       
       
