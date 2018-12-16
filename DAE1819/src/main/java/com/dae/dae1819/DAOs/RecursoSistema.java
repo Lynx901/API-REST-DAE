@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -80,10 +81,61 @@ public class RecursoSistema {
 //    }
     
     @RequestMapping(value = "/eventos", method = RequestMethod.GET, produces = "application/json")
-    public List<EventoDTO> obtenerAsistentes() throws ListaEventosVacia {
-        List<EventoDTO> eventos = sistema.buscarEventos();
-        if (eventos.isEmpty()) {
-            throw new ListaEventosVacia("No hay eventos");
+    public List<EventoDTO> obtenerAsistentes(@RequestParam(defaultValue = "") String s) throws ListaEventosVacia {
+        List<EventoDTO> eventos = new ArrayList();
+        if (s.equals("")) {
+            eventos = sistema.buscarEventos();
+            if (eventos.isEmpty()) {
+                throw new ListaEventosVacia("No hay ningún evento en el sistema");
+            }
+        } else {
+            boolean nombre = true;
+            try {
+                List<EventoDTO> eventosNombre = sistema.buscarEventoPorNombre(s);
+                for (EventoDTO e : eventosNombre) {
+                    if(!eventos.contains(e)) {
+                        eventos.add(e);
+                    }
+                }
+            } catch (ListaEventosVacia e) {
+                nombre = false;
+            }
+            
+            boolean descripcion = true;
+            try {
+                List<EventoDTO> eventosDescripcion = sistema.buscarEventosPorDescripcion(s);
+                for (EventoDTO e : eventosDescripcion) {
+                    if(!eventos.contains(e)) {
+                        eventos.add(e);
+                    }
+                }
+            } catch (ListaEventosVacia e) {
+                descripcion = false;
+            }
+            
+            // Falla porque mi base de datos (dani) está creada con una versión
+            // antigua y el tipo era integer. En una bbdd generada posteriormente 
+            // debería fucnionar sin problemas
+            
+//            boolean tipo = true;
+//            try {
+//                List<EventoDTO> eventosTipo = sistema.buscarEventosPorTipo(s);
+//                for (EventoDTO e : eventosTipo) {
+//                    if(!eventos.contains(e)) {
+//                       eventos.add(e);
+//                    }
+//                }
+//            } catch (ListaEventosVacia e) {
+//                tipo = false;
+//            }
+//
+//            if (!nombre && !descripcion && !tipo) {
+//                throw new ListaEventosVacia("No hay ningún evento en el sistema que coincida con esa búsqueda");
+//            }
+
+            if (!nombre && !descripcion) {
+                throw new ListaEventosVacia("No hay ningún evento en el sistema que coincida con esa búsqueda");
+            }
         }
 
         return eventos;
