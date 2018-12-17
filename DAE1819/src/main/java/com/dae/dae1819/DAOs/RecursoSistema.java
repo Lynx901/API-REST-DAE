@@ -69,6 +69,7 @@ public class RecursoSistema {
      *
      */
 
+    // <editor-fold defaultstate="collapsed" desc="GET Methods">
     @RequestMapping(value = "/eventos", method = RequestMethod.GET, produces = "application/json")
     public List<EventoDTO> obtenerAsistentes(@RequestParam(defaultValue = "") String s) throws ListaEventosVacia {
         List<EventoDTO> eventos = new ArrayList();
@@ -135,7 +136,7 @@ public class RecursoSistema {
         EventoDTO evento = sistema.buscarEventoPorId(id);
         return evento;
     }
-
+    
     @RequestMapping(value = "/evento/{id}/asistentes", method = RequestMethod.GET, produces = "application/json")
     public List<UsuarioDTO> obtenerAsistentes(@PathVariable int id) throws ListaUsuariosVacia {
         List<String> asistentes = sistema.buscarEventoPorId(id).getAsistentes();
@@ -153,7 +154,7 @@ public class RecursoSistema {
 
     @RequestMapping(value = "/evento/{id}/inscritos", method = RequestMethod.GET, produces = "application/json")
     public List<UsuarioDTO> obtenerInscritos(@PathVariable int id) throws ListaUsuariosVacia {
-        List<String> asistentes = sistema.buscarEventoPorId(id).getAsistentes();
+        List<String> asistentes = sistema.buscarEventoPorId(id).getInscritos();
         if (asistentes.isEmpty()) {
             throw new ListaUsuariosVacia("No hay usuarios en la lista de espera");
         }
@@ -236,7 +237,9 @@ public class RecursoSistema {
 
         return eventos;
     }
-
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="POST Methods">
     @ResponseStatus(code = HttpStatus.CREATED)
     @RequestMapping(value = "/evento/{id}", method = RequestMethod.POST, produces = "application/json")
     public void crearEvento(@PathVariable int id, @RequestBody EventoDTO evento) throws EventoIncorrecto, TokenInvalido, EventoExistente, AtributoVacio {
@@ -274,7 +277,9 @@ public class RecursoSistema {
         
         sistema.nuevoUsuario(username, usuario.getPassword(), usuario.getPassword(), usuario.getEmail());
     }
+    // </editor-fold>
     
+    // <editor-fold defaultstate="collapsed" desc="PUT Methods">
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     @RequestMapping(value = "/evento/{id}/asistentes/{username}", method=RequestMethod.PUT, produces="application/json")
     public void inscribirEnEvento(@PathVariable int id, @PathVariable String username) throws UsuarioIncorrecto, EventoIncorrecto {
@@ -301,7 +306,9 @@ public class RecursoSistema {
         
         sistema.reactivarEvento(eDTO, sistema.buscarUsuario(eDTO.getOrganizador()));
     }
+    // </editor-fold>
     
+    // <editor-fold defaultstate="collapsed" desc="DELETE Methods">
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     @RequestMapping(value = "/evento/{id}/asistentes/{username}", method=RequestMethod.DELETE, produces="application/json")
     public void desinscribirDeEvento(@PathVariable int id, @PathVariable String username) throws UsuarioIncorrecto, EventoIncorrecto {
@@ -344,4 +351,5 @@ public class RecursoSistema {
         
         sistema.cancelarEvento(eDTO, sistema.buscarUsuario(eDTO.getOrganizador()));
     }
+    // </editor-fold>
 }
