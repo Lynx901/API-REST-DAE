@@ -24,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -266,16 +267,18 @@ public class RecursoSistema {
         if (usuario == null) {
             throw new UsuarioIncorrecto();
         }
-        
-        if (sistema.buscarUsuario(username) != null) {
+        UsuarioDTO uDTO = new UsuarioDTO();
+        uDTO.setUsername(username);
+        uDTO.setEmail(usuario.getEmail());
+        if (sistema.buscarUsuario(uDTO.getUsername()) != null) {
             throw new UsuarioExistente();
         }
         
         if(usuario.getUsername() == null || usuario.getPassword() == null || usuario.getEmail() == null) {
             throw new AtributoVacio();
         }
-        
-        sistema.nuevoUsuario(username, usuario.getPassword(), usuario.getPassword(), usuario.getEmail());
+        String pass = new BCryptPasswordEncoder().encode(usuario.getPassword());
+        sistema.nuevoUsuario(username, pass, pass, usuario.getEmail());
     }
     // </editor-fold>
     

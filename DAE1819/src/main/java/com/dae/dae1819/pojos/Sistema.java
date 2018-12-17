@@ -338,7 +338,12 @@ public class Sistema extends SistemaInterface {
 
     @Override
     public UsuarioDTO buscarUsuario(String username) {
-        return usuarioToDTO(usuarios.buscar(username));
+        Usuario usuario = usuarios.buscar(username);
+        if(usuario != null) {
+            return usuarioToDTO(usuarios.buscar(username));
+        } else {
+            return null;
+        }
     }
 
     @Override

@@ -32,6 +32,6 @@ public class DatosUsuarios implements UserDetailsService{
 			throw new UsernameNotFoundException(username);
 		}
                 
-		return User.withUsername(username).password(new BCryptPasswordEncoder().encode(usuario.getPassword())).roles("USUARIO").build();
+		return User.withUsername(username).password(usuario.getPassword()).roles("USUARIO").build();
 	}
 }
