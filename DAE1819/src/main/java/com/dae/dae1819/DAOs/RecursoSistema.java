@@ -21,9 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,13 +53,13 @@ public class RecursoSistema {
      * 
      * /                            -
      *     /eventos                 - GET
-     *     /evento                  -
-     *         /{id}                - GET POST PUT DELETE
+     *         /{id}                - GET POST PUT
      *             /{asistentes}    - GET
      *                /{username}   -          PUT DELETE
-     *             /{inscritos}     - GET          DELETE
+     *             /{inscritos}     - GET          
+     *                /{username}   -              DELETE
      *             /{organizador}   - GET
-     *     /usuario                 - GET
+     *     /usuario                 -
      *         /{username}          - GET POST
      *             /eventos         - GET
      *             /listaEspera     - GET
@@ -132,13 +129,13 @@ public class RecursoSistema {
         return eventos;
     }
 
-    @RequestMapping(value = "/evento/{id}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/eventos/{id}", method = RequestMethod.GET, produces = "application/json")
     public EventoDTO obtenerEvento(@PathVariable int id) {
         EventoDTO evento = sistema.buscarEventoPorId(id);
         return evento;
     }
     
-    @RequestMapping(value = "/evento/{id}/asistentes", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/eventos/{id}/asistentes", method = RequestMethod.GET, produces = "application/json")
     public List<UsuarioDTO> obtenerAsistentes(@PathVariable int id) throws ListaUsuariosVacia {
         List<String> asistentes = sistema.buscarEventoPorId(id).getAsistentes();
         if (asistentes.isEmpty()) {
@@ -153,7 +150,7 @@ public class RecursoSistema {
         return usuarios;
     }
 
-    @RequestMapping(value = "/evento/{id}/inscritos", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/eventos/{id}/inscritos", method = RequestMethod.GET, produces = "application/json")
     public List<UsuarioDTO> obtenerInscritos(@PathVariable int id) throws ListaUsuariosVacia {
         List<String> asistentes = sistema.buscarEventoPorId(id).getInscritos();
         if (asistentes.isEmpty()) {
@@ -168,29 +165,29 @@ public class RecursoSistema {
         return usuarios;
     }
     
-    @RequestMapping(value = "/evento/{id}/organizador", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/eventos/{id}/organizador", method = RequestMethod.GET, produces = "application/json")
     public UsuarioDTO obtenerOrganizador(@PathVariable int id) {
         UsuarioDTO usuario = sistema.buscarUsuario(sistema.buscarEventoPorId(id).getOrganizador());
         return usuario;
     }
-    
-    @RequestMapping(value = "/usuario", method = RequestMethod.GET, produces = "application/json")
-    public UsuarioDTO obtenerPerfilUsuario() throws UsuarioIncorrecto {
-        Authentication auth = SecurityContextHolder
-            .getContext()
-            .getAuthentication();
-        UserDetails userDetail = (UserDetails) auth.getPrincipal();
-        UsuarioDTO usuario = sistema.buscarUsuario(userDetail.getUsername());
-//        UsuarioDTO usuario = sistema.buscarUsuario(username);
+//    
+//    @RequestMapping(value = "/usuarios", method = RequestMethod.GET, produces = "application/json")
+//    public UsuarioDTO obtenerPerfilUsuario() throws UsuarioIncorrecto {
+//        Authentication auth = SecurityContextHolder
+//            .getContext()
+//            .getAuthentication();
+//        UserDetails userDetail = (UserDetails) auth.getPrincipal();
+//        UsuarioDTO usuario = sistema.buscarUsuario(userDetail.getUsername());
+////        UsuarioDTO usuario = sistema.buscarUsuario(username);
+////        
+//        if (usuario == null) {
+//            throw new UsuarioIncorrecto("No ha iniciado sesión");
+//        }
 //        
-        if (usuario == null) {
-            throw new UsuarioIncorrecto("No ha iniciado sesión");
-        }
-        
-        return usuario;
-    }
+//        return usuario;
+//    }
 
-    @RequestMapping(value = "/usuario/{username}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/usuarios/{username}", method = RequestMethod.GET, produces = "application/json")
     public UsuarioDTO obtenerUsuario(@PathVariable String username) throws UsuarioIncorrecto {
         UsuarioDTO usuario = sistema.buscarUsuario(username);
         if (usuario == null) {
@@ -200,7 +197,7 @@ public class RecursoSistema {
         return usuario;
     }
 
-    @RequestMapping(value = "/usuario/{username}/eventos", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/usuarios/{username}/eventos", method = RequestMethod.GET, produces = "application/json")
     public List<EventoDTO> obtenerEventosUsuario(@PathVariable String username) {
         UsuarioDTO usuario = sistema.buscarUsuario(username);
         List<Integer> idEventos = usuario.getEventos();
@@ -213,7 +210,7 @@ public class RecursoSistema {
         return eventos;
     }
 
-    @RequestMapping(value = "/usuario/{username}/listaEspera", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/usuarios/{username}/listaEspera", method = RequestMethod.GET, produces = "application/json")
     public List<EventoDTO> obtenerEventosListaEspera(@PathVariable String username) {
         UsuarioDTO usuario = sistema.buscarUsuario(username);
         List<Integer> idEventos = usuario.getListaEspera();
@@ -226,7 +223,7 @@ public class RecursoSistema {
         return eventos;
     }
 
-    @RequestMapping(value = "/usuario/{username}/organizados", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/usuarios/{username}/organizados", method = RequestMethod.GET, produces = "application/json")
     public List<EventoDTO> obtenerEventosOrganizados(@PathVariable String username) {
         UsuarioDTO usuario = sistema.buscarUsuario(username);
         List<Integer> idEventos = usuario.getOrganizados();
@@ -242,7 +239,7 @@ public class RecursoSistema {
     
     // <editor-fold defaultstate="collapsed" desc="POST Methods">
     @ResponseStatus(code = HttpStatus.CREATED)
-    @RequestMapping(value = "/evento/{id}", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/eventos/{id}", method = RequestMethod.POST, produces = "application/json")
     public void crearEvento(@PathVariable int id, @RequestBody EventoDTO evento) throws EventoIncorrecto, TokenInvalido, EventoExistente, AtributoVacio {
         if (evento == null) {
             throw new EventoIncorrecto();
@@ -262,7 +259,7 @@ public class RecursoSistema {
     }
 
     @ResponseStatus(code = HttpStatus.CREATED)
-    @RequestMapping(value = "/usuario/{username}", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/usuarios/{username}", method = RequestMethod.POST, produces = "application/json")
     public void crearUsuario(@PathVariable String username, @RequestBody RegistroUsuarioDTO usuario) throws UsuarioIncorrecto, UsuarioExistente, AtributoVacio {
         if (usuario == null) {
             throw new UsuarioIncorrecto();
@@ -284,7 +281,7 @@ public class RecursoSistema {
     
     // <editor-fold defaultstate="collapsed" desc="PUT Methods">
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    @RequestMapping(value = "/evento/{id}/asistentes/{username}", method=RequestMethod.PUT, produces="application/json")
+    @RequestMapping(value = "/eventos/{id}/asistentes/{username}", method=RequestMethod.PUT, produces="application/json")
     public void inscribirEnEvento(@PathVariable int id, @PathVariable String username) throws UsuarioIncorrecto, EventoIncorrecto {
         UsuarioDTO uDTO = sistema.buscarUsuario(username);
         if(uDTO == null) {
@@ -300,20 +297,24 @@ public class RecursoSistema {
     }
     
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    @RequestMapping(value = "/evento/{id}", method=RequestMethod.PUT, produces="application/json")
+    @RequestMapping(value = "/eventos/{id}", method=RequestMethod.PUT, produces="application/json")
     public void reactivarEvento(@PathVariable int id) throws EventoIncorrecto {
         EventoDTO eDTO = sistema.buscarEventoPorId(id);
         if(eDTO == null) {
             throw new EventoIncorrecto();
         }
         
-        sistema.reactivarEvento(eDTO, sistema.buscarUsuario(eDTO.getOrganizador()));
+        if(eDTO.isCancelado()) {
+            sistema.reactivarEvento(eDTO, sistema.buscarUsuario(eDTO.getOrganizador()));
+        } else {
+            sistema.cancelarEvento(eDTO, sistema.buscarUsuario(eDTO.getOrganizador()));
+        }
     }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="DELETE Methods">
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    @RequestMapping(value = "/evento/{id}/asistentes/{username}", method=RequestMethod.DELETE, produces="application/json")
+    @RequestMapping(value = "/eventos/{id}/asistentes/{username}", method=RequestMethod.DELETE, produces="application/json")
     public void desinscribirDeEvento(@PathVariable int id, @PathVariable String username) throws UsuarioIncorrecto, EventoIncorrecto {
         UsuarioDTO uDTO = sistema.buscarUsuario(username);
         if(uDTO == null) {
@@ -329,7 +330,7 @@ public class RecursoSistema {
     }
     
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    @RequestMapping(value = "/evento/{id}/inscritos/{username}", method=RequestMethod.DELETE, produces="application/json")
+    @RequestMapping(value = "/eventos/{id}/inscritos/{username}", method=RequestMethod.DELETE, produces="application/json")
     public void desinscribirDeListaEspera(@PathVariable int id, @PathVariable String username) throws UsuarioIncorrecto, EventoIncorrecto {
         UsuarioDTO uDTO = sistema.buscarUsuario(username);
         if(uDTO == null) {
@@ -342,17 +343,6 @@ public class RecursoSistema {
         }
         
         sistema.desinscribirse(uDTO, eDTO);
-    }
-    
-    @ResponseStatus(code = HttpStatus.ACCEPTED)
-    @RequestMapping(value = "/evento/{id}", method=RequestMethod.DELETE, produces="application/json")
-    public void cancelarEvento(@PathVariable int id) throws EventoIncorrecto {
-        EventoDTO eDTO = sistema.buscarEventoPorId(id);
-        if(eDTO == null) {
-            throw new EventoIncorrecto();
-        }
-        
-        sistema.cancelarEvento(eDTO, sistema.buscarUsuario(eDTO.getOrganizador()));
     }
     // </editor-fold>
 }
