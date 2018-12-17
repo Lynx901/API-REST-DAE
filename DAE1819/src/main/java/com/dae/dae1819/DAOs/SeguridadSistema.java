@@ -31,6 +31,6 @@ public class SeguridadSistema extends WebSecurityConfigurerAdapter{
 		http.csrf().disable();
 		http.httpBasic();
                 
-		http.authorizeRequests().antMatchers("/**").hasRole("USUARIO");
+		http.authorizeRequests().antMatchers("/evento/**").hasRole("USUARIO");
 	}
 }
