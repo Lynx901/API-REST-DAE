@@ -137,7 +137,11 @@ public class Sistema extends SistemaInterface {
 
     @Override
     public EventoDTO buscarEventoPorId(int id) {
-        return this.eventoToDTO(eventos.buscar(id));
+        if (eventos.buscar(id) != null) {
+            return this.eventoToDTO(eventos.buscar(id));
+        } else {
+            return null;
+        }
     }
 
     @Override

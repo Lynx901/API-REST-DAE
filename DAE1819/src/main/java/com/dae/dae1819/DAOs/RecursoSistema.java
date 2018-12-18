@@ -242,20 +242,26 @@ public class RecursoSistema {
     @RequestMapping(value = "/eventos/{id}", method = RequestMethod.POST, produces = "application/json")
     public void crearEvento(@PathVariable int id, @RequestBody EventoDTO evento) throws EventoIncorrecto, TokenInvalido, EventoExistente, AtributoVacio {
         if (evento == null) {
-            throw new EventoIncorrecto();
+            throw new EventoIncorrecto("El evento no se ha recibido bien");
         }
         
         if (sistema.buscarEventoPorId(id) != null ) {
-            throw new EventoExistente();
+            throw new EventoExistente("Este ID ya existía");
         }
         
         if(evento.getNombre() == null || evento.getFecha() == null || evento.getTipo() == null ||
-           evento.getDescripcion() == null || evento.getLocalizacion() == null || evento.getOrganizador() == null) {
-            throw new AtributoVacio();
+           evento.getDescripcion() == null || evento.getCapacidad() == null || evento.getLocalizacion() == null) {
+            System.out.println("1. " + evento.getNombre() +
+                                "2. " + evento.getFecha() +
+                                "3. " + evento.getTipo() +
+                                "4. " + evento.getDescripcion() +
+                                "5. " + evento.getCapacidad() +
+                                "6. " + evento.getLocalizacion());
+            throw new AtributoVacio("Falta algún atributo");
         }
         
         UsuarioDTO organizador = sistema.buscarUsuario(evento.getOrganizador());
-        sistema.nuevoEvento(evento.getNombre(), evento.getFecha(), evento.getTipo(), evento.getDescripcion(), id, evento.getLocalizacion(), organizador);
+        sistema.nuevoEvento(evento.getNombre(), evento.getFecha(), evento.getTipo(), evento.getDescripcion(), evento.getCapacidad(), evento.getLocalizacion(), organizador);
     }
 
     @ResponseStatus(code = HttpStatus.CREATED)
